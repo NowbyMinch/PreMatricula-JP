@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,8 +24,17 @@ export default function RootLayout({
 }>) {
   return (
     <html className="bg-[#141416]">
-      <body className="w-screen h-screen flex justify-center overflow-y-auto overflow-x-hidden">
-        
+      <body className="w-screen h-screen flex justify-center items-center overflow-y-auto overflow-x-hidden">
+        <div className="bg-black w-full h-full opacity-[0.4] absolute"></div>
+        <video 
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute w-full h-full object-cover -z-10">
+          <div className="bg-black w-full h-full "></div>
+          <source src="file.mp4" type="video/mp4" />
+        </video>
         {children}
         
       </body>
