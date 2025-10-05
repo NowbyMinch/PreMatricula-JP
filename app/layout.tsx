@@ -30,14 +30,14 @@ export default function RootLayout({
 }>) {
   return (
     <html className={`bg-[#141416] ${poppins.variable} font-sans`}>
-      <body className="w-screen h-screen flex justify-center items-center overflow-y-auto overflow-x-hidden">
+      <body className="w-screen h-screen flex justify-center object-bottom items-center overflow-y-auto overflow-x-hidden">
         <div className="bg-black w-full h-full opacity-[0.55] absolute"></div>
         <video 
         autoPlay
         loop
         muted
         playsInline
-        className="absolute w-full h-full object-cover -z-10">
+        className="absolute w-[100%] h-[100%] object-cover object-bottom -z-10">
           <div className="bg-black w-full h-full "></div>
           <source src="file.mp4" type="video/mp4" />
         </video>

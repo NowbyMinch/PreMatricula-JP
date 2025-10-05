@@ -2,7 +2,8 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-
+import { Eye, EyeOff } from "lucide-react";
+import { p } from "framer-motion/client";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
@@ -11,37 +12,179 @@ import { useState } from "react";
 
 
 export default function Home() {
-  const [focused, setFocused] = useState(false);
+  const [mostrar, setMostrar] = useState(false);
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  
+  const [registrar, setRegistrar] = useState(false);
 
   return (
-    <div className="overflow-hidden max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 h-fit rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.9)] backdrop-blur-[20px] gap-4 z-20 flex-col">
-      <form className="w-full flex flex-col items-center text-white max-w-[95%] h-full overflow-y-auto overflow-x-hidden" onSubmit={(e) => {e.preventDefault();}}>
-        <img src="seice.png" alt="Seice Logo" className="w-[50%] h-auto mt-6"/>
-        <AnimatePresence >
-          <div className="w-[480px] max-w-full flex flex-col gap-2 mx-auto mt-10">
+    <div className={`  ${registrar ? "h-[749px]" :"h-[635px]"} overflow-hidden max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.9)] backdrop-blur-[20px] gap-4 z-20 flex-col shadow-2xl`}>
+      <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full overflow-y-auto overflow-x-hidden`} onSubmit={(e) => {e.preventDefault();}}>
+        
+        <motion.img 
+        initial={{scale:0}}
+        animate={{scale:1}}
+        exit={{scale:0}}
+        src="seice.png" alt="Seice Logo" className="w-[50%] h-auto mt-10"/>
+
+        <motion.h1 
+        initial={{scale:0}}
+        animate={{scale:1}}
+        exit={{scale:0}}
+        className="text-[50px] mx-auto my-2 font-medium">{registrar ? "Registrar" : "Login" }</motion.h1>
+
+        <p className="mb-4 ">Coloque a sua conta para poder realizar a pré matricula</p>
+        <AnimatePresence>
+          <div className={` ${registrar ? "hidden" : "flex"}  w-[480px] max-w-full flex flex-col gap-8 mx-auto `}>
+            <motion.div 
+            initial={{scale:0}}
+            animate={{scale:1}}
+            exit={{scale:0}}
+            className="flex flex-col gap-2">
               <motion.label 
-              initial={{scale:0}}
-              animate={{scale:1}}
-              exit={{scale:0}}
-              htmlFor="" className="origin-left">Email</motion.label>
+              htmlFor="" 
+              className="origin-left">Email</motion.label>
               <motion.input
-              initial={{scale:0.8}}
-              animate={{scale:1}}
-              exit={{scale:0}} 
-              onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
-              type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] ${focused
-                ? "border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.2)]"
-                : "border-gray-400"} `}/>
+              required
+              onChange={(e) => {setEmail(e.target.value); console.log(email)}}
+              type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+            </motion.div>
+
+            <motion.div 
+            initial={{scale:0}}
+            animate={{scale:1}}
+            exit={{scale:0}}
+            className="flex flex-col gap-2 ">
+              <motion.label 
+              htmlFor="" className="origin-left">Senha</motion.label>
+              
+              <div className="relative">
+                <motion.input
+                required
+                onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
+                type={`${mostrar ? "text" : "password"}`} placeholder="Digite sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
+                autoComplete="new-password"   
+                name="new-password" />
+                <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
+                  <motion.div 
+                  whileHover={{scale:1.10}}
+                  whileTap={{scale:0.95}}
+                  className="w-5">
+                    {mostrar ? (  
+                      <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                    ) : (
+                      <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                    )}
+                  </motion.div>
+                </div>
+              </div>
+              <motion.span onClick={() => setRegistrar(true)} className="mx-auto">Não possui uma conta? <motion.button 
+              whileHover={{scale:1.01}}
+              whileTap={{scale:0.99}}
+              type="button" className="cursor-pointer"><strong>registre-se</strong></motion.button></motion.span>
+
+            </motion.div>
+
+          </div>
+        </AnimatePresence>
+
+
+        <AnimatePresence >
+          <div className={`${registrar ? "flex" : "hidden"} w-[480px] max-w-full flex-col gap-8 mx-auto `}>
+            <motion.div 
+            initial={{scale:0}}
+            animate={{scale:1}}
+            exit={{scale:0}}
+            className="flex flex-col gap-2">
+              <motion.label 
+              htmlFor="" 
+              className="origin-left">Email</motion.label>
+              <motion.input
+              required
+              onChange={(e) => {setEmail(e.target.value); console.log(email)}}
+              type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+            </motion.div>
+
+            <motion.div 
+            initial={{scale:0}}
+            animate={{scale:1}}
+            exit={{scale:0}}
+            className="flex flex-col gap-2 ">
+              <motion.label 
+              htmlFor="" className="origin-left">Senha</motion.label>
+              
+              <div className="relative">
+                <motion.input
+                required
+                onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
+                type={`${mostrar ? "text" : "password"}`} placeholder="Digite sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
+                autoComplete="new-password"   
+                name="new-password" />
+                <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
+                  <motion.div 
+                  whileHover={{scale:1.10}}
+                  whileTap={{scale:0.95}}
+                  className="w-5">
+                    {mostrar ? (  
+                      <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                    ) : (
+                      <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                    )}
+                  </motion.div>
+                </div>
+              </div>
+
+            </motion.div>
+
+            <motion.div 
+            initial={{scale:0}}
+            animate={{scale:1}}
+            exit={{scale:0}}
+            className="flex flex-col gap-2 ">
+              <motion.label 
+              htmlFor="" className="origin-left">Repetir senha</motion.label>
+              
+              <div className="relative">
+                <motion.input
+                required
+                onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
+                type={`${mostrar ? "text" : "password"}`} placeholder="Repita sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
+                autoComplete="new-password"   
+                name="new-password" />
+                <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
+                  <motion.div 
+                  whileHover={{scale:1.10}}
+                  whileTap={{scale:0.95}}
+                  className="w-5">
+                    {mostrar ? (  
+                      <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                    ) : (
+                      <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                    )}
+                  </motion.div>
+                </div>
+              </div>
+              <motion.span onClick={() => setRegistrar(false)} className="mx-auto">Já possui uma conta? <motion.button 
+              whileHover={{scale:1.01}}
+              whileTap={{scale:0.99}}
+              type="button" className="cursor-pointer"><strong>Faça login</strong></motion.button></motion.span>
+
+            </motion.div>
+
+            
 
           </div>
         </AnimatePresence>
         
         <motion.button 
+        initial={{scale:0}}
+        animate={{scale:1}}
+        exit={{scale:0}}
         whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
         whileTap={{scale:0.98}}
         transition={{duration: 0.3, }}
-        className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-8">Enviar email</motion.button>
+        className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Enviar email</motion.button>
       </form>
     </div>
 
