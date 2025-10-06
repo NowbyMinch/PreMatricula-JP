@@ -1,24 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Poppins } from "next/font/google";
+
 const poppins = Poppins({
-  subsets: ["latin"],   // charset usado
-  weight: ["400", "500", "600", "700"], // pesos que você quer carregar
-  variable: "--font-poppins" // opcional se quiser usar em var()
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
 });
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-
 export const metadata: Metadata = {
-  title: "Pré Matricula - SEICE",
+  title: "Pré-Matrícula - SEICE",
 };
 
 export default function RootLayout({
@@ -26,14 +17,33 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
-    <html className={`bg-[#141416] ${poppins.variable} font-sans`}>
-      <body className="w-screen h-screen flex justify-center object-bottom items-center overflow-y-auto overflow-x-hidden">
-        <div className="bg-black w-full h-full opacity-[0.55] absolute"></div>
-        <video 
-        autoPlay
-        loop
+    <html lang="pt-BR" className={`${poppins.variable} font-sans bg-[#141416]`}>
+      <body className="relative w-screen min-h-screen flex justify-center items-center overflow-hidden">
+        
+        {/* 🎥 Vídeo de fundo fixo */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="fixed top-0 left-0 w-full h-full object-cover object-bottom -z-20"
+        >
+          <source src="file.mp4" type="video/mp4" />
+        </video>
+
+        {/* 🖤 Camada escura por cima do vídeo */}
+        <div className="fixed top-0 left-0 w-full h-full bg-black opacity-55 -z-10"></div>
+
+        {/* 🧱 Conteúdo principal */}
+        <main className="relative z-10 w-full flex justify-center items-center">
+          {children}
+        </main>
+
+      </body>
+    </html>
+  );
+}
         muted
         playsInline
         className="absolute w-[100%] h-[100%] object-cover object-bottom -z-10">
