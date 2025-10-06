@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Poppins } from "next/font/google";
-import { User } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-
 const poppins = Poppins({
   subsets: ["latin"],   // charset usado
   weight: ["400", "500", "600", "700"], // pesos que você quer carregar
