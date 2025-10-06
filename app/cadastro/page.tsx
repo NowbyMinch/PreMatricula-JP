@@ -20,7 +20,7 @@ export default function Home() {
     
     const [registrar, setRegistrar] = useState(false);
 
-    const handleSubmit = (e:any) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // prevent page reload
         console.log("Email:", email, "Senha:", senha);
         router.push("/"); // redirect
