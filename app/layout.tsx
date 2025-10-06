@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Poppins } from "next/font/google";
-import { User } from "lucide-react";
 
 const poppins = Poppins({
   subsets: ["latin"],   // charset usado
@@ -34,7 +33,7 @@ export default function RootLayout({
       <body className="w-screen h-screen flex justify-center object-bottom items-center overflow-y-auto overflow-x-hidden">
         <div className="bg-black w-full h-full opacity-[0.55] absolute"></div>
         <video 
-        autoPlay
+        autoPlay  
         loop
         muted
         playsInline

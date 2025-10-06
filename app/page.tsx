@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Eye, EyeOff, User } from "lucide-react";
+import { User } from "lucide-react";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
@@ -11,12 +11,8 @@ import { Eye, EyeOff, User } from "lucide-react";
 
 
 export default function Home() {
-  const [mostrar, setMostrar] = useState(false);
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
   const [ pop, setPop ] = useState(false);
   
-  const [registrar, setRegistrar] = useState(false);
 
   return (
     <>
