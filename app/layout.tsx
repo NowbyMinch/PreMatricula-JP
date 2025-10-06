@@ -45,6 +45,16 @@ export default function RootLayout({
   );
 }
 
+        {/* Conteúdo */}
+        <main className="relative z-10 w-full flex justify-center items-center">
+          {children}
+        </main>
+
+      </body>
+    </html>
+  );
+}
+
         {/* 🧱 Conteúdo principal */}
         <main className="relative z-10 w-full flex justify-center items-center">
           {children}
