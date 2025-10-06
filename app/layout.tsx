@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Poppins } from "next/font/google";
+import { User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const poppins = Poppins({
   subsets: ["latin"],   // charset usado
@@ -28,6 +30,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html className={`bg-[#141416] ${poppins.variable} font-sans`}>
       <body className="w-screen h-screen flex justify-center object-bottom items-center overflow-y-auto overflow-x-hidden">
@@ -41,8 +44,10 @@ export default function RootLayout({
           <div className="bg-black w-full h-full "></div>
           <source src="file.mp4" type="video/mp4" />
         </video>
-        {children}
+
         
+        {children}
+      
       </body>
     </html>
   );
