@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { User } from "lucide-react";
+import { useRouter } from "next/navigation";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
@@ -11,7 +12,13 @@ import { User } from "lucide-react";
 
 
 export default function Home() {
+  const router = useRouter();
   const [ pop, setPop ] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault(); // prevent page reload
+      router.push("/matricula/endereco_e_comunicacao_responsavel")
+  };
   
   return (
     <>
@@ -53,8 +60,8 @@ export default function Home() {
 
       </motion.div>
 
-      <div className={` overflow-hidden max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
-        <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full `} onSubmit={(e) => {e.preventDefault();}}>
+      <div className={`  max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
+        <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full  `} onSubmit={handleSubmit}>
           
           {/* <motion.img 
           initial={{scale:0}}
@@ -66,7 +73,7 @@ export default function Home() {
           initial={{scale:0}}
           animate={{scale:1}}
           exit={{scale:0}}
-          className="text-[35px] mx-auto my-2 font-medium text-center">Dados do responsável</motion.h1>
+          className="text-[35px] mx-auto mt-10 font-medium text-center">Dados do responsável</motion.h1>
 
           <motion.p 
           initial={{scale:0}}
@@ -257,13 +264,6 @@ export default function Home() {
                 </motion.div>
               </div>
 
-              <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
-                
-
-                
-                
-              </div>
-
             </div>
           </AnimatePresence>
           
@@ -274,10 +274,10 @@ export default function Home() {
           whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
           whileTap={{scale:0.98}}
           transition={{duration: 0.3, }}
+          type="submit"
           className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
         </form>
       </div>
-      
     </>
 
   );

@@ -58,7 +58,7 @@ export default function Home() {
 
       </motion.div>
 
-      <div className={` text-white overflow-hidden max-h-[95%] max-w-[90%] w-[1750px] flex items-center h-[90%] transition-all ease-in-out duration-300 rounded-[25px] bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
+      <div className={` text-white overflow-hidden max-h-[95%] max-w-[90%] w-[1700px] flex items-center h-[800px] my-4 transition-all ease-in-out duration-300 rounded-[25px] bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
         
         <div className="w-full">
             

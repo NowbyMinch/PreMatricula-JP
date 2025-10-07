@@ -23,7 +23,7 @@ export default function Home() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // prevent page reload
         console.log("Email:", email, "Senha:", senha);
-        router.push("/"); // redirect
+        router.push("/matricula/dados_do_responsavel"); // redirect
     };
 
     return (
@@ -66,194 +66,194 @@ export default function Home() {
 
         </motion.div>
 
-        <div className={`  ${registrar ? "h-[749px]" :"h-[635px]"} overflow-hidden max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
-            <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full overflow-y-auto overflow-x-hidden`} onSubmit={handleSubmit}>
-            
-            <motion.img 
-            initial={{scale:0}}
-            animate={{scale:1}}
-            exit={{scale:0}}
-            src="seice.png" alt="Seice Logo" className="w-[50%] h-auto mt-10"/>
+        <div className={` my-4 ${registrar ? "h-[749px]" :"h-[635px]"} overflow-hidden max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
+            <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full `} onSubmit={handleSubmit}>
+                
+                <motion.img 
+                initial={{scale:0}}
+                animate={{scale:1}}
+                exit={{scale:0}}
+                src="seice.png" alt="Seice Logo" className="w-[50%] h-auto mt-10"/>
 
-            <motion.h1 
-            initial={{scale:0}}
-            animate={{scale:1}}
-            exit={{scale:0}}
-            className="text-[50px] mx-auto my-2 font-medium">{registrar ? "Registrar" : "Login" }</motion.h1>
+                <motion.h1 
+                initial={{scale:0}}
+                animate={{scale:1}}
+                exit={{scale:0}}
+                className="text-[50px] mx-auto my-2 font-medium">{registrar ? "Registrar" : "Login" }</motion.h1>
 
-            <motion.p 
-            initial={{scale:0}}
-            animate={{scale:1}}
-            exit={{scale:0}}
-            className="mb-4 ">Coloque a sua conta para poder realizar a pré matricula</motion.p>
+                <motion.p 
+                initial={{scale:0}}
+                animate={{scale:1}}
+                exit={{scale:0}}
+                className="mb-4 ">Coloque a sua conta para poder realizar a pré matricula</motion.p>
 
-            { registrar ?
-            <>
-                <AnimatePresence >
-                    <div className={`w-[480px] max-w-full flex-col gap-8 mx-auto `}>
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2">
-                        <motion.label 
-                        htmlFor="" 
-                        className="origin-left">Email</motion.label>
-                        <motion.input
-                        required
-                        onChange={(e) => {setEmail(e.target.value); console.log(email)}}
-                        type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                    </motion.div>
-
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2 ">
-                        <motion.label 
-                        htmlFor="" className="origin-left">Senha</motion.label>
-                        
-                        <div className="relative">
-                        <motion.input
-                        required
-                        onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
-                        type={`${mostrar ? "text" : "password"}`} placeholder="Digite sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
-                        autoComplete="new-password"   
-                        name="new-password" />
-                        <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
+                { registrar ?
+                <>
+                    <AnimatePresence >
+                        <div className={`w-[480px] max-w-full flex flex-col gap-5 mx-auto `}>
                             <motion.div 
-                            whileHover={{scale:1.10}}
-                            whileTap={{scale:0.95}}
-                            className="w-5">
-                            {mostrar ? (  
-                                <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
-                            ) : (
-                                <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
-                            )}
+                            initial={{scale:0}}
+                            animate={{scale:1}}
+                            exit={{scale:0}}
+                            className="flex flex-col gap-2">
+                                <motion.label 
+                                htmlFor="" 
+                                className="origin-left">Email</motion.label>
+                                <motion.input
+                                required
+                                onChange={(e) => {setEmail(e.target.value); console.log(email)}}
+                                type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                            </motion.div>
+
+                            <motion.div 
+                            initial={{scale:0}}
+                            animate={{scale:1}}
+                            exit={{scale:0}}
+                            className="flex flex-col gap-2 ">
+                                <motion.label 
+                                htmlFor="" className="origin-left">Senha</motion.label>
+                                
+                                <div className="relative">
+                                <motion.input
+                                required
+                                onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
+                                type={`${mostrar ? "text" : "password"}`} placeholder="Digite sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
+                                autoComplete="new-password"   
+                                name="new-password" />
+                                <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
+                                    <motion.div 
+                                    whileHover={{scale:1.10}}
+                                    whileTap={{scale:0.95}}
+                                    className="w-5">
+                                    {mostrar ? (  
+                                        <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                                    ) : (
+                                        <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                                    )}
+                                    </motion.div>
+                                </div>
+                                </div>
+
+                            </motion.div>
+
+                            <motion.div 
+                            initial={{scale:0}}
+                            animate={{scale:1}}
+                            exit={{scale:0}}
+                            className="flex flex-col gap-2 ">
+                                <motion.label 
+                                htmlFor="" className="origin-left">Repetir senha</motion.label>
+                                
+                                <div className="relative">
+                                <motion.input
+                                required
+                                onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
+                                type={`${mostrar ? "text" : "password"}`} placeholder="Repita sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
+                                autoComplete="new-password"   
+                                name="new-password" />
+                                <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
+                                    <motion.div 
+                                    whileHover={{scale:1.10}}
+                                    whileTap={{scale:0.95}}
+                                    className="w-5">
+                                    {mostrar ? (  
+                                        <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                                    ) : (
+                                        <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                                    )}
+                                    </motion.div>
+                                </div>
+                                </div>
+                                <motion.span onClick={() => setRegistrar(false)} className="mx-auto">Já possui uma conta? <motion.button 
+                                whileHover={{scale:1.01}}
+                                whileTap={{scale:0.99}}
+                                type="button" className="cursor-pointer">
+                                <motion.strong
+                                whileHover={{scale:1.02}}
+                                whileTap={{scale:0.98}}
+                                className="hover:text-yellow-300 transition-all ease-in-out duration-300"
+                                >Faça login</motion.strong>
+                                </motion.button></motion.span>
+
                             </motion.div>
                         </div>
+                    </AnimatePresence>
+                </>
+                : 
+                <>
+                    <AnimatePresence>
+                        <div className={` w-[480px] max-w-full flex flex-col gap-5 mx-auto `}>
+                        <motion.div 
+                        initial={{scale:0}}
+                        animate={{scale:1}}
+                        exit={{scale:0}}
+                        className="flex flex-col gap-2">
+                            <motion.label 
+                            htmlFor="" 
+                            className="origin-left">Email</motion.label>
+                            <motion.input
+                            required
+                            onChange={(e) => {setEmail(e.target.value); console.log(email)}}
+                            type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                        </motion.div>
+
+                        <motion.div 
+                        initial={{scale:0}}
+                        animate={{scale:1}}
+                        exit={{scale:0}}
+                        className="flex flex-col gap-2 ">
+                            <motion.label 
+                            htmlFor="" className="origin-left">Senha</motion.label>
+                            
+                            <div className="relative">
+                            <motion.input
+                            required
+                            onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
+                            type={`${mostrar ? "text" : "password"}`} placeholder="Digite sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
+                            autoComplete="new-password"   
+                            name="new-password" />
+                            <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
+                                <motion.div 
+                                whileHover={{scale:1.10}}
+                                whileTap={{scale:0.95}}
+                                className="w-5">
+                                {mostrar ? (  
+                                    <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                                ) : (
+                                    <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
+                                )}
+                                </motion.div>
+                            </div>
+                            </div>
+                            <motion.span onClick={() => setRegistrar(true)} className="mx-auto">Não possui uma conta? <motion.button 
+                            whileHover={{scale:1.01}}
+                            whileTap={{scale:0.99}}
+                            type="button" className="cursor-pointer">
+                            <motion.strong
+                            whileHover={{scale:1.02}}
+                            whileTap={{scale:0.98}}
+                            className="hover:text-yellow-300 transition-all ease-in-out duration-300">
+                                registre-se
+                            </motion.strong></motion.button></motion.span>
+
+                        </motion.div>
+
                         </div>
-
-                    </motion.div>
-
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2 ">
-                        <motion.label 
-                        htmlFor="" className="origin-left">Repetir senha</motion.label>
-                        
-                        <div className="relative">
-                        <motion.input
-                        required
-                        onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
-                        type={`${mostrar ? "text" : "password"}`} placeholder="Repita sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
-                        autoComplete="new-password"   
-                        name="new-password" />
-                        <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
-                            <motion.div 
-                            whileHover={{scale:1.10}}
-                            whileTap={{scale:0.95}}
-                            className="w-5">
-                            {mostrar ? (  
-                                <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
-                            ) : (
-                                <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
-                            )}
-                            </motion.div>
-                        </div>
-                        </div>
-                        <motion.span onClick={() => setRegistrar(false)} className="mx-auto">Já possui uma conta? <motion.button 
-                        whileHover={{scale:1.01}}
-                        whileTap={{scale:0.99}}
-                        type="button" className="cursor-pointer">
-                        <motion.strong
-                        whileHover={{scale:1.02}}
-                        whileTap={{scale:0.98}}
-                        className="hover:text-yellow-300 transition-all ease-in-out duration-300"
-                        >Faça login</motion.strong>
-                        </motion.button></motion.span>
-
-                    </motion.div>
-                    </div>
-                </AnimatePresence>
-            </>
-            : 
-            <>
-                <AnimatePresence>
-                    <div className={` w-[480px] max-w-full flex flex-col gap-8 mx-auto `}>
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2">
-                        <motion.label 
-                        htmlFor="" 
-                        className="origin-left">Email</motion.label>
-                        <motion.input
-                        required
-                        onChange={(e) => {setEmail(e.target.value); console.log(email)}}
-                        type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                    </motion.div>
-
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2 ">
-                        <motion.label 
-                        htmlFor="" className="origin-left">Senha</motion.label>
-                        
-                        <div className="relative">
-                        <motion.input
-                        required
-                        onChange={(e) => {setSenha(e.target.value); console.log(senha)}}
-                        type={`${mostrar ? "text" : "password"}`} placeholder="Digite sua senha" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
-                        autoComplete="new-password"   
-                        name="new-password" />
-                        <div className="absolute right-3 bottom-[50%] translate-y-[50%] ">
-                            <motion.div 
-                            whileHover={{scale:1.10}}
-                            whileTap={{scale:0.95}}
-                            className="w-5">
-                            {mostrar ? (  
-                                <EyeOff onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
-                            ) : (
-                                <Eye onClick={() => setMostrar(!mostrar)} className="w-full cursor-pointer"/>
-                            )}
-                            </motion.div>
-                        </div>
-                        </div>
-                        <motion.span onClick={() => setRegistrar(true)} className="mx-auto">Não possui uma conta? <motion.button 
-                        whileHover={{scale:1.01}}
-                        whileTap={{scale:0.99}}
-                        type="button" className="cursor-pointer">
-                        <motion.strong
-                        whileHover={{scale:1.02}}
-                        whileTap={{scale:0.98}}
-                        className="hover:text-yellow-300 transition-all ease-in-out duration-300">
-                            registre-se
-                        </motion.strong></motion.button></motion.span>
-
-                    </motion.div>
-
-                    </div>
-                </AnimatePresence>
-            </>
-            }
+                    </AnimatePresence>
+                </>
+                }
 
 
-            
-            <motion.button 
-            initial={{scale:0}}
-            animate={{scale:1}}
-            exit={{scale:0}}
-            whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
-            whileTap={{scale:0.98}}
-            transition={{duration: 0.3, }}
-            type="submit"
-            className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">{registrar ? "Registrar":"Entrar"}</motion.button>
+                
+                <motion.button 
+                initial={{scale:0}}
+                animate={{scale:1}}
+                exit={{scale:0}}
+                whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+                whileTap={{scale:0.98}}
+                transition={{duration: 0.3, }}
+                type="submit"
+                className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">{registrar ? "Registrar":"Entrar"}</motion.button>
             </form>
         </div>
         </>
