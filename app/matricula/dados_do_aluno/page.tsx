@@ -15,7 +15,6 @@ export default function Home() {
   const router = useRouter();
   const [ pop, setPop ] = useState(false);
   const [ genero, setGenero ] = useState("");
-  const [ data, setData ] = useState("");
   const [ estado_civil, setEstado_civil ] = useState("");
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -125,7 +124,7 @@ export default function Home() {
                   <motion.label 
                   htmlFor="" 
                   className="origin-left">Data de Nascimento</motion.label>
-                  <DatePicker onChange={(val) => {setData(val)}} />
+                  <DatePicker onChange={() => {}} />
                 </motion.div>
                 
               </div>

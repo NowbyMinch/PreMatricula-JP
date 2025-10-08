@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { User } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 import { Celular, CEP, Numero } from "@imports/components/ui/selectionboxes";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
@@ -11,12 +11,18 @@ import { Celular, CEP, Numero } from "@imports/components/ui/selectionboxes";
 // </span>
 
 export default function Home() {
-    // const router = useRouter();
+    const router = useRouter();
     const [ pop, setPop ] = useState(false);
+    const [ segundoResponsavel, setSegundoResponsavel ] = useState(true);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // prevent page reload
-        // router.push("/matricula/dados_do_aluno")
+        if (segundoResponsavel){
+            router.push("/matricula/endereco_e_comunicacao_responsavel")
+        }
+        else {
+            router.push("/matricula/dados_do_aluno")
+        }
     };
 
     return (
@@ -47,6 +53,7 @@ export default function Home() {
             
             </>
         )}
+
         <motion.div 
         whileHover={{scale:1.02}}
         whileTap={{scale:0.98}}
@@ -71,13 +78,13 @@ export default function Home() {
             initial={{scale:0}}
             animate={{scale:1}}
             exit={{scale:0}}
-            className="text-[35px] mx-auto mt-10 font-medium text-center">Endereço/Comunicação do aluno</motion.h1>
+            className="text-[35px] mx-auto mt-10 font-medium text-center">Endereço/Comunicação do responsável Financeiro</motion.h1>
 
             <motion.p 
             initial={{scale:0}}
             animate={{scale:1}}
             exit={{scale:0}}
-            className="mb-4 ">Preencha os campos com seu endereço e formas de comunicação do aluno</motion.p>
+            className="mb-4 ">Preencha os campos com seu endereço e formas de comunicação do responsável</motion.p>
 
             <AnimatePresence >
                 <div className="flex flex-col justify-between w-full gap-5">
@@ -138,38 +145,11 @@ export default function Home() {
                         className="flex flex-col gap-2 w-full ">
                         <motion.label 
                         htmlFor="" 
-                        className="origin-left">Complemento</motion.label>
-                        <motion.input
-                        required
-                        
-                        type="text" placeholder="Digite um complemento" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                        </motion.div>
-
-                        <motion.div 
-                        initial={{scale:0}}
-                        animate={{scale:1}}
-                        exit={{scale:0}}
-                        className="flex flex-col gap-2 w-full ">
-                        <motion.label 
-                        htmlFor="" 
                         className="origin-left">Cidade</motion.label>
                         <motion.input
                         required
                         
                         type="text" placeholder="Digite sua cidade" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                        </motion.div>
-
-                        <motion.div 
-                        initial={{scale:0}}
-                        animate={{scale:1}}
-                        exit={{scale:0}}
-                        className="flex flex-col gap-2 w-[130px] ">
-                        <motion.label 
-                        htmlFor="" 
-                        className="origin-left">UF</motion.label>
-                        <motion.input
-                        required
-                        type="text" placeholder="" className={` w-full h-full flex justify-center items-center text-center rounded-[15px] border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                         </motion.div>
 
                         <motion.div 
@@ -182,11 +162,11 @@ export default function Home() {
                         className="origin-left">Bairro</motion.label>
                         <motion.input
                         required
+                        
                         type="text" placeholder="Digite seu bairro" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                         </motion.div>
 
                     </div>
-
 
                     <motion.h1 
                     initial={{scale:0}}
@@ -202,24 +182,10 @@ export default function Home() {
                         className="flex flex-col gap-2 w-full ">
                         <motion.label 
                         htmlFor="" 
-                        className="origin-left">Telefone</motion.label>
-                        <Celular />
-                        </motion.div>
-                        
-                        <motion.div 
-                        initial={{scale:0}}
-                        animate={{scale:1}}
-                        exit={{scale:0}}
-                        className="flex flex-col gap-2 w-full ">
-                        <motion.label 
-                        htmlFor="" 
                         className="origin-left">Celular</motion.label>
                         <Celular />
                         </motion.div>
-
-                    </div>
-                    
-                    <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
+                        
                         <motion.div 
                         initial={{scale:0}}
                         animate={{scale:1}}
@@ -233,33 +199,31 @@ export default function Home() {
                         
                         type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                         </motion.div>
-                        
-                        <div className="flex w-full gap-4 items-end">
-                            <motion.div 
-                            initial={{scale:0}}
-                            animate={{scale:1}}
-                            exit={{scale:0}}
-                            className="flex flex-col gap-2 w-full ">
-                            <motion.label 
-                            htmlFor="" 
-                            className="origin-left">Contato Whatsapp</motion.label>
-                                <Celular />
-                            </motion.div>
-                            
-                            <motion.button 
-                            initial={{scale:0}}
-                            animate={{scale:1}}
-                            exit={{scale:0}}
-                            whileHover={{scale:1.01}}
-                            whileTap={{scale:0.99}}
-                            className="px-4 h-[50px] rounded-[15px] border border-green-600 cursor-pointer flex gap-2 justify-center items-center ">
-                                <FaWhatsapp className="text-green-600 size-6" aria-hidden="true" />
-                                WhatsApp</motion.button>
-                        </div>
-                        
 
                     </div>
+                    
+                    <motion.label 
+                    initial={{scale:0}}
+                    animate={{scale:1}}
+                    exit={{scale:0}}
+                    className="inline-flex items-center cursor-pointer mx-auto">
+                        {/* Hidden native checkbox */}
+                        <input onChange={() => {setSegundoResponsavel(!segundoResponsavel); console.log(segundoResponsavel)}} type="checkbox" className="sr-only peer" />
 
+                        {/* Custom checkbox */}
+                        <motion.div 
+                        whileHover={{scale:1.10}}
+                        whileTap={{scale:0.90}}
+                        className="w-5 h-5 border-2 border-gray-400 rounded-md flex items-center justify-center peer-checked:bg-yellow-400 peer-checked:border-yellow-400">
+                            {/* Checkmark */}
+                            <svg className="w-3 h-3 text-white hidden peer-checked:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </motion.div>
+
+                        {/* Label text */}
+                        <span className="ml-2 select-none">Não tenho um segundo responsável</span>
+                    </motion.label>
                 </div>
             </AnimatePresence>
             

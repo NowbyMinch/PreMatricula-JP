@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "./button";
 import { motion } from "framer-motion";
@@ -17,7 +17,6 @@ import {
   CommandItem,
 } from "./command";
 import { cn } from "../../lib/utils";
-import { AnimatePresence } from "framer-motion";
 
 interface ComboboxDemoProps {
   value: string;
@@ -185,10 +184,10 @@ interface CpfInputProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  className?: string;
+  // className?: string;
 }
 
-export function CpfInput({ value = "", onChange, placeholder = "000.000.000-00", className = ""}: CpfInputProps) {
+export function CpfInput({ value = "", onChange, placeholder = "000.000.000-00", }: CpfInputProps) {
   const [cpf, setCpf] = useState(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,7 +215,7 @@ export function CpfInput({ value = "", onChange, placeholder = "000.000.000-00",
   )
 };
 
-export function NumeroRG({ value = "", onChange, placeholder = "000.000.000-0", className = "", ...props }: CpfInputProps) {
+export function NumeroRG({ value = "", onChange, placeholder = "000.000.000-0",  ...props }: CpfInputProps) {
   const [numeroRG, setNumeroRG] = useState(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -244,7 +243,7 @@ export function NumeroRG({ value = "", onChange, placeholder = "000.000.000-0", 
   )
 };
 
-export function CEP({ value = "", onChange, placeholder = "00.000-000", className = ""}: CpfInputProps) {
+export function CEP({ value = "", onChange, placeholder = "00.000-000", }: CpfInputProps) {
   const [CEP, setCEP] = useState(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,7 +270,7 @@ export function CEP({ value = "", onChange, placeholder = "00.000-000", classNam
   )
 };
 
-export function Numero({ value = "", onChange, placeholder = "000", className = "", ...props }: CpfInputProps) {
+export function Numero({ value = "", onChange, placeholder = "000",  ...props }: CpfInputProps) {
   const [numero, setNumero] = useState(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -294,7 +293,7 @@ export function Numero({ value = "", onChange, placeholder = "000", className = 
   )
 };
 
-export function Celular({ value = "", onChange, placeholder = "(00) 00000-0000", className = "", ...props }: CpfInputProps) {
+export function Celular({ value = "", onChange, placeholder = "(00) 00000-0000",  ...props }: CpfInputProps) {
   const [numero, setNumero] = useState(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
