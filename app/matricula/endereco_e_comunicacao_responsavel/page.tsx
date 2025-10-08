@@ -4,12 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Celular, CEP, Numero } from "@imports/components/ui/selectionboxes";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
 // </span>
-
-
 
 export default function Home() {
     const router = useRouter();
@@ -69,7 +68,6 @@ export default function Home() {
             exit={{scale:0}}
             src="seice.png" alt="Seice Logo" className="w-[50%] h-auto mt-10"/> */}
 
-
             <motion.h1 
             initial={{scale:0}}
             animate={{scale:1}}
@@ -100,10 +98,7 @@ export default function Home() {
                         <motion.label 
                         htmlFor="" 
                         className="origin-left">C.E.P.</motion.label>
-                        <motion.input
-                        required
-                        
-                        type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                        <CEP />
                         </motion.div>
 
                         <motion.div 
@@ -117,7 +112,7 @@ export default function Home() {
                         <motion.input
                         required
                         
-                        type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                        type="text" placeholder="Digite sua Rua/Avenida" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                         </motion.div>
                         
                         <motion.div 
@@ -128,10 +123,7 @@ export default function Home() {
                         <motion.label 
                         htmlFor="" 
                         className="origin-left">N°</motion.label>
-                        <motion.input
-                        required
-                        
-                        type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                        <Numero />
                         </motion.div>
 
                         
@@ -147,11 +139,11 @@ export default function Home() {
                         className="flex flex-col gap-2 w-full ">
                         <motion.label 
                         htmlFor="" 
-                        className="origin-left">Estado Civil</motion.label>
+                        className="origin-left">Cidade</motion.label>
                         <motion.input
                         required
                         
-                        type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                        type="text" placeholder="Digite sua cidade" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                         </motion.div>
 
                         <motion.div 
@@ -161,11 +153,11 @@ export default function Home() {
                         className="flex flex-col gap-2 w-full ">
                         <motion.label 
                         htmlFor="" 
-                        className="origin-left">Cidade Natal</motion.label>
+                        className="origin-left">Bairro</motion.label>
                         <motion.input
                         required
                         
-                        type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                        type="text" placeholder="Digite seu bairro" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                         </motion.div>
 
                     </div>
@@ -186,10 +178,7 @@ export default function Home() {
                         <motion.label 
                         htmlFor="" 
                         className="origin-left">Celular</motion.label>
-                        <motion.input
-                        required
-                        
-                        type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                        <Celular />
                         </motion.div>
                         
                         <motion.div 
@@ -203,11 +192,11 @@ export default function Home() {
                         <motion.input
                         required
                         
-                        type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                        type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                         </motion.div>
 
                     </div>
-
+                    
                 </div>
             </AnimatePresence>
             

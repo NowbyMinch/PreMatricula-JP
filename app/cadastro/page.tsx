@@ -233,7 +233,7 @@ export default function Home() {
                             whileHover={{scale:1.02}}
                             whileTap={{scale:0.98}}
                             className="hover:text-yellow-300 transition-all ease-in-out duration-300">
-                                registre-se
+                                Registre-se
                             </motion.strong></motion.button></motion.span>
 
                         </motion.div>

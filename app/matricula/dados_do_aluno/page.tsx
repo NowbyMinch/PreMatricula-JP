@@ -4,18 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Genero } from "@imports/components/ui/selectionboxes";
+import { Civil, CpfInput, Genero } from "@imports/components/ui/selectionboxes";
+import DatePicker from "@imports/components/ui/datepicker";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
 // </span>
 
-
-
 export default function Home() {
   const router = useRouter();
   const [ pop, setPop ] = useState(false);
   const [ genero, setGenero ] = useState("");
+  const [ data, setData ] = useState("");
+  const [ estado_civil, setEstado_civil ] = useState("");
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault(); // prevent page reload
@@ -124,10 +125,7 @@ export default function Home() {
                   <motion.label 
                   htmlFor="" 
                   className="origin-left">Data de Nascimento</motion.label>
-                  <motion.input
-                  required
-                  
-                  type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  <DatePicker onChange={(val) => {setData(val)}} />
                 </motion.div>
                 
               </div>
@@ -142,10 +140,7 @@ export default function Home() {
                   <motion.label 
                   htmlFor="" 
                   className="origin-left">Estado Civíl</motion.label>
-                  <motion.input
-                  required
-                  
-                  type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  <Civil value={estado_civil} onChange={(val) => {setEstado_civil(val)}} />
                 </motion.div>
 
                 <motion.div 
@@ -159,7 +154,7 @@ export default function Home() {
                   <motion.input
                   required
                   
-                  type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  type="text" placeholder="Digite sua cidade natal" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                 </motion.div>
 
                 <motion.div 
@@ -173,7 +168,7 @@ export default function Home() {
                   <motion.input
                   required
                   
-                  type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  type="text" placeholder="Digite sua nacionalidade" defaultValue="brasileiro(a)" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                 </motion.div>
                 
               </div>
@@ -191,7 +186,7 @@ export default function Home() {
                   <div className="w-full flex flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
 
                     <div className="flex w-full gap-4">
-                      <label className="flex items-center gap-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
                         <motion.input 
                         whileHover={{ scale: 1.04}}
                         whileTap={{ scale: 0.96}}
@@ -199,7 +194,7 @@ export default function Home() {
                         type="radio" name="personType" value="fisica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
                         Pessoa Física
                       </label>
-                      <label className="flex items-center gap-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
                         <motion.input 
                         whileHover={{ scale: 1.04}}
                         whileTap={{ scale: 0.96}}
@@ -217,10 +212,7 @@ export default function Home() {
                       <motion.label 
                       htmlFor="" 
                       className="origin-left">CPF</motion.label>
-                      <motion.input
-                      required
-                      
-                      type="text" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                      <CpfInput />
                       
                     </motion.div>
 
