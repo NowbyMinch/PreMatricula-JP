@@ -16,10 +16,15 @@ export default function Home() {
   const [ pop, setPop ] = useState(false);
   const [ genero, setGenero ] = useState("");
   const [ estado_civil, setEstado_civil ] = useState("");
+  const [ enderecoDiferente, setEnderecoDiferente ] = useState(false);
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault(); // prevent page reload
-      router.push("/matricula/endereco_e_comunicacao_aluno")
+      if (enderecoDiferente) {
+        router.push("/matricula/endereco_e_comunicacao_aluno")
+      } else {
+        return
+      }
   };
   
   return (
@@ -219,6 +224,29 @@ export default function Home() {
                 </motion.div>
 
               </div>
+
+              <motion.label 
+                initial={{scale:0}}
+                animate={{scale:1}}
+                exit={{scale:0}}
+                className="inline-flex items-center cursor-pointer mx-auto">
+                    {/* Hidden native checkbox */}
+                    <input onChange={() => {setEnderecoDiferente(!enderecoDiferente);}} type="checkbox" className="sr-only peer" />
+
+                    {/* Custom checkbox */}
+                    <motion.div 
+                    whileHover={{scale:1.10}}
+                    whileTap={{scale:0.90}}
+                    className="w-5 h-5 border-2 border-gray-400 rounded-md flex items-center justify-center peer-checked:bg-yellow-400 peer-checked:border-yellow-400">
+                        {/* Checkmark */}
+                        <svg className="w-3 h-3 text-white hidden peer-checked:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                    </motion.div>
+
+                    {/* Label text */}
+                    <span className="ml-2 select-none">O aluno possui um endereço diferente</span>
+                </motion.label>
 
             </div>
           </AnimatePresence>
