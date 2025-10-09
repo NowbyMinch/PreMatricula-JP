@@ -5,6 +5,9 @@ export function middleware(request: NextRequest){
 
     const isProtectedRoute = request.nextUrl.pathname.startsWith('/matricula');
 
+    if (token) {
+      console.log(token)
+    }
     if (isProtectedRoute && !token) {
       return NextResponse.redirect(new URL('/cadastro', request.url));
     }

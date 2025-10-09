@@ -4,18 +4,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Eye, EyeOff, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { em } from "framer-motion/client";
+import ErrorModal from "@imports/components/ui/ErrorModal";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
 // </span>
 
-
-
 export default function Home() {
     const router = useRouter();
     const [mostrar, setMostrar] = useState(false);
-    const [mostrar2, setMostrar2] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
 
     // REGISTRAR
     const [form, setForm] = useState({ email: ""});
@@ -61,6 +59,8 @@ export default function Home() {
     
             if (data.message === "Login realizado com sucesso"){
                 router.push("/matricula/dados_do_responsavel"); // redirect
+            } else {
+                setMessage(data.message);
             }
             return
         }
@@ -69,6 +69,10 @@ export default function Home() {
 
     return (
         <>
+        {message && (
+            <ErrorModal message={message} onClose={() => setMessage(null)} />
+        )}
+        
         {pop && (
             <>
             <motion.div 
