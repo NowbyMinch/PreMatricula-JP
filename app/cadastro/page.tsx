@@ -45,9 +45,10 @@ export default function Home() {
             if (data.message === "Código enviado"){
                 router.push("/registrar"); // redirect
             }
-
+            
         } else {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/home/login`, {
+            
+            const res = await fetch(`/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(login),
@@ -58,11 +59,29 @@ export default function Home() {
             console.log(data);
     
             if (data.message === "Login realizado com sucesso"){
+                console.log("deu certo, nem acredito")
                 router.push("/matricula/dados_do_responsavel"); // redirect
             } else {
-                setMessage(data.message);
+                if (data.error.length > 1)
+                    {
+                    let errors = ""
+                    for (let i=0; i < data.error.length; i++)
+                    {
+                        if (i > 0){
+                            errors = errors + " e " + data.error[i]; 
+                        }
+                        else {
+                            errors = errors + data.error[i]; 
+                        }
+                        console.log(errors, "timeline ->", i)
+                    } 
+                    setMessage(errors);
+                }
+                else {
+                    setMessage(data.error[0]);
+                }
             }
-            return
+
         }
         
     };
