@@ -17,17 +17,52 @@ import Account from "@imports/components/ui/account_icon";
 export default function Home() {
   const router = useRouter();
   const [ pop, setPop ] = useState(false);
+  
+  // const [ nome, setGenero ] = useState("");
   const [ genero, setGenero ] = useState("");
-  const [ estado_civil, setEstado_civil ] = useState<string>("");
   const [ data, setData ] = useState<string>("");
+  // const [ profissao, setData ] = useState<string>("");
+  // const [ naturalidade, setData ] = useState<string>("");
+  const [ estado_civil, setEstado_civil ] = useState<string>("");
+  // const [ nacionalidade, setEstado_civil ] = useState<string>("");
+  // const [ rg, setEstado_civil ] = useState<string>("");
+  // const [ cpf, setEstado_civil ] = useState<string>("");
 
-  useEffect(() => {
-    console.log(data);
-    
-  },[data]);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault(); // prevent page reload
+
+      const iniciar = {
+          nome: " ",
+          genero: "",
+          dataNascimento: "",
+          profissao: "",
+          naturalidade: " ",
+          estadoCivil: "",
+          nacionalidade: "",
+          rg: "",
+          cpf: ""
+      }
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          // body: JSON.stringify(),
+      });
+
+      const data = await res.json();
+      console.log(data);
+    
+      // if (data.error && Array.isArray(data.message) && data.message.length > 0) {
+      //     // data.error exists and is a non-empty array
+      //     let errors = "";
+      //     for (let i = 0; i < data.message.length; i++) {
+      //         errors += data.message[i] + "\n";
+      //     }
+      //     setMessage(errors);
+      // } else {
+      //     router.push('/cadastro');
+      // }
+      
       router.push("/matricula/endereco_e_comunicacao_responsavel_financeiro")
   };
   
