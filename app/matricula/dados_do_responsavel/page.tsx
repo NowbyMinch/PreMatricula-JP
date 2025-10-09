@@ -6,6 +6,7 @@ import { User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Civil, CpfInput, Genero, NumeroRG } from "@imports/components/ui/selectionboxes";
 import DatePicker from "@imports/components/ui/datepicker";
+import Account from "@imports/components/ui/account_icon";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
@@ -34,28 +35,7 @@ export default function Home() {
     <>
       {pop && (
         <>
-          <motion.div 
-          initial={{scale:0}}
-          animate={{scale:1}}
-          exit={{scale:0}}
-          className="origin-top-right w-44 h-24 rounded-[15px] flex flex-col justify-center gap-2 items-center cursor-pointer bg-[rgba(12,12,14,0.9)] backdrop-blur-[20px] absolute top-20 right-3 z-100">
-
-            <motion.a 
-            whileHover={{scale:1.02}}
-            whileTap={{scale:0.98}}
-            href="/matriculas"
-            className="w-full pl-4 hover:text-yellow-300 transition-all ease-in-out duration-300 text-white cursor-pointer font-extralight">Ver matrículas</motion.a>
-
-            <hr className="w-[85%] text-white"/>
-
-            <motion.a 
-            whileHover={{scale:1.02}}
-            whileTap={{scale:0.98}}
-            href="/cadastro"
-            className="w-full pl-4 hover:text-yellow-300 transition-all ease-in-out duration-300 text-white cursor-pointer font-extralight">Sair da conta</motion.a>
-
-          </motion.div>
-        
+          <Account onClose={() => setPop(!pop)} /> 
         </>
       )}
 

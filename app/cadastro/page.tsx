@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Eye, EyeOff, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ErrorModal from "@imports/components/ui/ErrorModal";
+import Account from "@imports/components/ui/account_icon";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
@@ -42,8 +43,10 @@ export default function Home() {
             const data = await res.json();
             console.log(data);
     
-            if (data.message === "Código enviado"){
-                router.push("/registrar"); // redirect
+            if (data.error){
+                setMessage(data.message);
+            } else {
+                router.push('/registrar')
             }
             
         } else {
@@ -56,29 +59,24 @@ export default function Home() {
             });
     
             const data = await res.json();
-            console.log(data);
+            console.log(data, "dataaaa");
     
-            if (data.message === "Login realizado com sucesso"){
-                console.log("deu certo, nem acredito")
-                router.push("/matricula/dados_do_responsavel"); // redirect
-            } else {
-                if (data.error.length > 1)
-                    {
-                    let errors = ""
-                    for (let i=0; i < data.error.length; i++)
-                    {
-                        if (i > 0){
-                            errors = errors + " e " + data.error[i]; 
-                        }
-                        else {
-                            errors = errors + data.error[i]; 
-                        }
-                        console.log(errors, "timeline ->", i)
-                    } 
-                    setMessage(errors);
+            // handleSubmit snippet
+            if (data.message && Array.isArray(data.message) && data.message.length > 0) {
+                if (data.message[0] === "Login realizado com sucesso"){
+                    router.push('/matricula/dados_do_responsavel');
                 }
-                else {
-                    setMessage(data.error[0]);
+                // data.error exists and is a non-empty array
+                let errors = "";
+                for (let i = 0; i < data.message.length; i++) {
+                    errors += data.message[i] + "\n";
+                }
+                setMessage(errors);
+            } else {
+                if (data.message === "Login realizado com sucesso"){
+                    router.push('/matricula/dados_do_responsavel');
+                } else {
+                    setMessage(data.message);
                 }
             }
 
@@ -91,32 +89,9 @@ export default function Home() {
         {message && (
             <ErrorModal message={message} onClose={() => setMessage(null)} />
         )}
-        
+
         {pop && (
-            <>
-            <motion.div 
-            initial={{scale:0}}
-            animate={{scale:1}}
-            exit={{scale:0}}
-            className="origin-top-right w-44 h-24 rounded-[15px] flex flex-col justify-center gap-2 items-center cursor-pointer bg-[rgba(12,12,14,0.9)] backdrop-blur-[20px] absolute top-20 right-3 z-100">
-
-                <motion.a 
-                whileHover={{scale:1.02}}
-                whileTap={{scale:0.98}}
-                href="/matriculas"
-                className="w-full pl-4 hover:text-yellow-300 transition-all ease-in-out duration-300 text-white cursor-pointer font-extralight">Ver matrículas</motion.a>
-
-                <hr className="w-[85%] text-white"/>
-
-                <motion.a 
-                whileHover={{scale:1.02}}
-                whileTap={{scale:0.98}}
-                href="/cadastro"
-                className="w-full pl-4 hover:text-yellow-300 transition-all ease-in-out duration-300 text-white cursor-pointer font-extralight">Sair da conta</motion.a>
-
-            </motion.div>
-            
-            </>
+            <Account onClose={() => setPop(!pop)} />    
         )}
 
         <motion.div 
