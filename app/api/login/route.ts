@@ -1,5 +1,16 @@
 import { NextResponse } from "next/server";
 
+type LoginResponse = {
+  message?: string;
+  user?: {
+    id: string;
+    email: string;
+    name: string;
+  };
+  token?: string;
+  emailSent?: boolean;
+};
+
 export async function POST(req: Request) {
   try {
     const body = await req.json(); // recebe { email, password }
@@ -12,7 +23,7 @@ export async function POST(req: Request) {
     });
 
     // ❌ se o backend retornar vazio, não tenta JSON
-    let data: any = {};
+    let data: LoginResponse = {};
     try {
       data = await response.json();
     } catch (err) {
@@ -28,7 +39,7 @@ export async function POST(req: Request) {
 
     // 2️⃣ sucesso, cria cookie
     const res = NextResponse.json({ message: `Login realizado com sucesso` });
-    res.cookies.set("access_token", data.access_token || "", {
+    res.cookies.set("access_token", data.token || "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Eye, EyeOff, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
@@ -32,17 +32,17 @@ export default function Home() {
         console.log(codigo, "registro");
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/home/register/confirm`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(registro),
-            });
-    
-            const data = await res.json();
-            console.log(data);
-    
-            if (data.message === "Usuário criado"){
-                router.push("/matricula/dados_do_responsavel"); // redirect
-            }
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(registro),
+        });
+
+        const data = await res.json();
+        console.log(data);
+
+        if (data.message === "Usuário criado"){
+            router.push("/matricula/dados_do_responsavel"); // redirect
+        }
 
     };
 
