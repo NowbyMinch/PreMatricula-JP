@@ -18,11 +18,11 @@ export default function Home() {
   const router = useRouter();
   const [ pop, setPop ] = useState(false);
   
-  // const [ nome, setGenero ] = useState("");
+  const [ nome, setNome ] = useState("");
   const [ genero, setGenero ] = useState("");
   const [ data, setData ] = useState<string>("");
-  // const [ profissao, setData ] = useState<string>("");
-  // const [ naturalidade, setData ] = useState<string>("");
+  const [ profissao, setProfissao ] = useState<string>("");
+  const [ naturalidade, setNaturalidade ] = useState<string>("");
   const [ estado_civil, setEstado_civil ] = useState<string>("");
   // const [ nacionalidade, setEstado_civil ] = useState<string>("");
   // const [ rg, setEstado_civil ] = useState<string>("");
@@ -201,7 +201,7 @@ export default function Home() {
                           <motion.label 
                           htmlFor="" 
                           className="origin-left">CPF</motion.label>
-                          <CpfInput />
+                          <CpfInput disabled={false}/>
                           
                         </motion.div>
 
@@ -232,7 +232,7 @@ export default function Home() {
                       <motion.label 
                       htmlFor="" 
                       className="origin-left">N°</motion.label>
-                      <NumeroRG />
+                      <NumeroRG disabled={false}/>
                       
                     </motion.div>
 
