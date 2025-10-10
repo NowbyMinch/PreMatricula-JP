@@ -146,6 +146,7 @@ export default function DatePicker({ onChange }: DatePickerProps ) {
       if (isValid(typedDate)) {
         setCalendarMonth(typedDate);
         setSelectedDate(typedDate);
+        onChange(typedDate.toISOString().split("T")[0]);
       }
     }
   }, [inputValue, inputValue2, inputValue3]);

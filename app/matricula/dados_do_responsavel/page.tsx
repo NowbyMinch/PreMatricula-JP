@@ -7,12 +7,11 @@ import { useRouter } from "next/navigation";
 import { Civil, CpfInput, Genero, NumeroRG } from "@imports/components/ui/selectionboxes";
 import DatePicker from "@imports/components/ui/datepicker";
 import Account from "@imports/components/ui/account_icon";
+import ErrorModal from "@imports/components/ui/ErrorModal";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
 // </span>
-
-
 
 export default function Home() {
   const router = useRouter();
@@ -21,53 +20,60 @@ export default function Home() {
   const [ nome, setNome ] = useState("");
   const [ genero, setGenero ] = useState("");
   const [ data, setData ] = useState<string>("");
-  const [ profissao, setProfissao ] = useState<string>("");
-  const [ naturalidade, setNaturalidade ] = useState<string>("");
+  const [ orgaoExpeditor, setOrgaoExpeditor ] = useState<string>("");
+  const [ dataExpedicao, setDataExpedicao ] = useState<string>("");
   const [ estado_civil, setEstado_civil ] = useState<string>("");
-  // const [ nacionalidade, setEstado_civil ] = useState<string>("");
-  // const [ rg, setEstado_civil ] = useState<string>("");
-  // const [ cpf, setEstado_civil ] = useState<string>("");
+  const [ rg, setRG ] = useState<string>("");
+  const [ cpf, setCPF ] = useState<string>("");
+  const [ pessoaJuridica, setPessoaJuridica ] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault(); // prevent page reload
-
+      console.log(data)
+      console.log(dataExpedicao)
       const iniciar = {
-          nome: " ",
-          genero: "",
-          dataNascimento: "",
-          profissao: "",
-          naturalidade: " ",
-          estadoCivil: "",
-          nacionalidade: "",
-          rg: "",
-          cpf: ""
+        nome: nome,
+        genero: genero,
+        dataNascimento: data,
+        orgaoExpeditor: orgaoExpeditor,
+        dataExpedicao: dataExpedicao,
+        estadoCivil: estado_civil,
+        rg: rg,
+        cpf: cpf,
+        pessoaJuridica: pessoaJuridica,
       }
       
+      console.log(iniciar);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          // body: JSON.stringify(),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: "include",
+        body: JSON.stringify(iniciar),
       });
 
-      const data = await res.json();
-      console.log(data);
+      const dataRes = await res.json();
+      console.log(dataRes);
     
-      // if (data.error && Array.isArray(data.message) && data.message.length > 0) {
-      //     // data.error exists and is a non-empty array
-      //     let errors = "";
-      //     for (let i = 0; i < data.message.length; i++) {
-      //         errors += data.message[i] + "\n";
-      //     }
-      //     setMessage(errors);
-      // } else {
-      //     router.push('/cadastro');
-      // }
+      if (dataRes.error && Array.isArray(dataRes.message) && dataRes.message.length > 0) {
+          // dataRes.error exists and is a non-empty array
+          let errors = "";
+          for (let i = 0; i < dataRes.message.length; i++) {
+              errors += dataRes.message[i] + "\n";
+          }
+          setMessage(errors);
+      } else {
+        router.push("/matricula/endereco_e_comunicacao_responsavel_financeiro")
+      }
       
-      router.push("/matricula/endereco_e_comunicacao_responsavel_financeiro")
   };
   
   return (
     <>
+      {message && (
+          <ErrorModal message={message} onClose={() => setMessage(null)} />
+      )}
       {pop && (
         <>
           <Account onClose={() => setPop(!pop)} /> 
@@ -119,7 +125,7 @@ export default function Home() {
                   className="origin-left">Nome</motion.label>
                   <motion.input
                   required
-                  
+                  onChange={(e) => {setNome(e.target.value)}}
                   type="text" placeholder="Digite seu nome" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                 </motion.div>
 
@@ -144,7 +150,7 @@ export default function Home() {
                   <motion.label 
                   htmlFor="" 
                   className="origin-left">Data de Nascimento</motion.label>
-                  <DatePicker onChange={(val) => {setData(val)}} />
+                  <DatePicker onChange={(val) => {setData(val); console.log(val, data)} } />
                 </motion.div>
                 
               </div>
@@ -180,6 +186,7 @@ export default function Home() {
                             whileHover={{ scale: 1.04}}
                             whileTap={{ scale: 0.96}}
                             required
+                            onChange={(e) => {if (e.target.checked) {setPessoaJuridica(false)}; }}
                             type="radio" name="personType" value="fisica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
                             Pessoa Física
                           </label>
@@ -188,6 +195,7 @@ export default function Home() {
                             whileHover={{ scale: 1.04}}
                             whileTap={{ scale: 0.96}}
                             required
+                            onChange={(e) => {setPessoaJuridica(e.target.checked)}}
                             type="radio" name="personType" value="juridica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
                             Pessoa Jurídica
                           </label>
@@ -201,7 +209,7 @@ export default function Home() {
                           <motion.label 
                           htmlFor="" 
                           className="origin-left">CPF</motion.label>
-                          <CpfInput disabled={false}/>
+                          <CpfInput onChange={(value) => {setCPF(value)}} disabled={false}/>
                           
                         </motion.div>
 
@@ -209,9 +217,6 @@ export default function Home() {
                   </motion.div>
 
                 </div>
-                
-
-
 
                 <motion.div 
                 initial={{scale:0}}
@@ -222,8 +227,9 @@ export default function Home() {
                   htmlFor="" 
                   className="origin-left">RG</motion.label>
 
-                  <div className="w-full flex sm:flex-row flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
 
+                  <div className="w-full flex sm:flex-row flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
+                    
                     <motion.div 
                     initial={{scale:0}}
                     animate={{scale:1}}
@@ -232,7 +238,7 @@ export default function Home() {
                       <motion.label 
                       htmlFor="" 
                       className="origin-left">N°</motion.label>
-                      <NumeroRG disabled={false}/>
+                      <NumeroRG onChange={(value) => {setRG(value)}} disabled={false}/>
                       
                     </motion.div>
 
@@ -246,7 +252,7 @@ export default function Home() {
                       className="origin-left">Órgão Exp.</motion.label>
                       <motion.input
                       required
-                      
+                      onChange={(e) => {setOrgaoExpeditor(e.target.value)}}
                       type="text" placeholder="Digite o órgão expedidor" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                       
                     </motion.div>
@@ -259,7 +265,7 @@ export default function Home() {
                       <motion.label 
                       htmlFor="" 
                       className="origin-left">Data de Exp.</motion.label>
-                      <DatePicker onChange={(val) => {setData(val)}} />
+                      <DatePicker onChange={(val) => {setDataExpedicao(val)}} />
                       
                     </motion.div>
 
