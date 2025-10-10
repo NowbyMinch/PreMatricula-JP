@@ -14,7 +14,6 @@ type LoginResponse = {
 export async function POST(req: Request) {
   try {
     const body = await req.json(); // recebe { email, password }
-
     // 1️⃣ envia para o backend no Railway
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/home/login`, {
       method: "POST",

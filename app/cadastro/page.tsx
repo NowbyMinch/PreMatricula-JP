@@ -59,26 +59,23 @@ export default function Home() {
             });
     
             const data = await res.json();
-            console.log(data, "dataaaa");
+            console.log(data);
+            console.log(login);
     
             // handleSubmit snippet
-            if (data.message && Array.isArray(data.message) && data.message.length > 0) {
-                if (data.message[0] === "Login realizado com sucesso"){
+            if (Array.isArray(data?.message) && data.message.length > 0) {
+                if (data.message[0] === "Login realizado com sucesso") {
                     router.push('/matricula/dados_do_responsavel');
-                }
-                // data.error exists and is a non-empty array
-                let errors = "";
-                for (let i = 0; i < data.message.length; i++) {
-                    errors += data.message[i] + "\n";
-                }
-                setMessage(errors);
             } else {
-                if (data.message === "Login realizado com sucesso"){
-                    router.push('/matricula/dados_do_responsavel');
-                } else {
-                    setMessage(data.message);
-                }
+                let errors = data.message.join("\n");
+                setMessage(errors);
             }
+            } else if (data?.message === "Login realizado com sucesso") {
+                router.push('/matricula/dados_do_responsavel');
+            } else {
+                setMessage(data?.message || data?.error || "Erro desconhecido ao fazer login.");
+            }
+
 
         }
         
