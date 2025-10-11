@@ -15,19 +15,69 @@ import Account from "@imports/components/ui/account_icon";
 export default function Home() {
   const router = useRouter();
   const [ pop, setPop ] = useState(false);
-  const [ genero, setGenero ] = useState("");
-  const [ estado_civil, setEstado_civil ] = useState("");
+  
+  const [ nome, setNome ] = useState("");
+  const [ genero, setGenero ] = useState<string>("");
+  const [ data, setData ] = useState<string>("");
+  const [ cidadeNatal, setCidadeNatal ] = useState<string>("");
+  const [ cpf, setCPF ] = useState<string>("");
+  const [ estado_civil, setEstado_civil ] = useState<string>("");
+
+  const [ nacionalidade, setNacionalidade ] = useState("brasileiro(a)"); //FALTA DUDA COLOCAR NO BACKEND ----------------------------------------------------------
+  const [ pessoaJuridica, setPessoaJuridica ] = useState(false); //FALTA DUDA COLOCAR NO BACKEND ----------------------------------------------------------
+  
+  //EMAIL VAI VIR DO GET------------------------
+  const [email, setEmail] = useState<string | null>(null);
+
   const [ enderecoDiferente, setEnderecoDiferente ] = useState(false);
-  
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault(); // prevent page reload
-      if (enderecoDiferente) {
-        router.push("/matricula/endereco_e_comunicacao_aluno")
+      console.log(data);
+
+      const etapaTres = {
+        nome: nome,
+        genero: genero,
+        dataNascimento: data,
+        cidadeNatal: cidadeNatal,
+        cpf: cpf,
+        estadoCivil: estado_civil,
+        moraComResponsavel: enderecoDiferente
+      };
+     
+      console.log(etapaTres);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-3/{matriculaId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: "include",
+        body: JSON.stringify(etapaTres),
+      });
+
+      const dataRes = await res.json();
+      console.log(dataRes);
+    
+      if (dataRes.error && Array.isArray(dataRes.message) && dataRes.message.length > 0) {
+          // dataRes.error exists and is a non-empty array
+          let errors = "";
+          for (let i = 0; i < dataRes.message.length; i++) {
+              errors += dataRes.message[i] + "\n";
+          }
+          setMessage(errors);
       } else {
-        return
+        if (enderecoDiferente) {
+          router.push("/matricula/endereco_e_comunicacao_aluno")
+        } else {
+          return 
+        }
+        
       }
+      
   };
-  
+
+
+
+  const [message, setMessage] = useState<string | null>(null);
+
   return (
     <>
       {pop && (
@@ -82,7 +132,7 @@ export default function Home() {
                   className="origin-left">Nome</motion.label>
                   <motion.input
                   required
-                  
+                  onChange={(e) => setNome(e.target.value)}
                   type="text" placeholder="Digite seu nome" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                 </motion.div>
 
@@ -109,7 +159,7 @@ export default function Home() {
                   <motion.label 
                   htmlFor="" 
                   className="origin-left">Data de Nascimento</motion.label>
-                  <DatePicker onChange={() => {}} />
+                  <DatePicker onChange={(val) => {setData(val);} } />
                 </motion.div>
                 
               </div>
@@ -137,7 +187,7 @@ export default function Home() {
                   className="origin-left">Cidade Natal</motion.label>
                   <motion.input
                   required
-                  
+                  onChange={(e) => setCidadeNatal(e.target.value)}
                   type="text" placeholder="Digite sua cidade natal" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                 </motion.div>
 
@@ -151,56 +201,31 @@ export default function Home() {
                   className="origin-left">Nacionalidade</motion.label>
                   <motion.input
                   required
-                  
-                  type="text" placeholder="Digite sua nacionalidade" defaultValue="brasileiro(a)" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  onChange={(e) => setNacionalidade(e.target.value)}
+                  type="text" placeholder="Digite sua nacionalidade" defaultValue="Brasileiro(a)" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                 </motion.div>
                 
               </div>
             
-              <div className={` w-[492px] max-w-full flex gap-4 md:flex-row flex-col`}>
+              <div className={` w-[335px] max-w-full flex gap-4 md:flex-row flex-col`}>
 
                 <motion.div 
                 initial={{scale:0}}
                 animate={{scale:1}}
                 exit={{scale:0}}
                 className="flex flex-col gap-2 w-full">
-                  <motion.label 
-                  htmlFor="" 
-                  className="origin-left">CPF / CNPJ</motion.label>
-                  <div className="w-full flex flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
-
-                    <div className="flex w-full gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <motion.input 
-                        whileHover={{ scale: 1.04}}
-                        whileTap={{ scale: 0.96}}
-                        required
-                        type="radio" name="personType" value="fisica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
-                        Pessoa Física
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <motion.input 
-                        whileHover={{ scale: 1.04}}
-                        whileTap={{ scale: 0.96}}
-                        required
-                        type="radio" name="personType" value="juridica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
-                        Pessoa Jurídica
-                      </label>
-                    </div>
-
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2 w-full ">
-                      <motion.label 
-                      htmlFor="" 
-                      className="origin-left">CPF</motion.label>
-                      <CpfInput />
-                      
-                    </motion.div>
-
-                  </div>
+                  <motion.div 
+                  initial={{scale:0}}
+                  animate={{scale:1}}
+                  exit={{scale:0}}
+                  className="flex flex-col gap-2 w-full ">
+                    <motion.label 
+                    htmlFor="" 
+                    className="origin-left">CPF</motion.label>
+                    <CpfInput disabled={false} />
+                    
+                  </motion.div>
+                  
                 </motion.div>
 
               </div>
