@@ -26,72 +26,93 @@ export default function Home() {
     const [ email, setEmail] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
+        const fetchToken = async () => {
+            const tok = await fetch('/api/token');
+            const data = await tok.json();
+            if (!data.token) {return;}
+            const token = data.token;
+            console.log(token)
+            
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {
                 method: 'GET',
-                credentials: "include",
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
             });
-
             const dataRes = await res.json();
             console.log(dataRes);
         };
+        fetchToken();
 
-        fetchData();
-    }, []);
+    },[])
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault(); // prevent page reload
+        e.preventDefault(); // prevent page reload
 
-      const endereco = {
-        cep: cep,
-        rua: rua,
-        numero: numero,
-        complemento: "",
-        cidade: cidade,
-        uf: "",
-        bairro: bairro,
-        celular: celular,
-        email: email
-      }
-      
-      console.log(endereco);
-    //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/{matriculaId}`, {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     credentials: "include",
-    //     body: JSON.stringify(iniciar),
-    //   });
+        const tok = await fetch("/api/token", { credentials: "include" });
+        const data = await tok.json();
+        console.log(data.token);
+        if (!data.token) return
+        const token = data.token;
+        const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+        const matricula = await Matricula.json();
+        console.log(matricula);
+        const matriculaID = matricula.id;
 
-    //   const dataRes = await res.json();
-    //   console.log(dataRes);
-    
-    //   if (dataRes.error && Array.isArray(dataRes.message) && dataRes.message.length > 0) {
-    //       // dataRes.error exists and is a non-empty array
-    //       let errors = "";
-    //       for (let i = 0; i < dataRes.message.length; i++) {
-    //           errors += dataRes.message[i] + "\n";
-    //       }
-    //       setMessage(errors);
-    //   } else {
-    //     if (segundoResponsavel){
-    //         router.push("/matricula/endereco_e_comunicacao_responsavel");
-    //     } else {
-    //         router.push("/matricula/dados_do_aluno");
-    //     }
-    //   }
+        const endereco = {
+            cep: cep,
+            rua: rua,
+            numero: numero,
+            cidade: cidade,
+            bairro: bairro,
+            celular: celular,
+            email: email,
+            temSegundoResponsavel: segundoResponsavel
+        }
+
+        console.log(matriculaID)
+        console.log(endereco)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/${matriculaID}`, {
+          method: 'POST',
+          headers: { 
+           'Content-Type': 'application/json',
+           Authorization: `Bearer ${token}`, },
+          body: JSON.stringify(endereco),
+        });
+  
+        const dataRes = await res.json();
+        console.log(dataRes);
       
-  };
+       if (dataRes?.error){
+            if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
+
+                // dataRes.error exists and is a non-empty array
+                let errors = "";
+                for (let i = 0; i < dataRes.message.length; i++) {
+                    errors += dataRes.message[i] + "\n";
+                }
+
+                setMessage(errors);
+            } else if (dataRes?.error && dataRes?.message){
+                setMessage(dataRes.error.message)
+            }
+        } else if (dataRes?.message){
+            if (dataRes.message === "Etapa 2 concluída com sucesso."){
+                if (segundoResponsavel){
+                    router.push("/matricula/dados_do_responsavel_dois");
+                } else {
+                    router.push("/matricula/dados_do_aluno");
+                }
+            }
+        }
+    };
 
     return (
         <>
             {message && (
                 <ErrorModal message={message} onClose={() => setMessage(null)} />
             )}
-            
             {pop && (
                 <Account onClose={() => setPop(!pop)} />     
             )}
-
             <motion.div 
             whileHover={{scale:1.02}}
             whileTap={{scale:0.98}}
@@ -116,7 +137,7 @@ export default function Home() {
                 initial={{scale:0}}
                 animate={{scale:1}}
                 exit={{scale:0}}
-                className="text-[35px] mx-auto mt-10 font-medium text-center">Endereço/Comunicação do responsável Financeiro</motion.h1>
+                className="text-[35px] mx-auto mt-10 font-medium text-center">Endereço/Comunicação do responsável financeiro</motion.h1>
 
                 <motion.p 
                 initial={{scale:0}}

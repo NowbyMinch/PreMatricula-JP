@@ -1,12 +1,13 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Civil, CpfInput, Genero } from "@imports/components/ui/selectionboxes";
 import DatePicker from "@imports/components/ui/datepicker";
 import Account from "@imports/components/ui/account_icon";
+import ErrorModal from "@imports/components/ui/ErrorModal";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
@@ -18,63 +19,87 @@ export default function Home() {
   
   const [ nome, setNome ] = useState("");
   const [ genero, setGenero ] = useState<string>("");
-  const [ data, setData ] = useState<string>("");
+  const [ dataNascimento, setDataNascimento ] = useState<string>("");
   const [ cidadeNatal, setCidadeNatal ] = useState<string>("");
   const [ cpf, setCPF ] = useState<string>("");
   const [ estado_civil, setEstado_civil ] = useState<string>("");
 
   const [ nacionalidade, setNacionalidade ] = useState("brasileiro(a)"); //FALTA DUDA COLOCAR NO BACKEND ----------------------------------------------------------
-  const [ pessoaJuridica, setPessoaJuridica ] = useState(false); //FALTA DUDA COLOCAR NO BACKEND ----------------------------------------------------------
   
-  //EMAIL VAI VIR DO GET------------------------
-  const [email, setEmail] = useState<string | null>(null);
-
-  const [ enderecoDiferente, setEnderecoDiferente ] = useState(false);
+  
+  useEffect(() => {
+    const fetchToken = async () => {
+        const tok = await fetch('/api/token');
+        const data = await tok.json();
+        if (!data.token) {return;}
+        const token = data.token;
+        console.log(token)
+        
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+        });
+        const dataRes = await res.json();
+        console.log(dataRes);
+    };
+    fetchToken();
+  },[])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault(); // prevent page reload
-      console.log(data);
 
-      const etapaTres = {
+      const tok = await fetch("/api/token", { credentials: "include" });
+      const data = await tok.json();
+      console.log(data.token);
+      if (!data.token) return
+      const token = data.token;
+      const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      const matricula = await Matricula.json();
+      console.log(matricula);
+      const matriculaID = matricula.id;
+
+      const dadosAluno = {
         nome: nome,
         genero: genero,
-        dataNascimento: data,
+        dataNascimento: dataNascimento,
         cidadeNatal: cidadeNatal,
+        nacionalidade: nacionalidade,
         cpf: cpf,
         estadoCivil: estado_civil,
-        moraComResponsavel: enderecoDiferente
-      };
-     
-      console.log(etapaTres);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-3/{matriculaId}`, {
+      }
+
+      console.log(matriculaID)
+      console.log(dadosAluno)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-3/${matriculaID}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: "include",
-        body: JSON.stringify(etapaTres),
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, },
+        body: JSON.stringify(dadosAluno),
       });
 
       const dataRes = await res.json();
       console.log(dataRes);
     
-      if (dataRes.error && Array.isArray(dataRes.message) && dataRes.message.length > 0) {
-          // dataRes.error exists and is a non-empty array
-          let errors = "";
-          for (let i = 0; i < dataRes.message.length; i++) {
-              errors += dataRes.message[i] + "\n";
-          }
-          setMessage(errors);
-      } else {
-        if (enderecoDiferente) {
-          router.push("/matricula/endereco_e_comunicacao_aluno")
-        } else {
-          return 
+      if (dataRes?.error){
+        if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
+
+            // dataRes.error exists and is a non-empty array
+            let errors = "";
+            for (let i = 0; i < dataRes.message.length; i++) {
+                errors += dataRes.message[i] + "\n";
+            }
+
+            setMessage(errors);
+        } else if (dataRes?.error && dataRes?.message){
+            setMessage(dataRes.error.message)
         }
-        
+      } else if (dataRes?.message){
+          if (dataRes.message === "Dados do aluno registrados (etapa 3). Endereço do aluno pendente (etapa 3B)."){
+        router.push("/matricula/endereco_e_comunicacao_aluno");
       }
-      
+    }
   };
-
-
 
   const [message, setMessage] = useState<string | null>(null);
 
@@ -84,6 +109,10 @@ export default function Home() {
         <>
           <Account onClose={() => setPop(!pop)} /> 
         </>
+      )}
+
+      {message && (
+          <ErrorModal message={message} onClose={() => setMessage(null)} />
       )}
 
       <motion.div 
@@ -159,7 +188,7 @@ export default function Home() {
                   <motion.label 
                   htmlFor="" 
                   className="origin-left">Data de Nascimento</motion.label>
-                  <DatePicker onChange={(val) => {setData(val);} } />
+                  <DatePicker onChange={(val) => {setDataNascimento(val);} } />
                 </motion.div>
                 
               </div>
@@ -222,36 +251,13 @@ export default function Home() {
                     <motion.label 
                     htmlFor="" 
                     className="origin-left">CPF</motion.label>
-                    <CpfInput disabled={false} />
+                    <CpfInput onChange={(value) => {setCPF(value)}} disabled={false} />
                     
                   </motion.div>
                   
                 </motion.div>
 
               </div>
-
-              <motion.label 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                className="inline-flex items-center cursor-pointer mx-auto">
-                    {/* Hidden native checkbox */}
-                    <input onChange={() => {setEnderecoDiferente(!enderecoDiferente);}} type="checkbox" className="sr-only peer" />
-
-                    {/* Custom checkbox */}
-                    <motion.div 
-                    whileHover={{scale:1.10}}
-                    whileTap={{scale:0.90}}
-                    className="w-5 h-5 border-2 border-gray-400 rounded-md flex items-center justify-center peer-checked:bg-yellow-400 peer-checked:border-yellow-400">
-                        {/* Checkmark */}
-                        <svg className="w-3 h-3 text-white hidden peer-checked:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                    </motion.div>
-
-                    {/* Label text */}
-                    <span className="ml-2 select-none">O aluno possui um endereço diferente</span>
-                </motion.label>
 
             </div>
           </AnimatePresence>

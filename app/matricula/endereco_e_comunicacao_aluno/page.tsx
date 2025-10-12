@@ -1,21 +1,152 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Celular, CEP, Numero, Responsavel } from "@imports/components/ui/selectionboxes";
 import Account from "@imports/components/ui/account_icon";
+import ErrorModal from "@imports/components/ui/ErrorModal";
 
 export default function Home() {
-  const [pop, setPop] = useState(false);
-  const [responsavel, setResponsavel] = useState<string>("");
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
+  const [ pop, setPop] = useState(false);
+  const [ responsavel, setResponsavel] = useState<string>("");
+  const [ message, setMessage] = useState<string | null>(null);
+  const [ cep, setCEP] = useState<string | null>(null);
+  const [ rua, setRua] = useState<string | null>(null);
+  const [ telefone, setTelefone] = useState<string | null>(null);
+  const [ whatsApp, setWhatsApp] = useState<string | null>(null);
+  const [ numero, setNumero] = useState<string | null>(null);
+  const [ complemento, setComplemento] = useState<string | null>(null);
+  const [ uf, setUF] = useState<string | null>(null);
+  const [ cidade, setCidade] = useState<string | null>(null);
+  const [ bairro, setBairro] = useState<string | null>(null);
+  const [ celular, setCelular] = useState<string | null>(null);
+  const [ email, setEmail] = useState<string | null>(null);
 
   // 🔹 Define se os campos devem ser desativados
   const [isDisabled, setIsDisabled] = useState(false);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+        const tok = await fetch('/api/token');
+        const data = await tok.json();
+        if (!data.token) {return;}
+        const token = data.token;
+        console.log(token)
+        
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+        });
+        const dataRes = await res.json();
+        console.log(dataRes);
+    };
+    fetchToken();
+  },[])
+  
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault(); // prevent page reload
+
+      const tok = await fetch("/api/token", { credentials: "include" });
+      const data = await tok.json();
+      console.log(data.token);
+      if (!data.token) return
+      const token = data.token;
+      const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      const matricula = await Matricula.json();
+      console.log(matricula);
+      const matriculaID = matricula.id;
+      const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      const responsaveis = await Responsavel.json();
+
+      const endereco1 = {
+        telefone: telefone,
+        celular: celular,
+        email: email,
+        whatsapp: whatsApp,
+        cep: cep,
+        rua: rua,
+        numero: numero,
+        complemento: complemento,
+        bairro: bairro,
+        cidade: cidade,
+        uf: uf,
+        moraComResponsavel: false,
+      }
+      
+      const endereco2 = {
+        telefone: telefone,
+        celular: celular,
+        email: email,
+        whatsapp: whatsApp,
+        moraComResponsavel: true,
+        moraComResponsavelNome: responsavel,
+      }
+
+      console.log(endereco1)
+      console.log(endereco2)
+
+      // if (isDisabled){
+      //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/${matriculaID}`, {
+      //     method: 'POST',
+      //     headers: { 
+      //       'Content-Type': 'application/json',
+      //       Authorization: `Bearer ${token}`, },
+      //     body: JSON.stringify(endereco1),
+      //   });
+  
+      //   const dataRes = await res.json();
+      //   console.log(dataRes);
+      //   if (dataRes?.error){
+      //       if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
+  
+      //         // dataRes.error exists and is a non-empty array
+      //         let errors = "";
+      //         for (let i = 0; i < dataRes.message.length; i++) {
+      //             errors += dataRes.message[i] + "\n";
+      //         }
+  
+      //         setMessage(errors);
+      //       } else if (dataRes?.error && dataRes?.message){
+      //           setMessage(dataRes.error.message)
+      //       }
+      //   } else if (dataRes?.message){
+      //     if (dataRes.message === "Etapa 2 concluída com sucesso."){
+      //     }
+      //   }
+
+      // } else {
+      //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/${matriculaID}`, {
+      //     method: 'POST',
+      //     headers: { 
+      //       'Content-Type': 'application/json',
+      //       Authorization: `Bearer ${token}`, },
+      //     body: JSON.stringify(endereco2),
+      //   });
+  
+      //   const dataRes = await res.json();
+      //   console.log(dataRes);
+      
+      //   if (dataRes?.error){
+      //       if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
+  
+      //         // dataRes.error exists and is a non-empty array
+      //         let errors = "";
+      //         for (let i = 0; i < dataRes.message.length; i++) {
+      //             errors += dataRes.message[i] + "\n";
+      //         }
+  
+      //         setMessage(errors);
+      //       } else if (dataRes?.error && dataRes?.message){
+      //           setMessage(dataRes.error.message)
+      //       }
+      //   } else if (dataRes?.message){
+      //     if (dataRes.message === "Etapa 2 concluída com sucesso."){
+      //     }
+      //   }
+      // }
+  };
+
 
   
   // 🔹 Classe de input com estilo condicional
@@ -26,6 +157,9 @@ export default function Home() {
 
   return (
     <>
+      {message && (
+          <ErrorModal message={message} onClose={() => setMessage(null)} />
+      )}
       {pop && <Account onClose={() => setPop(!pop)} />}
 
       <motion.div
@@ -67,17 +201,17 @@ export default function Home() {
               <div className="w-full max-w-full flex md:flex-row flex-col gap-4">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>C.E.P.</motion.label>
-                  <CEP disabled={isDisabled} />
+                  <CEP onChange={(value) => (setCEP(value))} disabled={isDisabled} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Rua/Avenida</motion.label>
-                  <motion.input disabled={isDisabled} required type="text" placeholder="Digite sua Rua/Avenida" className={inputClass} />
+                  <motion.input onChange={(e) => {setRua(e.target.value)}} disabled={isDisabled} required type="text" placeholder="Digite sua Rua/Avenida" className={inputClass} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>N°</motion.label>
-                  <Numero disabled={isDisabled} />
+                  <Numero onChange={(value) => (setNumero(value))} disabled={isDisabled} />
                   {/* <Numero disabled={isDisabled} /> */}
                 </motion.div>
               </div>
@@ -86,22 +220,25 @@ export default function Home() {
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Complemento</motion.label>
-                  <motion.input disabled={isDisabled} required type="text" placeholder="Digite um complemento" className={inputClass} />
+                  <motion.input onChange={(e) => (setComplemento(e.target.value))} disabled={isDisabled} required type="text" placeholder="Digite um complemento" className={inputClass} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Cidade</motion.label>
-                  <motion.input disabled={isDisabled} required type="text" placeholder="Digite sua cidade" className={inputClass} />
+                  <motion.input onChange={(e) => (setCidade(e.target.value))} disabled={isDisabled} required type="text" placeholder="Digite sua cidade" className={inputClass} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-[130px]">
                   <motion.label>UF</motion.label>
-                  <motion.input disabled={isDisabled} required type="text" className={`${inputClass} text-center`} />
+                  <motion.input disabled={isDisabled} maxLength={2} required type="text" className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 
+                  border-gray-400 max-w-[480px] 
+                  ${isDisabled ? "bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed " 
+                  : "focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] bg-transparent text-white"} text-center`} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Bairro</motion.label>
-                  <motion.input disabled={isDisabled} required type="text" placeholder="Digite seu bairro" className={inputClass} />
+                  <motion.input onChange={(e) => (setBairro(e.target.value))} disabled={isDisabled} required type="text" placeholder="Digite seu bairro" className={inputClass} />
                 </motion.div>
               </div>
 
@@ -113,26 +250,26 @@ export default function Home() {
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Telefone</motion.label>
-                  <Celular disabled={false} />
+                  <Celular onChange={(value) => (setTelefone(value))} disabled={false} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Celular</motion.label>
-                  <Celular disabled={false} />
+                  <Celular onChange={(value) => (setCelular(value))} disabled={false} />
                 </motion.div>
               </div>
 
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Email</motion.label>
-                  <motion.input disabled={false} required type="email" placeholder="Digite seu email" className={
+                  <motion.input onChange={(e) => (setEmail(e.target.value))} disabled={false} required type="email" placeholder="Digite seu email" className={
                     "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] bg-transparent text-white"} />
                 </motion.div>
 
                 <div className="flex w-full gap-4 items-end">
                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                     <motion.label>Contato Whatsapp</motion.label>
-                    <Celular disabled={false} />
+                    <Celular onChange={(value) => {setWhatsApp(value)}} disabled={false} />
                   </motion.div>
 
                   <motion.button
@@ -143,9 +280,8 @@ export default function Home() {
                     whileHover={!isDisabled ? { scale: 1.01 } : {}}
                     whileTap={!isDisabled ? { scale: 0.99 } : {}}
                     type="button"
-                    className={`${isDisabled ? "bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed": "border border-gray-400 " } px-4 h-[50px] rounded-[15px]  flex gap-2 justify-center items-center transition-all duration-300 cursor-pointer`}
+                    className={`border border-gray-400 px-4 h-[50px] rounded-[15px]  flex gap-2 justify-center items-center transition-all duration-300 cursor-pointer`}
                   >
-
                     <FaWhatsapp className="text-green-600 size-6" aria-hidden="true" /> WhatsApp
                   </motion.button>
                 </div>

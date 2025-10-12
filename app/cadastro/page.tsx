@@ -68,7 +68,7 @@ export default function Home() {
                 if (data.message[0] === "Login realizado com sucesso") {
                     router.push('/matricula/dados_do_responsavel');
             } else {
-                let errors = data.message.join("\n");
+                const errors = data.message.join("\n");
                 setMessage(errors);
             }
             } else if (data?.message === "Login realizado com sucesso") {

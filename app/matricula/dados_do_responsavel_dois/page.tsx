@@ -40,26 +40,25 @@ export default function Home() {
     const token = data.token;
     const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
     const matricula = await Matricula.json();
-    console.log(matricula);
+    const matriculaID = matricula.id;
 
-    const iniciar = {
-    nome: nome,
-    genero: genero,
-    dataNascimento: dataNascimento,
-    orgaoExpeditor: orgaoExpeditor,
-    dataExpedicao: dataExpedicao,
-    estadoCivil: estado_civil,
-    rg: rg,
-    cpf: cpf,
-    pessoaJuridica: pessoaJuridica,
-    parentesco: parentesco
+    const dadosResponsavelDois = {
+      nome: nome,
+      genero: genero,
+      dataNascimento: dataNascimento,
+      orgaoExpeditor: orgaoExpeditor,
+      dataExpedicao: dataExpedicao,
+      estadoCivil: estado_civil,
+      rg: rg,
+      cpf: cpf,
+      pessoaJuridica: pessoaJuridica,
+      parentesco: parentesco
     }
 
-    console.log(iniciar);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-1b/${matriculaID}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-    body: JSON.stringify(iniciar),
+    body: JSON.stringify(dadosResponsavelDois),
     });
     const dataRes = await res.json();
     console.log(dataRes);
@@ -76,8 +75,8 @@ export default function Home() {
         setMessage(dataRes.error.message)
         }
     } else if (dataRes?.message){
-        if (dataRes.message === "Pré-matrícula iniciada com sucesso."){
-            router.push("/matricula/endereco_e_comunicacao_responsavel_financeiro")
+        if (dataRes.message === "Etapa 1B (segundo responsável) concluída com sucesso."){
+            router.push("/matricula/endereco_e_comunicacao_responsavel")
         }
     }
   };
@@ -117,7 +116,7 @@ export default function Home() {
           initial={{scale:0}}
           animate={{scale:1}}
           exit={{scale:0}}
-          className="text-[35px] mx-auto mt-10 font-medium text-center">Dados do responsável</motion.h1>
+          className="text-[35px] mx-auto mt-10 font-medium text-center">Dados do segundo responsável </motion.h1>
 
           <motion.p 
           initial={{scale:0}}

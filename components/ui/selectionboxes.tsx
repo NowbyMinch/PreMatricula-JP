@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "./button";
 import { motion } from "framer-motion";
@@ -111,9 +111,33 @@ export function Genero({ value, onChange }: ComboboxDemoProps) {
   );
 }
 
-const responsavel = [{value:"RESPONSAVEL1", label:"María"}, {value:"RESPONSAVEL2", label:"Marío"}];
+interface Nomes {
+  nome: string[];
+}
 
 export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
+  const [ responsaveis, setResponsaveis] = useState<Nomes>();
+  useEffect(() => {
+    const Responsaveis = async () => {
+      const tok = await fetch("/api/token", { credentials: "include" });
+      const data = await tok.json();
+      console.log(data.token);
+      if (!data.token) return
+      const token = data.token;
+      const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      const matricula = await Matricula.json();
+      console.log(matricula);
+      const matriculaID = matricula.id;
+      const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      const dataResponsavel = await Responsavel.json();
+      setResponsaveis({ nome: [dataResponsavel[0].nome, dataResponsavel[1].nome] })
+    }; Responsaveis();
+  },[])
+  
+  console.log(responsaveis)
+  const responsavel = [{value:"RESPONSAVEL1", label:"a"}, {value:"RESPONSAVEL2", label:"Marío"}];
+
+
   const [open, setOpen] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   
@@ -146,7 +170,7 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
           {/* Label text */}
           <span className="ml-2 select-none">Mora junto com algum dos seus responsáveis?</span>
       </motion.label>
-      <input type="hidden" value={value} required />
+      <input type="hidden" value={value} />
 
       <Popover open={open} onOpenChange={setOpen} >
         <PopoverTrigger asChild className="">
@@ -165,7 +189,7 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
                 type="text"
                 name="responsavel"
                 value={value}
-                required
+                
                 onChange={() => {}}
                 style={{
                   opacity: 0,
@@ -375,7 +399,7 @@ export function NumeroRG({ value = "", onChange, placeholder = "000.000.000-0", 
   )
 };
 
-export function CEP({ value = "", onChange, placeholder = "00.000-000", disabled }: CpfInputProps) {
+export function CEP({ value = "", onChange, placeholder = "00000-000", disabled }: CpfInputProps) {
   const [CEP, setCEP] = useState(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -384,8 +408,7 @@ export function CEP({ value = "", onChange, placeholder = "00.000-000", disabled
 
     // apply mask
     v = v
-      .replace(/(\d{2})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1-$2")
+      .replace(/(\d{5})(\d{3})$/, "$1-$2")
 
     setCEP(v);
     onChange?.(v);

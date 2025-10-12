@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 
 type LoginResponse = {
-  message?: string;
+  access_token?: string;
   user?: {
     id: string;
     email: string;
     name: string;
   };
-  token?: string;
+  message?: string;
   emailSent?: boolean;
 };
 
@@ -38,19 +38,21 @@ export async function POST(req: Request) {
     }
 
     // 2️⃣ sucesso, cria cookie
-    const res = NextResponse.json({ message: `Login realizado com sucesso` });
-    res.cookies.set("access_token", data.token || "", {
-      httpOnly: true,
+    const res = NextResponse.json({ message: `Login realizado com sucesso`});
+    res.cookies.set("access_token", data.access_token || "", {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60, 
     });
 
+    
     return res;
 
   } catch (err) {
     console.error("Erro interno no route.ts:", err);
+
+    
     return NextResponse.json({ message: "Erro interno no servidor" }, { status: 500 });
   }
 }
