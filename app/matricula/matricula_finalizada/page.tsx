@@ -64,7 +64,7 @@ export default function Home() {
                     whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
                     whileTap={{scale:0.98}}
                     transition={{duration: 0.3, }}
-                    onClick={() => router.push('/matriculas')}
+                    onClick={() => router.push('/matriculas/dados_do_reponsavel')}
                     className="cursor-pointer rounded-[15px] max-w-full w-[230px] py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold mb-10">Ver matrículas</motion.button>
                 </div>
             </div>

@@ -36,7 +36,7 @@ export default function Account({ onClose }: AccountProps) {
       <motion.a
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        href="/matriculas"
+        href="/matriculas/dados_do_reponsavel"
         className="w-full pl-4 hover:text-yellow-300 transition-all ease-in-out duration-300 text-white cursor-pointer font-extralight"
       >
         Ver matrículas
