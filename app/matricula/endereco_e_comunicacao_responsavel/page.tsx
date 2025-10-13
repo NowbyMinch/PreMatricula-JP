@@ -26,20 +26,24 @@ export default function Home() {
 
     useEffect(() => {
         const fetchToken = async () => {
-            const tok = await fetch('/api/token');
-            const data = await tok.json();
-            if (!data.token) {return;}
-            const token = data.token;
-            console.log(token)
-            
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-            });
-            const dataRes = await res.json();
-            console.log(dataRes);
+        const tok = await fetch('/api/token');
+        const data = await tok.json();
+        if (!data.token) {return;}
+        const token = data.token;
+        console.log(token)
+        
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+        });
+        const dataRes = await res.json();
+        if (dataRes?.message === "Unauthorized"){
+            setMessage("Erro na matricula. Por favor, logue novamente.")
+        }
+        console.log(dataRes);
         };
         fetchToken();
+
     },[])
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -52,6 +56,10 @@ export default function Home() {
         const token = data.token;
         const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
         const matricula = await Matricula.json();
+        if (matricula?.message === "Unauthorized"){
+            setMessage("Erro na matricula. Por favor, logue novamente.");
+            return;
+        }
         console.log(matricula);
         const matriculaID = matricula.id;
 
@@ -90,7 +98,7 @@ export default function Home() {
 
                 setMessage(errors);
             } else if (dataRes?.error && dataRes?.message){
-                setMessage(dataRes.error.message)
+                setMessage(dataRes.message)
             }
         } else if (dataRes?.message){
             if (dataRes.message === "Etapa 2B (endereço do segundo responsável) concluída com sucesso."){

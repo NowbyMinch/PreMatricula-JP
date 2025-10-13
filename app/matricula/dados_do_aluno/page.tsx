@@ -29,21 +29,24 @@ export default function Home() {
   
   useEffect(() => {
     const fetchToken = async () => {
-        const tok = await fetch('/api/token');
-        const data = await tok.json();
-        if (!data.token) {return;}
-        const token = data.token;
-        console.log(token)
-        
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-        });
-        const dataRes = await res.json();
-        console.log(dataRes);
+    const tok = await fetch('/api/token');
+    const data = await tok.json();
+    if (!data.token) {return;}
+    const token = data.token;
+    console.log(token)
+    
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+    });
+    const dataRes = await res.json();
+    if (dataRes?.message === "Unauthorized"){
+        setMessage("Erro na matricula. Por favor, logue novamente.")
+    }
+    console.log(dataRes);
     };
     fetchToken();
-  },[])
+  },[]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault(); // prevent page reload
@@ -55,6 +58,10 @@ export default function Home() {
       const token = data.token;
       const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
       const matricula = await Matricula.json();
+      if (matricula?.message === "Unauthorized"){
+        setMessage("Erro na matricula. Por favor, logue novamente.");
+        return;
+      }
       console.log(matricula);
       const matriculaID = matricula.id;
 
@@ -83,21 +90,23 @@ export default function Home() {
     
       if (dataRes?.error){
         if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
+          console.log("hahahaha 1")
 
-            // dataRes.error exists and is a non-empty array
-            let errors = "";
-            for (let i = 0; i < dataRes.message.length; i++) {
-                errors += dataRes.message[i] + "\n";
-            }
+          // dataRes.error exists and is a non-empty array
+          let errors = "";
+          for (let i = 0; i < dataRes.message.length; i++) {
+              errors += dataRes.message[i] + "\n";
+          }
 
-            setMessage(errors);
+          setMessage(errors);
+
         } else if (dataRes?.error && dataRes?.message){
-            setMessage(dataRes.error.message)
+            setMessage(dataRes.message)
         }
       } else if (dataRes?.message){
           if (dataRes.message === "Dados do aluno registrados (etapa 3). Endereço do aluno pendente (etapa 3B)."){
-        router.push("/matricula/endereco_e_comunicacao_aluno");
-      }
+          router.push("/matricula/endereco_e_comunicacao_aluno");
+        }
     }
   };
 
@@ -112,7 +121,7 @@ export default function Home() {
       )}
 
       {message && (
-          <ErrorModal message={message} onClose={() => setMessage(null)} />
+        <ErrorModal message={message} onClose={() => setMessage(null)} />
       )}
 
       <motion.div 

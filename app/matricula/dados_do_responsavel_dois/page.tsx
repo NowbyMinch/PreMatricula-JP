@@ -29,7 +29,28 @@ export default function Home() {
   const [ parentesco, setParentesco ] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
   
-  const [matriculaID, setMatriculaID] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const tok = await fetch('/api/token');
+      const data = await tok.json();
+      if (!data.token) {return;}
+      const token = data.token;
+      console.log(token)
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const dataRes = await res.json();
+      if (dataRes?.message === "Unauthorized"){
+          setMessage("Erro na matricula. Por favor, logue novamente.")
+      }
+      console.log(dataRes);
+    };
+    fetchToken();
+
+  },[])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent page reload
@@ -41,6 +62,15 @@ export default function Home() {
     const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
     const matricula = await Matricula.json();
     const matriculaID = matricula.id;
+    const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+    const responsaveis = await Responsavel.json();
+    console.log(responsaveis)
+
+
+    if (matricula?.message === "Unauthorized"){
+      setMessage("Erro na matricula. Por favor, logue novamente.")
+      return
+    }
 
     const dadosResponsavelDois = {
       nome: nome,
@@ -55,6 +85,7 @@ export default function Home() {
       parentesco: parentesco
     }
 
+    console.log(dadosResponsavelDois)
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-1b/${matriculaID}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },

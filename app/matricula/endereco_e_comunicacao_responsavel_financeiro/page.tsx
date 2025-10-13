@@ -33,11 +33,14 @@ export default function Home() {
             const token = data.token;
             console.log(token)
             
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
             });
             const dataRes = await res.json();
+            if (dataRes?.message === "Unauthorized"){
+                setMessage("Erro na matricula. Por favor, logue novamente.")
+            }
             console.log(dataRes);
         };
         fetchToken();
@@ -54,6 +57,11 @@ export default function Home() {
         const token = data.token;
         const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
         const matricula = await Matricula.json();
+        if (matricula?.message === "Unauthorized"){
+            setMessage("Erro na matricula. Por favor, logue novamente.")
+            return
+        }
+        
         console.log(matricula);
         const matriculaID = matricula.id;
 

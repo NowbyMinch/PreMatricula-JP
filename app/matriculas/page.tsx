@@ -1,24 +1,40 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "lucide-react";
 import Account from "@imports/components/ui/account_icon";
-// <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
-//   {new Date().getFullYear() + 1} 
-//   {/* Example: will show 2026 automatically if current year is 2025 */}
-// </span>
-
 
 
 export default function Home() {
-  //const [mostrar, setMostrar] = useState(false);
-  //const [email, setEmail] = useState("");
-  //const [senha, setSenha] = useState("");
   const [ pop, setPop ] = useState(false);
-  
-  //const [registrar, setRegistrar] = useState(false);
 
+  useEffect(() => {
+    const fetchToken = async () => {
+      const tok = await fetch('/api/token');
+      const data = await tok.json();
+      if (!data.token) {return;}
+      const token = data.token;
+      
+      const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const usuarioIDRetorno = await usuarioID.json();
+      const usuarioId = usuarioIDRetorno.id; 
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const dataRes = await res.json();
+      
+      console.log(dataRes);
+    };
+    fetchToken();
+
+  },[])
+  
   return (
     <>
       {pop && (

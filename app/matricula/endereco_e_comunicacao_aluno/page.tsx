@@ -6,8 +6,10 @@ import { FaWhatsapp } from "react-icons/fa";
 import { Celular, CEP, Numero, Responsavel } from "@imports/components/ui/selectionboxes";
 import Account from "@imports/components/ui/account_icon";
 import ErrorModal from "@imports/components/ui/ErrorModal";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [ pop, setPop] = useState(false);
   const [ responsavel, setResponsavel] = useState<string>("");
   const [ message, setMessage] = useState<string | null>(null);
@@ -28,18 +30,20 @@ export default function Home() {
 
   useEffect(() => {
     const fetchToken = async () => {
-        const tok = await fetch('/api/token');
-        const data = await tok.json();
-        if (!data.token) {return;}
-        const token = data.token;
-        console.log(token)
-        
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-        });
-        const dataRes = await res.json();
-        console.log(dataRes);
+    const tok = await fetch('/api/token');
+    const data = await tok.json();
+    if (!data.token) {return;}
+    const token = data.token;
+    console.log(token)
+    
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+    });
+    const dataRes = await res.json();
+    if (dataRes?.message === "Unauthorized"){
+      setMessage("Erro na matricula. Por favor, logue novamente.")
+    }
     };
     fetchToken();
   },[])
@@ -49,105 +53,78 @@ export default function Home() {
 
       const tok = await fetch("/api/token", { credentials: "include" });
       const data = await tok.json();
-      console.log(data.token);
       if (!data.token) return
       const token = data.token;
       const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
       const matricula = await Matricula.json();
-      console.log(matricula);
+      if (matricula?.message === "Unauthorized"){
+        setMessage("Erro na matricula. Por favor, logue novamente.")
+        return;
+      }
       const matriculaID = matricula.id;
-      const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-      const responsaveis = await Responsavel.json();
 
-      const endereco1 = {
-        telefone: telefone,
-        celular: celular,
-        email: email,
-        whatsapp: whatsApp,
-        cep: cep,
-        rua: rua,
-        numero: numero,
-        complemento: complemento,
-        bairro: bairro,
-        cidade: cidade,
-        uf: uf,
-        moraComResponsavel: false,
+      const AlunoID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/aluno-id`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      const Alunoid = await AlunoID.json();
+      const alunoID = Alunoid.alunoId;
+      const endereco = isDisabled
+      ? {
+          telefone,
+          celular,
+          email,
+          whatsapp: whatsApp,
+          moraComResponsavel: true,
+          ...(responsavel ? { moraComResponsavelNome: responsavel } : {}),
+        }
+      : {
+          telefone,
+          celular,
+          email,
+          whatsapp: whatsApp,
+          moraComResponsavel: false,
+          cep,
+          rua,
+          numero,
+          ...(complemento ? { complemento } : {}), // 👈 only include if not empty
+          bairro,
+          cidade,
+          uf,
+        };
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-3b/${matriculaID}/${alunoID}`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, },
+        body: JSON.stringify(endereco),
+      });
+      const dataRes = await res.json();
+
+      console.log(dataRes)
+      console.log(matricula)
+
+      if (dataRes?.error){
+        if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
+
+          // dataRes.error exists and is a non-empty array
+          let errors = "";
+          for (let i = 0; i < dataRes.message.length; i++) {
+              errors += dataRes.message[i] + "\n";
+          }
+
+          setMessage(errors);
+        } else if (dataRes?.error && dataRes?.message){
+            setMessage(dataRes.message)
+        }
+        
+        console.log("deu certo1")
+      } 
+      else if (dataRes?.message){
+        if (dataRes.message === "Endereço do aluno (etapa 3B) concluído com sucesso."){
+          router.push("/matricula/matricula_finalizada");
+        }
       }
       
-      const endereco2 = {
-        telefone: telefone,
-        celular: celular,
-        email: email,
-        whatsapp: whatsApp,
-        moraComResponsavel: true,
-        moraComResponsavelNome: responsavel,
-      }
-
-      console.log(endereco1)
-      console.log(endereco2)
-
-      // if (isDisabled){
-      //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/${matriculaID}`, {
-      //     method: 'POST',
-      //     headers: { 
-      //       'Content-Type': 'application/json',
-      //       Authorization: `Bearer ${token}`, },
-      //     body: JSON.stringify(endereco1),
-      //   });
-  
-      //   const dataRes = await res.json();
-      //   console.log(dataRes);
-      //   if (dataRes?.error){
-      //       if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
-  
-      //         // dataRes.error exists and is a non-empty array
-      //         let errors = "";
-      //         for (let i = 0; i < dataRes.message.length; i++) {
-      //             errors += dataRes.message[i] + "\n";
-      //         }
-  
-      //         setMessage(errors);
-      //       } else if (dataRes?.error && dataRes?.message){
-      //           setMessage(dataRes.error.message)
-      //       }
-      //   } else if (dataRes?.message){
-      //     if (dataRes.message === "Etapa 2 concluída com sucesso."){
-      //     }
-      //   }
-
-      // } else {
-      //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/${matriculaID}`, {
-      //     method: 'POST',
-      //     headers: { 
-      //       'Content-Type': 'application/json',
-      //       Authorization: `Bearer ${token}`, },
-      //     body: JSON.stringify(endereco2),
-      //   });
-  
-      //   const dataRes = await res.json();
-      //   console.log(dataRes);
-      
-      //   if (dataRes?.error){
-      //       if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
-  
-      //         // dataRes.error exists and is a non-empty array
-      //         let errors = "";
-      //         for (let i = 0; i < dataRes.message.length; i++) {
-      //             errors += dataRes.message[i] + "\n";
-      //         }
-  
-      //         setMessage(errors);
-      //       } else if (dataRes?.error && dataRes?.message){
-      //           setMessage(dataRes.error.message)
-      //       }
-      //   } else if (dataRes?.message){
-      //     if (dataRes.message === "Etapa 2 concluída com sucesso."){
-      //     }
-      //   }
-      // }
   };
-
-
   
   // 🔹 Classe de input com estilo condicional
   const inputClass = `w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 
@@ -230,7 +207,7 @@ export default function Home() {
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-[130px]">
                   <motion.label>UF</motion.label>
-                  <motion.input disabled={isDisabled} maxLength={2} required type="text" className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 
+                  <motion.input onChange={(e) => (setUF(e.target.value))} disabled={isDisabled} maxLength={2} required type="text" className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 
                   border-gray-400 max-w-[480px] 
                   ${isDisabled ? "bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed " 
                   : "focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] bg-transparent text-white"} text-center`} />

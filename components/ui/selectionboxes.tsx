@@ -111,31 +111,39 @@ export function Genero({ value, onChange }: ComboboxDemoProps) {
   );
 }
 
-interface Nomes {
-  nome: string[];
-}
+type ResponsavelData = {
+  nome: string;
+  id?: number;
+};
 
 export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
-  const [ responsaveis, setResponsaveis] = useState<Nomes>();
+  const [ responsaveis, setResponsaveis] = useState<{ value: string; label: string }[]>([]);
+
   useEffect(() => {
     const Responsaveis = async () => {
       const tok = await fetch("/api/token", { credentials: "include" });
       const data = await tok.json();
-      console.log(data.token);
       if (!data.token) return
       const token = data.token;
       const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
       const matricula = await Matricula.json();
-      console.log(matricula);
       const matriculaID = matricula.id;
       const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
       const dataResponsavel = await Responsavel.json();
-      setResponsaveis({ nome: [dataResponsavel[0].nome, dataResponsavel[1].nome] })
+      console.log(dataResponsavel);
+      
+      const array: ResponsavelData[] = Array.isArray(dataResponsavel)
+      ? dataResponsavel
+      : [dataResponsavel];
+
+
+      const Res = array.map((item, index) => ({
+        value: `Responsavel ${index + 1}`,
+        label: item.nome
+      }));
+      setResponsaveis(Res);
     }; Responsaveis();
   },[])
-  
-  console.log(responsaveis)
-  const responsavel = [{value:"RESPONSAVEL1", label:"a"}, {value:"RESPONSAVEL2", label:"Marío"}];
 
 
   const [open, setOpen] = useState(false);
@@ -153,7 +161,6 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
             setIsDisabled(!isDisabled);
             if (disabled) disabled(isDisabled); 
             if (!isDisabled) {onChange("")}; 
-            console.log(disabled)
           }} type="checkbox" className="sr-only peer" />
 
           {/* Custom checkbox */}
@@ -181,7 +188,7 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
           >
             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
               {value
-                ? responsavel.find((framework) => framework.value === value)?.label as string
+                ? value
                 : <span className="text-[#9CA3AF]">Reponsáveis</span>
               }
 
@@ -225,13 +232,14 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
                     )}
                   />
                 </CommandItem> */}
-                {responsavel.map((framework) => (
+                {responsaveis.map((framework) => (
                   <CommandItem
                     key={framework.value}
                     value={framework.value}
                     className="text-[16px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent"
                     onSelect={(currentValue) => {
-                      onChange(currentValue === value ? "" : currentValue);
+                      const selected = responsaveis.find(r => r.value === currentValue);
+                      onChange(selected ? selected.label : "");
                       setOpen(false);
                     }}
                   >

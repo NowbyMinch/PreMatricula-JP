@@ -29,7 +29,28 @@ export default function Home() {
   const [ parentesco, setParentesco ] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
   
-  const [matriculaID, setMatriculaID] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const tok = await fetch('/api/token');
+      const data = await tok.json();
+      if (!data.token) {return;}
+      const token = data.token;
+      console.log(token)
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const dataRes = await res.json();
+      if (dataRes?.message === "Unauthorized"){
+          setMessage("Erro na matricula. Por favor, logue novamente.")
+      }
+      console.log(dataRes);
+    };
+    fetchToken();
+
+  },[])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent page reload
@@ -40,7 +61,10 @@ export default function Home() {
     const token = data.token;
     const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
     const matricula = await Matricula.json();
-    console.log(matricula);
+    const matriculaID = matricula.id;
+    const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+    const responsaveis = await Responsavel.json();
+    console.log(responsaveis)
 
     const iniciar = {
     nome: nome,
@@ -56,6 +80,7 @@ export default function Home() {
     }
 
     console.log(iniciar);
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
@@ -65,21 +90,23 @@ export default function Home() {
     console.log(dataRes);
     
     if (dataRes?.error){
-        if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
-            // dataRes.error exists and is a non-empty array
-            let errors = "";
-            for (let i = 0; i < dataRes.message.length; i++) {
-                errors += dataRes.message[i] + "\n";
-            }
-            setMessage(errors);
-        } else {
-        setMessage(dataRes.error.message)
-        }
-    } else if (dataRes?.message){
-        if (dataRes.message === "Pré-matrícula iniciada com sucesso."){
-            router.push("/matricula/endereco_e_comunicacao_responsavel_financeiro")
-        }
-    }
+      if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
+          // dataRes.error exists and is a non-empty array
+          let errors = "";
+          for (let i = 0; i < dataRes.message.length; i++) {
+              errors += dataRes.message[i] + "\n";
+          }
+          setMessage(errors);
+      } else {
+      setMessage(dataRes.error.message)
+      }
+    } 
+    else if (dataRes?.message){
+      if (dataRes.message === "Pré-matrícula iniciada com sucesso."){
+          router.push("/matricula/endereco_e_comunicacao_responsavel_financeiro")
+      }
+    } 
+    
   };
   
   return (

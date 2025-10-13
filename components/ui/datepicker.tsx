@@ -149,7 +149,7 @@ export default function DatePicker({ onChange }: DatePickerProps ) {
         onChange(typedDate.toISOString().split("T")[0]);
       }
     }
-  }, [inputValue, inputValue2, inputValue3]);
+  }, [inputValue, inputValue2, inputValue3, onChange]);
 
   return (
     <div className="relative">
