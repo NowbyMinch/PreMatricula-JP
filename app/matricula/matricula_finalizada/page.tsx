@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Account from "@imports/components/ui/account_icon";
@@ -10,9 +10,41 @@ import Account from "@imports/components/ui/account_icon";
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
 // </span>
 
+
 export default function Home() {
     const router = useRouter();
     const [ pop, setPop ] = useState(false);
+    const [ ultima, setUltima ] = useState("");
+
+    useEffect(() => {
+
+    // Bloco completo necessário ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    const fetchToken = async () => {
+      const tok = await fetch('/api/token');
+      const data = await tok.json();
+      if (!data.token) {return;}
+      const token = data.token;
+      
+      const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const usuarioIDRetorno = await usuarioID.json();
+      const usuarioId = usuarioIDRetorno.usuarioId; 
+    
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const dataRes = await res.json();
+      
+      setUltima(dataRes.items[0].id);
+    };
+    fetchToken();
+  
+    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
+  },[])
     
     return (
         <>
@@ -64,7 +96,7 @@ export default function Home() {
                     whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
                     whileTap={{scale:0.98}}
                     transition={{duration: 0.3, }}
-                    onClick={() => router.push('/matriculas/dados_do_reponsavel')}
+                    onClick={() => {if (ultima) {router.push(`/matriculas/${ultima}/dados_do_responsavel`)}}}
                     className="cursor-pointer rounded-[15px] max-w-full w-[230px] py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold mb-10">Ver matrículas</motion.button>
                 </div>
             </div>

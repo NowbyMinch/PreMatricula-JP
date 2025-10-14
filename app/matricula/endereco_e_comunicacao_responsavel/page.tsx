@@ -131,153 +131,146 @@ export default function Home() {
 
             <div className={`  max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
                 <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full `} onSubmit={handleSubmit}>
-                
-                {/* <motion.img 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                src="seice.png" alt="Seice Logo" className="w-[50%] h-auto mt-10"/> */}
+                    <motion.h1 
+                    initial={{scale:0}}
+                    animate={{scale:1}}
+                    exit={{scale:0}}
+                    className="text-[35px] mx-auto mt-10 font-medium text-center">Endereço/Comunicação do responsável</motion.h1>
 
-                <motion.h1 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                className="text-[35px] mx-auto mt-10 font-medium text-center">Endereço/Comunicação do responsável</motion.h1>
+                    <motion.p 
+                    initial={{scale:0}}
+                    animate={{scale:1}}
+                    exit={{scale:0}}
+                    className="mb-4 ">Preencha os campos com seu endereço e formas de comunicação do responsável</motion.p>
 
-                <motion.p 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                className="mb-4 ">Preencha os campos com seu endereço e formas de comunicação do responsável</motion.p>
+                    <AnimatePresence >
+                        <div className="flex flex-col justify-between w-full gap-5">
 
-                <AnimatePresence >
-                    <div className="flex flex-col justify-between w-full gap-5">
-
-                        <motion.h1 
-                        initial={{scale:0}}
-                        animate={{scale:1}}
-                        exit={{scale:0}}
-                        className="text-[35px] origin-left">Endereço</motion.h1>
-
-                        <div className={` w-full max-w-full flex md:flex-row flex-col gap-4`}>
-                            <motion.div 
+                            <motion.h1 
                             initial={{scale:0}}
                             animate={{scale:1}}
                             exit={{scale:0}}
-                            className="flex flex-col gap-2 w-full">
-                            <motion.label 
-                            htmlFor="" 
-                            className="origin-left">C.E.P.</motion.label>
-                            <CEP onChange={(value) => setCEP(value) } disabled={false}/>
-                            </motion.div>
+                            className="text-[35px] origin-left">Endereço</motion.h1>
 
-                            <motion.div 
+                            <div className={` w-full max-w-full flex md:flex-row flex-col gap-4`}>
+                                <motion.div 
+                                initial={{scale:0}}
+                                animate={{scale:1}}
+                                exit={{scale:0}}
+                                className="flex flex-col gap-2 w-full">
+                                <motion.label 
+                                htmlFor="" 
+                                className="origin-left">C.E.P.</motion.label>
+                                <CEP onChange={(value) => setCEP(value) } disabled={false}/>
+                                </motion.div>
+
+                                <motion.div 
+                                initial={{scale:0}}
+                                animate={{scale:1}}
+                                exit={{scale:0}}
+                                className="flex flex-col gap-2 w-full ">
+                                <motion.label 
+                                htmlFor="" 
+                                className="origin-left">Rua/Avenida</motion.label>
+                                <motion.input
+                                required
+                                onChange={(e) => setRua(e.target.value) }
+                                type="text" placeholder="Digite sua Rua/Avenida" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                                </motion.div>
+                                
+                                <motion.div 
+                                initial={{scale:0}}
+                                animate={{scale:1}}
+                                exit={{scale:0}}
+                                className="flex flex-col gap-2 w-full ">
+                                <motion.label 
+                                htmlFor="" 
+                                className="origin-left">N°</motion.label>
+                                <Numero onChange={(value) => setNumero(value) } disabled={false}/>
+                                </motion.div>
+
+                                
+                            </div>
+
+                            <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
+
+                                
+                                <motion.div 
+                                initial={{scale:0}}
+                                animate={{scale:1}}
+                                exit={{scale:0}}
+                                className="flex flex-col gap-2 w-full ">
+                                <motion.label 
+                                htmlFor="" 
+                                className="origin-left">Cidade</motion.label>
+                                <motion.input
+                                required
+                                onChange={(e) => setCidade(e.target.value) }
+                                type="text" placeholder="Digite sua cidade" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                                </motion.div>
+
+                                <motion.div 
+                                initial={{scale:0}}
+                                animate={{scale:1}}
+                                exit={{scale:0}}
+                                className="flex flex-col gap-2 w-full ">
+                                <motion.label 
+                                htmlFor="" 
+                                className="origin-left">Bairro</motion.label>
+                                <motion.input
+                                required
+                                onChange={(e) => setBairro(e.target.value) }
+                                type="text" placeholder="Digite seu bairro" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                                </motion.div>
+
+                            </div>
+
+                            <motion.h1 
                             initial={{scale:0}}
                             animate={{scale:1}}
                             exit={{scale:0}}
-                            className="flex flex-col gap-2 w-full ">
-                            <motion.label 
-                            htmlFor="" 
-                            className="origin-left">Rua/Avenida</motion.label>
-                            <motion.input
-                            required
-                            onChange={(e) => setRua(e.target.value) }
-                            type="text" placeholder="Digite sua Rua/Avenida" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                            </motion.div>
+                            className="text-[35px] origin-left">Comunicação</motion.h1>
                             
-                            <motion.div 
-                            initial={{scale:0}}
-                            animate={{scale:1}}
-                            exit={{scale:0}}
-                            className="flex flex-col gap-2 w-full ">
-                            <motion.label 
-                            htmlFor="" 
-                            className="origin-left">N°</motion.label>
-                            <Numero onChange={(value) => setNumero(value) } disabled={false}/>
-                            </motion.div>
+                            <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
+                                <motion.div 
+                                initial={{scale:0}}
+                                animate={{scale:1}}
+                                exit={{scale:0}}
+                                className="flex flex-col gap-2 w-full ">
+                                <motion.label 
+                                htmlFor="" 
+                                className="origin-left">Celular</motion.label>
+                                <Celular onChange={(value) => setCelular(value) } disabled={false}/>
+                                </motion.div>
+                                
+                                <motion.div 
+                                initial={{scale:0}}
+                                animate={{scale:1}}
+                                exit={{scale:0}}
+                                className="flex flex-col gap-2 w-full ">
+                                <motion.label 
+                                htmlFor="" 
+                                className="origin-left">Email</motion.label>
+                                <motion.input
+                                required
+                                onChange={(e) => setEmail(e.target.value) }
+                                type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                                </motion.div>
 
+                            </div>
                             
                         </div>
-
-                        <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
-
-                            
-                            <motion.div 
-                            initial={{scale:0}}
-                            animate={{scale:1}}
-                            exit={{scale:0}}
-                            className="flex flex-col gap-2 w-full ">
-                            <motion.label 
-                            htmlFor="" 
-                            className="origin-left">Cidade</motion.label>
-                            <motion.input
-                            required
-                            onChange={(e) => setCidade(e.target.value) }
-                            type="text" placeholder="Digite sua cidade" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                            </motion.div>
-
-                            <motion.div 
-                            initial={{scale:0}}
-                            animate={{scale:1}}
-                            exit={{scale:0}}
-                            className="flex flex-col gap-2 w-full ">
-                            <motion.label 
-                            htmlFor="" 
-                            className="origin-left">Bairro</motion.label>
-                            <motion.input
-                            required
-                            onChange={(e) => setBairro(e.target.value) }
-                            type="text" placeholder="Digite seu bairro" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                            </motion.div>
-
-                        </div>
-
-                        <motion.h1 
-                        initial={{scale:0}}
-                        animate={{scale:1}}
-                        exit={{scale:0}}
-                        className="text-[35px] origin-left">Comunicação</motion.h1>
-                        
-                        <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
-                            <motion.div 
-                            initial={{scale:0}}
-                            animate={{scale:1}}
-                            exit={{scale:0}}
-                            className="flex flex-col gap-2 w-full ">
-                            <motion.label 
-                            htmlFor="" 
-                            className="origin-left">Celular</motion.label>
-                            <Celular onChange={(value) => setCelular(value) } disabled={false}/>
-                            </motion.div>
-                            
-                            <motion.div 
-                            initial={{scale:0}}
-                            animate={{scale:1}}
-                            exit={{scale:0}}
-                            className="flex flex-col gap-2 w-full ">
-                            <motion.label 
-                            htmlFor="" 
-                            className="origin-left">Email</motion.label>
-                            <motion.input
-                            required
-                            onChange={(e) => setEmail(e.target.value) }
-                            type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                            </motion.div>
-
-                        </div>
-                        
-                    </div>
-                </AnimatePresence>
-                
-                <motion.button 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
-                whileTap={{scale:0.98}}
-                transition={{duration: 0.3, }}
-                type="submit"
-                className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
+                    </AnimatePresence>
+                    
+                    <motion.button 
+                    initial={{scale:0}}
+                    animate={{scale:1}}
+                    exit={{scale:0}}
+                    whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+                    whileTap={{scale:0.98}}
+                    transition={{duration: 0.3, }}
+                    type="submit"
+                    className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
                 </form>
             </div>
         </>

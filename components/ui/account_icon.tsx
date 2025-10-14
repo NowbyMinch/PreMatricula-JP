@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface AccountProps {
   onClose: () => void; // callback to close popover
@@ -8,7 +9,39 @@ interface AccountProps {
 
 export default function Account({ onClose }: AccountProps) {
   const router = useRouter();
+  const [ ultima, setUltima ] = useState("");
 
+  
+  useEffect(() => {
+
+    // Bloco completo necessário ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    const fetchToken = async () => {
+      const tok = await fetch('/api/token');
+      const data = await tok.json();
+      if (!data.token) {return;}
+      const token = data.token;
+      
+      const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const usuarioIDRetorno = await usuarioID.json();
+      const usuarioId = usuarioIDRetorno.usuarioId; 
+    
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const dataRes = await res.json();
+      
+      setUltima(dataRes.items[0].id);
+    };
+    fetchToken();
+  
+    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
+  },[])
+  
   const Logout = async () => {
     try {
       const res = await fetch(`/api/logout`, { method: 'POST', credentials: "include" });
@@ -36,7 +69,7 @@ export default function Account({ onClose }: AccountProps) {
       <motion.a
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        href="/matriculas/dados_do_reponsavel"
+        href={`/matriculas/${ultima}/dados_do_responsavel`}
         className="w-full pl-4 hover:text-yellow-300 transition-all ease-in-out duration-300 text-white cursor-pointer font-extralight"
       >
         Ver matrículas

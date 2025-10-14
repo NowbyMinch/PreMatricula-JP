@@ -144,7 +144,7 @@ export default function Home() {
           initial={{scale:0}}
           animate={{scale:1}}
           exit={{scale:0}}
-          className="text-[35px] mx-auto mt-10 font-medium text-center">Dados do responsável</motion.h1>
+          className="text-[35px] mx-auto mt-10 font-medium text-center">Dados do responsável Financeiro</motion.h1>
 
           <motion.p 
           initial={{scale:0}}

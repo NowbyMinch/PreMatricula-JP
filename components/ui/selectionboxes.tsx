@@ -17,6 +17,7 @@ import {
   CommandItem,
 } from "./command";
 import { cn } from "../../lib/utils";
+import { usePathname } from "next/navigation";
 
 const inputClass = `w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 
     border-gray-400 max-w-[480px] bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed `;
@@ -338,6 +339,121 @@ export function Civil({ value, onChange }: ComboboxDemoProps) {
       </Popover>
     
       <input type="hidden" name="genero" value={value} required />
+
+    </>
+  );
+}
+
+type MatriculasData = {
+  numero: string;
+  id?: number;
+};
+
+export function Matricula({ value, onChange }: ComboboxDemoProps) {
+  const [open, setOpen] = useState(false);
+  const [ matricula, setMatricula] = useState<{ value: string; label: string }[]>([]);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const tok = await fetch('/api/token');
+      const data = await tok.json();
+      if (!data.token) {return;}
+      const token = data.token;
+      
+      const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const usuarioIDRetorno = await usuarioID.json();
+      const usuarioId = usuarioIDRetorno.usuarioId; 
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const dataRes = await res.json();
+
+      const array: MatriculasData[] = Array.isArray(dataRes.items)
+      ? dataRes.items
+      : [dataRes.items];
+
+      const Res = array.map((item, index) => ({
+        value: item.id !== undefined ? String(item.id) : "",
+        label: `Matricula ${index + 1}`
+      }));
+      
+      setMatricula(Res);
+
+    }; fetchToken();
+
+  },[]);
+
+  return (
+    <>
+      <input type="hidden" value={value} required />
+
+      <Popover open={open} onOpenChange={setOpen} >
+        <PopoverTrigger asChild className="">
+          <Button
+            role="combobox"
+            className={`pl-5 text-[16px] w-[130px] max-w-[60%] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+          >
+            <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
+              {value
+                ? matricula.find((framework) => framework.value === value)?.label as string
+                : <span className="text-[#9CA3AF]">Matriculas</span>
+              }
+
+              <input
+                type="text"
+                name="genero"
+                value={value}
+                required
+                onChange={() => {}}
+                style={{
+                  opacity: 0,
+                  position: 'absolute',
+                  pointerEvents: 'none',
+                }}
+              />
+            </span>
+          </Button>
+
+        </PopoverTrigger>
+
+        <PopoverContent className="min-w-[200px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
+
+          <Command className="rounded-[15px] bg-transparent"> 
+            <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)]">
+              <CommandEmpty className="text-white mx-auto text-center py-2 my-auto bg-[rgba(12,12,14,1)]" >Nenhuma matrícula encontrada</CommandEmpty>
+              <CommandGroup className="cursor-pointer  bg-[rgba(12,12,14,1)] relative">
+
+                {matricula.map((framework) => (
+                  <CommandItem
+                    key={framework.value}
+                    value={framework.value}
+                    className="text-[16px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent"
+                    onSelect={(currentValue) => {
+                      onChange(currentValue === value ? "" : currentValue);
+                      setOpen(false);
+                    }}
+                  >
+                    {framework.label}
+                    <Check
+                      className={cn(
+                        "ml-auto transition-all ease-in-out duration-300",
+                        value === framework.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+
+
+      </Popover>
 
     </>
   );
