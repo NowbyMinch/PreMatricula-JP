@@ -1,5 +1,6 @@
 "use client";
 
+import {Loading} from "@imports/components/ui/loading";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -20,6 +21,7 @@ export default function Home() {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
   const [dados, setDados] = useState<Dados | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -28,41 +30,24 @@ export default function Home() {
       if (!data.token) {return;}
       const token = data.token;
       
-      const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-      });
-      const usuarioIDRetorno = await usuarioID.json();
-      const usuarioId = usuarioIDRetorno.usuarioId; 
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${id}/detalhe`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
       });
       const dataRes = await res.json();
 
       console.log(dataRes)
-      for (let i=0; i<dataRes.total; i++){
-        if (dataRes.items[i].id === id){
-          setDados(dataRes.items[i]);
-          console.log(dataRes.items[i])
-        }
-      }
+      setDados(dataRes);
+      setLoading(false);
 
     }; fetchToken();
   },[id])
   
+  if (loading) return <div className="h-[703px]"><Loading /></div>
+
   return (
     <>
-      <motion.h1 
-      initial={{scale:0}}
-      animate={{scale:1}}
-      exit={{scale:0}}
-      className="text-[30px] w-full mt-5 font-medium ">
-        Responsavel Financeiro
-      </motion.h1>
-      
-      <div className="flex flex-col gap-10 pb-10 w-full">
+      <div className="flex flex-col gap-10 pb-10 pt-16 w-full">
         <AnimatePresence >
           <div key={0} className="flex flex-col justify-between w-full gap-5">
             <div className={` w-full max-w-full flex md:flex-row flex-col gap-4`}>

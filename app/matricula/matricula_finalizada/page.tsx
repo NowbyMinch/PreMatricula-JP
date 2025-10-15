@@ -48,21 +48,9 @@ export default function Home() {
     
     return (
         <>
-        {pop && (
-            <Account onClose={() => setPop(!pop)} />    
-        )}
 
-        <motion.div 
-        whileHover={{scale:1.02}}
-        whileTap={{scale:0.98}}
-        onClick={() => setPop(!pop)} className="cursor-pointer  bg-[rgba(12,12,14,0.9)] backdrop-blur-[20px] rounded-full w-16 h-16 absolute z-10 right-3 top-3 flex justify-center items-center ">
 
-            <button className="cursor-pointer w-[36px] h-[36px]">
-                <User className="cursor-pointer w-full h-full text-white stroke-1 hover:text-yellow-300 transition-all ease-in-out duration-300" />
-            </button>
-
-        </motion.div>
-        <div className={` my-4 h-fit overflow-hidden max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
+        <div className={`  h-fit overflow-hidden max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
             <div className={`w-full flex flex-col items-center text-white max-w-[90%] h-full gap-10`} >
                 
                 <motion.img 
@@ -75,8 +63,7 @@ export default function Home() {
                 initial={{scale:0}}
                 animate={{scale:1}}
                 exit={{scale:0}}
-                className=" text-center">Matricula concluída! Deseja ver suas matrículas ou fazer uma nova?</motion.p>
-
+                className=" text-center text-[20px]">Matricula concluída! Deseja ver suas matrículas ou fazer uma nova?</motion.p>
 
                 <div className="flex flex-1 gap-4 max-w-full ">
                     <motion.button 

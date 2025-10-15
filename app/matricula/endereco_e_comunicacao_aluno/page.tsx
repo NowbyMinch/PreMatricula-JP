@@ -1,16 +1,13 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { User } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Celular, CEP, Numero, Responsavel } from "@imports/components/ui/selectionboxes";
-import Account from "@imports/components/ui/account_icon";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const [ pop, setPop] = useState(false);
   const [ responsavel, setResponsavel] = useState<string>("");
   const [ message, setMessage] = useState<string | null>(null);
   const [ cep, setCEP] = useState<string | null>(null);
@@ -137,18 +134,8 @@ export default function Home() {
       {message && (
           <ErrorModal message={message} onClose={() => setMessage(null)} />
       )}
-      {pop && <Account onClose={() => setPop(!pop)} />}
 
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => setPop(!pop)}
-        className="cursor-pointer bg-[rgba(12,12,14,0.9)] backdrop-blur-[20px] rounded-full w-16 h-16 absolute z-100 right-3 top-3 flex justify-center items-center"
-      >
-        <button className="cursor-pointer w-[36px] h-[36px]">
-          <User className="cursor-pointer w-full h-full text-white stroke-1 hover:text-yellow-300 transition-all ease-in-out duration-300" />
-        </button>
-      </motion.div>
+
 
       <div className="max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl">
         <form

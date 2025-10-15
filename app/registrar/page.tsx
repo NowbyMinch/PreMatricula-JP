@@ -2,9 +2,8 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Eye, EyeOff, User } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Account from "@imports/components/ui/account_icon";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
@@ -22,7 +21,6 @@ export default function Home() {
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
     
-    const [ pop, setPop ] = useState(false);
     
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // prevent page reload
@@ -88,22 +86,8 @@ export default function Home() {
             {message && (
                 <ErrorModal message={message} onClose={() => setMessage(null)} />
             )}
-            {pop && (
-                <Account onClose={() => setPop(!pop)} />     
-            )}
 
-            <motion.div 
-            whileHover={{scale:1.02}}
-            whileTap={{scale:0.98}}
-            onClick={() => setPop(!pop)} className="cursor-pointer  bg-[rgba(12,12,14,0.9)] backdrop-blur-[20px] rounded-full w-16 h-16 absolute z-10 right-3 top-3 flex justify-center items-center ">
-
-                <button className="cursor-pointer w-[36px] h-[36px]">
-                <User className="cursor-pointer w-full h-full text-white stroke-1 hover:text-yellow-300 transition-all ease-in-out duration-300" />
-                </button>
-
-            </motion.div>
-
-            <div className={` my-4 h-fit overflow-hidden max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
+            <div className={` h-fit overflow-hidden max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
                 <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full `} onSubmit={handleSubmit}>
                     
                     <motion.img 

@@ -1,25 +1,28 @@
 "use client";
 
+import {Loading} from "@imports/components/ui/loading";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type DadosResponsavel = {
-  responsavel: {
+  responsaveis: {
     nome: string;
     genero: string;
     dataNascimento: string;
     estadoCivil: string;
-    parentesco: string;
+    tipoParentesco: string;
+    pessoaJuridica: boolean;
     cpf: string;
     rg: string;
-  };
+  }[];
 };
 
 export default function Home() {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
   const [dados, setDados] = useState<DadosResponsavel | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -28,43 +31,36 @@ export default function Home() {
       if (!data.token) {return;}
       const token = data.token;
       
-      const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-      });
-      const usuarioIDRetorno = await usuarioID.json();
-      const usuarioId = usuarioIDRetorno.usuarioId; 
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${id}/detalhe`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
       });
       const dataRes = await res.json();
 
-      console.log(dataRes)
-      for (let i=0; i<dataRes.total; i++){
-        if (dataRes.items[i].id === id){
-          setDados(dataRes.items[i]);
-          console.log(dataRes.items[i])
-        }
-      }
-
+      setDados(dataRes);
+      setLoading(false);
     }; fetchToken();
   },[id])
-  
+
+  if (loading) return <div className="h-[703px]"><Loading /></div>
+
   return (
     <>
-      <motion.h1 
-      initial={{scale:0}}
-      animate={{scale:1}}
-      exit={{scale:0}}
-      className="text-[30px] w-full mt-5 font-medium ">
-        Responsavel Financeiro
-      </motion.h1>
       
       <div className="flex flex-col gap-10 pb-10">
         <AnimatePresence >
+          
           <div key={0} className="flex flex-col justify-between w-full gap-5">
+            { dados?.responsaveis[1] && 
+              <motion.h1 
+              initial={{scale:0}}
+              animate={{scale:1}}
+              exit={{scale:0}}
+              className="text-[30px] w-full mt-5 font-medium ">
+                Responsavel Financeiro
+              </motion.h1>
+            }
+            
             <div className={` w-full max-w-full flex md:flex-row flex-col gap-4`}>
               <motion.div 
               initial={{scale:0}}
@@ -76,7 +72,7 @@ export default function Home() {
                 className="origin-left">Nome</motion.label>
                 <motion.input
                 disabled
-                type="text" defaultValue={dados ? dados.responsavel.nome : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                type="text" defaultValue={dados ? dados.responsaveis[0].nome : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
               <motion.div 
@@ -90,7 +86,7 @@ export default function Home() {
                 <motion.input
                 disabled
                 
-                type="text" defaultValue={dados ? (dados.responsavel.genero.toLowerCase()[0].toUpperCase() + dados.responsavel.genero.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                type="text" defaultValue={dados ? (dados.responsaveis[0].genero.toLowerCase()[0].toUpperCase() + dados.responsaveis[0].genero.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
 
                 
               </motion.div>
@@ -106,7 +102,7 @@ export default function Home() {
                 <motion.input
                 disabled
                 
-                type="text" defaultValue={dados ? dados.responsavel.dataNascimento : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                type="text" defaultValue={dados ? dados.responsaveis[0].dataNascimento : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
               
             </div>
@@ -124,7 +120,7 @@ export default function Home() {
                   <motion.input
                 disabled
                   
-                  type="text" defaultValue={dados ? (dados.responsavel.estadoCivil.toLowerCase()[0].toUpperCase() + dados.responsavel.estadoCivil.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  type="text" defaultValue={dados ? (dados.responsaveis[0].estadoCivil.toLowerCase()[0].toUpperCase() + dados.responsaveis[0].estadoCivil.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
               <motion.div 
@@ -138,7 +134,7 @@ export default function Home() {
                   <motion.input
                 disabled
                   
-                  type="text" defaultValue={dados ? dados.responsavel.parentesco : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  type="text" defaultValue={dados ? dados.responsaveis[0].tipoParentesco : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
             </div>
 
@@ -155,22 +151,22 @@ export default function Home() {
                 <div className="w-full flex flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
 
                   <div className="flex w-full gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2 ">
                       <motion.input
-                disabled 
                       whileHover={{ scale: 1.04}}
                       whileTap={{ scale: 0.96}}
-                      
-                      type="radio" name="personType" value="fisica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
+                      checked={dados?.responsaveis[0].pessoaJuridica ? false : true}
+                      onChange={() => {}}
+                      type="radio"  className="form-radio cursor-none  accent-yellow-400 pointer-events-none"/>
                       Pessoa Física
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2">
                       <motion.input
-                disabled 
                       whileHover={{ scale: 1.04}}
                       whileTap={{ scale: 0.96}}
-                      
-                      type="radio" name="personType" value="juridica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
+                      checked={dados?.responsaveis[0].pessoaJuridica ? true : false}
+                      onChange={() => {}}
+                      type="radio"  className="form-radio poicursor-non accent-yellow-400 pointer-events-none"/>
                       Pessoa Jurídica
                     </label>
                   </div>
@@ -186,7 +182,7 @@ export default function Home() {
                     <motion.input
                 disabled
                     
-                    type="text" defaultValue={dados ? dados.responsavel.cpf : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                    type="text" defaultValue={dados ? dados.responsaveis[0].cpf : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                     
                   </motion.div>
 
@@ -216,7 +212,7 @@ export default function Home() {
                     <motion.input
                 disabled
                     
-                    type="text" defaultValue={dados ? dados.responsavel.rg : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                    type="text" defaultValue={dados ? dados.responsaveis[0].rg : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                     
                   </motion.div>
 
@@ -257,7 +253,8 @@ export default function Home() {
 
           </div>
 
-          <div key={1} className="flex flex-col justify-between w-full gap-5">
+          { dados?.responsaveis[1] ? 
+            <div key={1} className="flex flex-col justify-between w-full gap-5">
             <motion.h1 
             initial={{scale:0}}
             animate={{scale:1}}
@@ -277,7 +274,7 @@ export default function Home() {
                 className="origin-left">Nome</motion.label>
                 <motion.input
                 disabled
-                type="text" defaultValue={dados ? dados.responsavel.nome : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                type="text" defaultValue={dados ? dados.responsaveis[1].nome : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
               <motion.div 
@@ -291,7 +288,7 @@ export default function Home() {
                 <motion.input
                 disabled
                 
-                type="text" defaultValue={dados ? (dados.responsavel.genero.toLowerCase()[0].toUpperCase() + dados.responsavel.genero.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                type="text" defaultValue={dados ? (dados.responsaveis[1].genero.toLowerCase()[0].toUpperCase() + dados.responsaveis[1].genero.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
 
                 
               </motion.div>
@@ -307,7 +304,7 @@ export default function Home() {
                 <motion.input
                 disabled
                 
-                type="text" defaultValue={dados ? dados.responsavel.dataNascimento : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                type="text" defaultValue={dados ? dados.responsaveis[1].dataNascimento : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
               
               <motion.div 
@@ -321,7 +318,7 @@ export default function Home() {
                   <motion.input
                 disabled
                   
-                  type="text" defaultValue={dados ? (dados.responsavel.estadoCivil.toLowerCase()[0].toUpperCase() + dados.responsavel.estadoCivil.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  type="text" defaultValue={dados ? (dados.responsaveis[1].estadoCivil.toLowerCase()[0].toUpperCase() + dados.responsaveis[1].estadoCivil.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
               <motion.div 
@@ -335,7 +332,7 @@ export default function Home() {
                   <motion.input
                 disabled
                   
-                  type="text" defaultValue={dados ? dados.responsavel.parentesco : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                  type="text" defaultValue={dados ? dados.responsaveis[1].tipoParentesco : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                 </motion.div>
             </div>
 
@@ -352,22 +349,22 @@ export default function Home() {
                 <div className="w-full flex flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
 
                   <div className="flex w-full gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2 ">
                       <motion.input
-                disabled 
                       whileHover={{ scale: 1.04}}
                       whileTap={{ scale: 0.96}}
-                      
-                      type="radio" name="personType" value="fisica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
+                      checked={dados.responsaveis[1].pessoaJuridica ? false : true}
+                      onChange={() => {}}
+                      type="radio"  className="form-radio cursor-none  accent-yellow-400 pointer-events-none"/>
                       Pessoa Física
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2">
                       <motion.input
-                disabled 
                       whileHover={{ scale: 1.04}}
                       whileTap={{ scale: 0.96}}
-                      
-                      type="radio" name="personType" value="juridica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
+                      checked={dados.responsaveis[1].pessoaJuridica ? true : false}
+                      onChange={() => {}}
+                      type="radio"  className="form-radio poicursor-non accent-yellow-400 pointer-events-none"/>
                       Pessoa Jurídica
                     </label>
                   </div>
@@ -383,7 +380,7 @@ export default function Home() {
                     <motion.input
                 disabled
                     
-                    type="text" defaultValue={dados ? dados.responsavel.cpf : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                    type="text" defaultValue={dados ? dados.responsaveis[1].cpf : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                     
                   </motion.div>
 
@@ -413,7 +410,7 @@ export default function Home() {
                     <motion.input
                 disabled
                     
-                    type="text" defaultValue={dados ? dados.responsavel.rg : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                    type="text" defaultValue={dados ? dados.responsaveis[1].rg : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                     
                   </motion.div>
 
@@ -452,7 +449,9 @@ export default function Home() {
               </motion.div>
             </div>
 
-          </div>
+            </div>
+            
+          : "" }
         </AnimatePresence>
 
       </div>

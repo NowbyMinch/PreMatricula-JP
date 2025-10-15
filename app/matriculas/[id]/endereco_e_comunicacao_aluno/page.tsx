@@ -1,18 +1,10 @@
 "use client";
 
+import {Loading} from "@imports/components/ui/loading";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-type Endereco = {
-  cep: string;
-  rua: string;
-  numero: string;
-  complemento?: string;
-  bairro: string;
-  cidade: string;
-  uf: string;
-};
 
 type Aluno = {
   nome: string;
@@ -25,7 +17,14 @@ type Aluno = {
   celular: string;
   email: string;
   moraComResponsavel: boolean;
-  endereco: Endereco;
+  moraComResponsavelNome: string;
+  cep: string;
+  rua: string;
+  numero: string;
+  complemento?: string;
+  bairro: string;
+  cidade: string;
+  uf: string;
 };
 
 type DadosAluno = {
@@ -36,6 +35,7 @@ export default function Home() {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
   const [dados, setDados] = useState<DadosAluno | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -44,30 +44,22 @@ export default function Home() {
       if (!data.token) {return;}
       const token = data.token;
       
-      const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-      });
-      const usuarioIDRetorno = await usuarioID.json();
-      const usuarioId = usuarioIDRetorno.usuarioId; 
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${id}/detalhe`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
       });
       const dataRes = await res.json();
 
       console.log(dataRes)
-      for (let i=0; i<dataRes.total; i++){
-        if (dataRes.items[i].id === id){
-          setDados(dataRes.items[i]);
-          console.log(dataRes.items[i])
-        }
-      }
+      setDados(dataRes);
+      setLoading(false);
 
     }; fetchToken();
   },[id])
   
+  if (loading) return <div className="h-[703px]"><Loading /></div>
+
   return (
     <>
       
@@ -92,7 +84,7 @@ export default function Home() {
               className="origin-left">C.E.P.</motion.label>
               <motion.input
               disabled
-              type="text" defaultValue={dados ? dados.aluno.endereco.cep : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+              type="text" defaultValue={dados ? dados.aluno.cep : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
               <motion.div 
@@ -105,7 +97,7 @@ export default function Home() {
               className="origin-left">Rua/Avenida</motion.label>
               <motion.input
               disabled
-              type="text" defaultValue={dados ? dados.aluno.endereco.rua : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+              type="text" defaultValue={dados ? dados.aluno.rua : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
               
               <motion.div 
@@ -118,7 +110,7 @@ export default function Home() {
               className="origin-left">N°</motion.label>
               <motion.input
               disabled
-              type="text" defaultValue={dados ? dados.aluno.endereco.numero : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+              type="text" defaultValue={dados ? dados.aluno.numero : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
                 
             </div>
@@ -135,7 +127,7 @@ export default function Home() {
               className="origin-left">Complemento</motion.label>
               <motion.input
               disabled
-              type="text" defaultValue={dados ? dados.aluno.endereco.cidade : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+              type="text" defaultValue={dados ? dados.aluno.cidade : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
               <motion.div 
@@ -148,7 +140,7 @@ export default function Home() {
               className="origin-left">Cidade</motion.label>
               <motion.input
               disabled
-              type="text" defaultValue={dados ? dados.aluno.endereco.cidade : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+              type="text" defaultValue={dados ? dados.aluno.cidade : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
               <motion.div 
@@ -162,7 +154,7 @@ export default function Home() {
                 <motion.input 
                 type="text" 
                 disabled
-                defaultValue={dados ? dados.aluno.endereco.uf : ""}
+                defaultValue={dados ? dados.aluno.uf : ""}
                 className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] bg-transparent text-white  text-center`} />
               </motion.div>
 
@@ -176,7 +168,7 @@ export default function Home() {
               className="origin-left">Bairro</motion.label>
               <motion.input
               disabled
-              type="text" defaultValue={dados ? dados.aluno.endereco.bairro : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+              type="text" defaultValue={dados ? dados.aluno.bairro : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
             </div>
@@ -258,7 +250,7 @@ export default function Home() {
 
                 <motion.input
                 disabled
-                type="email" defaultValue={dados ? dados.aluno.email : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                type="email" defaultValue={dados ? dados.aluno.moraComResponsavelNome : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
 
               </motion.div>
             </div>

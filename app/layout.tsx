@@ -1,3 +1,4 @@
+import Account from "@imports/components/ui/account_icon";
 import "./globals.css";
 import { Poppins } from "next/font/google";
 
@@ -24,7 +25,7 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
 
   return (
     <html className={`bg-[#141416] ${poppins.variable} font-sans`}>
-      <body className="w-screen min-h-screen flex justify-center items-center overflow-x-hidden relative">
+      <body className="w-screen min-h-screen flex items-center overflow-x-hidden relative flex-col">
         <video 
         autoPlay
         loop
@@ -33,11 +34,16 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
         className="fixed top-0 left-0 w-full h-full object-cover object-bottom -z-10"
       >
         <source src="/file.mp4" type="video/mp4" />
-      </video>
+        </video>
+
 
       <div className="fixed top-0 left-0 w-full h-full bg-black opacity-55 z-[-5] "></div>
 
-        {children}
+        <Account />
+
+        <div className="my-auto py-4 h-full flex justify-center items-center w-full overflow-y-auto">
+          {children}
+        </div>
       
       </body>
     </html>

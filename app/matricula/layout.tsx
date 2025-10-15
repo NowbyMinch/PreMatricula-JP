@@ -19,7 +19,7 @@ import "../globals.css";
 export default function RootLayout({children,}: { children: React.ReactNode;}) {
 
   return (
-    <main className="w-screen min-h-screen flex justify-center items-center overflow-hidden relative py-4 ">
+    <main className="w-screen  flex justify-center items-center overflow-hidden relative py-4 ">
       {children}
     
     </main>

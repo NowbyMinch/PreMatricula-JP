@@ -17,7 +17,7 @@ import {
   CommandItem,
 } from "./command";
 import { cn } from "../../lib/utils";
-import { usePathname } from "next/navigation";
+import {LoadingSmaller} from "./loading";
 
 const inputClass = `w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 
     border-gray-400 max-w-[480px] bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed `;
@@ -352,6 +352,7 @@ type MatriculasData = {
 export function Matricula({ value, onChange }: ComboboxDemoProps) {
   const [open, setOpen] = useState(false);
   const [ matricula, setMatricula] = useState<{ value: string; label: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -383,10 +384,13 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
       }));
       
       setMatricula(Res);
-
+      setLoading(false);
+      
     }; fetchToken();
 
   },[]);
+
+  if (loading) return <div className="w-[130px] border rounded-[15px] h-[45px] border-gray-400 "><LoadingSmaller /></div>
 
   return (
     <>
@@ -401,7 +405,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
               {value
                 ? matricula.find((framework) => framework.value === value)?.label as string
-                : <span className="text-[#9CA3AF]">Matriculas</span>
+                : <span className="text-[#9CA3AF]">Matriculas </span>
               }
 
               <input
@@ -425,7 +429,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
 
           <Command className="rounded-[15px] bg-transparent"> 
             <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)]">
-              <CommandEmpty className="text-white mx-auto text-center py-2 my-auto bg-[rgba(12,12,14,1)]" >Nenhuma matrícula encontrada</CommandEmpty>
+              <CommandEmpty className="text-white mx-auto text-center py-2 my-auto bg-[rgba(12,12,14,1)]">Nenhuma matrícula encontrada</CommandEmpty>
               <CommandGroup className="cursor-pointer  bg-[rgba(12,12,14,1)] relative">
 
                 {matricula.map((framework) => (
@@ -434,7 +438,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
                     value={framework.value}
                     className="text-[16px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent"
                     onSelect={(currentValue) => {
-                      onChange(currentValue === value ? "" : currentValue);
+                      onChange(currentValue);
                       setOpen(false);
                     }}
                   >
