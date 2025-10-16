@@ -94,7 +94,7 @@ export default function Home() {
     } 
     else if (dataRes?.message){
       if (dataRes.message === "Pré-matrícula iniciada com sucesso."){
-          router.push("/matricula/endereco_e_comunicacao_responsavel")
+          router.push("/matricula/endereco_e_comunicacao_responsavel_financeiro")
       }
     } 
     

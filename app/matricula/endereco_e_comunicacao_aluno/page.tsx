@@ -25,22 +25,21 @@ export default function Home() {
 
   useEffect(() => {
     const fetchToken = async () => {
-    const tok = await fetch('/api/token');
-    const data = await tok.json();
-    if (!data.token) {return;}
-    const token = data.token;
-    console.log(token)
-    
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-    });
-    const dataRes = await res.json();
-    if (dataRes?.message === "Unauthorized"){
-      setMessage("Erro na matricula. Por favor, logue novamente.")
-    }
-    };
-    fetchToken();
+      const tok = await fetch('/api/token');
+      const data = await tok.json();
+      if (!data.token) {return;}
+      const token = data.token;
+      console.log(token)
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+      });
+      const dataRes = await res.json();
+      if (dataRes?.message === "Unauthorized"){
+        setMessage("Erro na matricula. Por favor, logue novamente.")
+      }
+      }; fetchToken();
   },[])
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -92,8 +91,20 @@ export default function Home() {
       });
       const dataRes = await res.json();
 
-      console.log(dataRes)
-      console.log(matricula)
+      const Atual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      const AtualDado = await Atual.json();
+      console.log(AtualDado.matriculaId, "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk ")
+
+      const Sponte = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/integrar-sponte/${AtualDado.matriculaId}`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, },
+        body: JSON.stringify(endereco),
+      });
+      const IntegrarSponte = await Sponte.json();
+      console.log(IntegrarSponte, "Sponte aqui");
+
 
       if (dataRes?.error){
         if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {

@@ -53,7 +53,7 @@ export default function Account() {
       const detalheRes = await detalhe.json();
       console.log(detalheRes, "detalhe novo atual");
 
-      if (detalheRes.status !== "PENDENTE"){
+      if (detalheRes.completo){
         console.log(detalheRes.status)
         setFinalizado(true);
       } 
@@ -161,7 +161,7 @@ export default function Account() {
             exit={{scale:0}}
             whileHover={{scale:1.02, color: "oklch(90.5% 0.182 98.111)"}}
             whileTap={{scale:0.98}}
-            onClick={() => { if(ultima) {router.push(`/matriculas/${ultima}/dados_do_responsavel_financeiro`)} }} // logout closes popover
+            onClick={() => { if(ultima) {router.push(`/matriculas/${ultima}/dados_do_responsavel`)} }} // logout closes popover
             className={`w-fit h-10 my-auto  rounded-[15px] flex flex-col justify-center gap-2 items-center cursor-pointer z-100`}>
               Matrículas
             </motion.button>

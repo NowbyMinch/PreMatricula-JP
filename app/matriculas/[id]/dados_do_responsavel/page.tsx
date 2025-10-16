@@ -40,7 +40,6 @@ export default function Home() {
       const dataRes = await res.json();
 
       setDados(dataRes);
-      console.log(dataRes, "Esse aqui é o de agora que está pegando as informações da pagina")
       setLoading(false);
     }; fetchToken();
     
@@ -220,7 +219,7 @@ export default function Home() {
                 animate={{scale:1}}
                 exit={{scale:0}}
                 className="text-[30px] w-full mt-5 font-medium ">
-                  Responsavel Financeiro
+                  Segundo responsável
                 </motion.h1>
               }
               

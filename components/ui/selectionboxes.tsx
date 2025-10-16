@@ -18,7 +18,7 @@ import {
 } from "./command";
 import { cn } from "../../lib/utils";
 import {LoadingSmaller} from "./loading";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const inputClass = `w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 
     border-gray-400 max-w-[480px] bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed `;
@@ -357,6 +357,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
   const [open, setOpen] = useState(false);
   const [ matricula, setMatricula] = useState<{ value: string; label: string }[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -389,7 +390,6 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
       
       setMatricula(Res);
       setLoading(false);
-      
     }; fetchToken();
 
   },[]);
@@ -481,8 +481,12 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
   ];
 
   useEffect(() => {
-    const atual = Dados.filter((item) => item.value === id)[0].label;
-    setAtual(atual);
+    const found = Dados.find((item) => item.value === id);
+    if (found) {
+      setAtual(found.label);
+    } else {
+      setAtual(""); // ou um texto padrão, tipo "Selecione"
+    }
   },[Dados, id])
 
   return (
