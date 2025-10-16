@@ -474,7 +474,7 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
   const id = pathname.split("/")[3]; 
   
   const Dados = [
-    {value:"dados_do_responsavel_financeiro", label:"Dados do responsável"}, 
+    {value:"dados_do_responsavel", label:"Dados do responsável"}, 
     {value:"endereco_e_comunicacao_responsavel", label:"Endereço/Comunicação do responsável"}, 
     {value:"dados_do_aluno", label:"Dados do aluno"},  
     {value:"endereco_e_comunicacao_aluno", label:"Endereço/Comunicação do aluno"}
