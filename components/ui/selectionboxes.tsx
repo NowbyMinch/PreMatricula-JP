@@ -18,6 +18,7 @@ import {
 } from "./command";
 import { cn } from "../../lib/utils";
 import {LoadingSmaller} from "./loading";
+import { usePathname } from "next/navigation";
 
 const inputClass = `w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 
     border-gray-400 max-w-[480px] bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed `;
@@ -126,11 +127,14 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
       const data = await tok.json();
       if (!data.token) return
       const token = data.token;
+
       const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
       const matricula = await Matricula.json();
+      
       const matriculaID = matricula.id;
       const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
       const dataResponsavel = await Responsavel.json();
+      
       console.log(dataResponsavel);
       
       const array: ResponsavelData[] = Array.isArray(dataResponsavel)
@@ -390,7 +394,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
 
   },[]);
 
-  if (loading) return <div className="w-[130px] border rounded-[15px] h-[45px] border-gray-400 "><LoadingSmaller /></div>
+  if (loading) return <div className="w-[120px] border rounded-[15px] h-[45px] border-gray-400 "><LoadingSmaller /></div>
 
   return (
     <>
@@ -400,7 +404,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
         <PopoverTrigger asChild className="">
           <Button
             role="combobox"
-            className={`pl-5 text-[16px] w-[130px] max-w-[60%] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+            className={` text-[15px] px-3 w-fit max-w-[100px] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
           >
             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
               {value
@@ -425,7 +429,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
 
         </PopoverTrigger>
 
-        <PopoverContent className="min-w-[200px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
+        <PopoverContent className="w-[130px] text-[15px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
 
           <Command className="rounded-[15px] bg-transparent"> 
             <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)]">
@@ -436,7 +440,96 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
                   <CommandItem
                     key={framework.value}
                     value={framework.value}
-                    className="text-[16px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent"
+                    className="text-[15px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent"
+                    onSelect={(currentValue) => {
+                      onChange(currentValue);
+                      setOpen(false);
+                    }}
+                  >
+                    {framework.label}
+                    <Check
+                      className={cn(
+                        "ml-auto transition-all ease-in-out duration-300",
+                        value === framework.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+
+
+      </Popover>
+
+    </>
+  );
+}
+
+export function Dados({ value, onChange }: ComboboxDemoProps) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [atual, setAtual] = useState("");
+  const id = pathname.split("/")[3]; 
+  
+  const Dados = [
+    {value:"dados_do_responsavel", label:"Dados do responsável"}, 
+    {value:"endereco_e_comunicacao_responsavel", label:"Endereço/Comunicação do responsável"}, 
+    {value:"dados_do_aluno", label:"Dados do aluno"},  
+    {value:"endereco_e_comunicacao_aluno", label:"Endereço/Comunicação do aluno"}
+  ];
+
+  useEffect(() => {
+    const atual = Dados.filter((item) => item.value === id)[0].label;
+    setAtual(atual);
+  },[])
+
+  return (
+    <>
+      <input type="hidden" value={value} required />
+
+      <Popover open={open} onOpenChange={setOpen} >
+        <PopoverTrigger asChild className="">
+          <Button
+            role="combobox"
+            className={`dadosBox xl:hidden text-[15px] px-3 w-fit max-w-[100px] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+          >
+            <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap text-nowrap">
+              {value
+                ? Dados.find((framework) => framework.value === value)?.label as string
+                : atual
+              }
+
+              <input
+                type="text"
+                name="genero"
+                value={value}
+                required
+                onChange={() => {}}
+                style={{
+                  opacity: 0,
+                  position: 'absolute',
+                  pointerEvents: 'none',
+                }}
+              />
+            </span>
+          </Button>
+
+        </PopoverTrigger>
+
+        <PopoverContent className="w-[200px] text-[15px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
+
+          <Command className="rounded-[15px] bg-transparent"> 
+            <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)]">
+              <CommandEmpty className="text-white mx-auto text-center py-2 my-auto bg-[rgba(12,12,14,1)]">Nenhum dado</CommandEmpty>
+              <CommandGroup className="cursor-pointer  bg-[rgba(12,12,14,1)] relative">
+
+                {Dados.map((framework) => (
+                  <CommandItem
+                    key={framework.value}
+                    value={framework.value}
+                    className="text-[15px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer "
                     onSelect={(currentValue) => {
                       onChange(currentValue);
                       setOpen(false);

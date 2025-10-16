@@ -231,33 +231,13 @@ export default function Home() {
                 </motion.div>
 
                 <div className="flex w-full gap-4 items-end">
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
-                    <motion.label>Contato Whatsapp</motion.label>
-                    <Celular onChange={(value) => {setWhatsApp(value)}} disabled={false} />
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-[380px] max-w-full">
+                    <Responsavel disabled={(value) => setIsDisabled(value)} value={responsavel} onChange={(value) => setResponsavel(value)} />
                   </motion.div>
-
-                  <motion.button
-                    disabled={isDisabled}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    whileHover={!isDisabled ? { scale: 1.01 } : {}}
-                    whileTap={!isDisabled ? { scale: 0.99 } : {}}
-                    type="button"
-                    className={`border border-gray-400 px-4 h-[50px] rounded-[15px]  flex gap-2 justify-center items-center transition-all duration-300 cursor-pointer`}
-                  >
-                    <FaWhatsapp className="text-green-600 size-6" aria-hidden="true" /> WhatsApp
-                  </motion.button>
+                  
                 </div>
               </div>
-{/* 
-              <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="mt-2">
-                Mora junto com algum dos seus responsáveis?
-              </motion.p> */}
-
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-[380px] max-w-full">
-                <Responsavel disabled={(value) => setIsDisabled(value)} value={responsavel} onChange={(value) => setResponsavel(value)} />
-              </motion.div>
+              
             </div>
           </AnimatePresence>
 

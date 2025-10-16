@@ -182,7 +182,7 @@ export default function Home() {
               
           </div>
 
-          { dados?.responsaveis[1] ? 
+          { dados?.responsaveis[1].endereco.cidade !== "PENDENTE" &&
             <div key={1} className="flex flex-col justify-between w-full gap-5">
               <motion.h1 
               initial={{scale:0}}
@@ -304,7 +304,7 @@ export default function Home() {
               </div>
                 
             </div>
-          : "" }
+           }
         </AnimatePresence>
       </div>
     </>

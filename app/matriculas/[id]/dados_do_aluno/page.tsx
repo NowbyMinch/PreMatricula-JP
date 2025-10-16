@@ -47,7 +47,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col gap-10 pb-10 pt-16 w-full">
+      <div className="flex flex-col gap-10 pb-10 pt-12 w-full">
         <AnimatePresence >
           <div key={0} className="flex flex-col justify-between w-full gap-5">
             <div className={` w-full max-w-full flex md:flex-row flex-col gap-4`}>
@@ -95,20 +95,6 @@ export default function Home() {
             </div>
 
             <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
-              
-              <motion.div 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                className="flex flex-col gap-2 w-full ">
-                  <motion.label 
-                  htmlFor="" 
-                  className="origin-left">Estado Civil</motion.label>
-                  <motion.input
-                  disabled
-                  
-                  type="text" defaultValue={dados?.aluno?.estadoCivil ? (dados.aluno.estadoCivil.toLowerCase()[0].toUpperCase() + dados.aluno.estadoCivil.toLowerCase().slice(1)) : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-              </motion.div>
 
               <motion.div 
               initial={{scale:0}}
@@ -135,13 +121,8 @@ export default function Home() {
                 <motion.input
                 disabled
                 
-                type="text" defaultValue={dados?.aluno?.nacionalidade ? dados.aluno.dataNascimento : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                type="text" defaultValue={dados?.aluno?.nacionalidade ? dados?.aluno?.nacionalidade : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
-
-            </div>
-
-            <div className={` w-[33%] max-w-full flex gap-4 md:flex-row flex-col`}>
-            
 
               <motion.div 
               initial={{scale:0}}
@@ -156,7 +137,6 @@ export default function Home() {
                 
                 type="text" defaultValue={dados ? dados.aluno.cpf : ""} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
-
             </div>
 
           </div>

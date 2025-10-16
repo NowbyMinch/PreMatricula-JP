@@ -17,9 +17,6 @@ export default function Home() {
   const [ nome, setNome ] = useState("");
   const [ genero, setGenero ] = useState("");
   const [ dataNascimento, setData ] = useState<string>("");
-  const [ orgaoExpeditor, setOrgaoExpeditor ] = useState<string>("");
-  const [ dataExpedicao, setDataExpedicao ] = useState<string>("");
-  const [ estado_civil, setEstado_civil ] = useState<string>("");
   const [ rg, setRG ] = useState<string>("");
   const [ cpf, setCPF ] = useState<string>("");
   const [ pessoaJuridica, setPessoaJuridica ] = useState(false);
@@ -73,9 +70,6 @@ export default function Home() {
       nome: nome,
       genero: genero,
       dataNascimento: dataNascimento,
-      orgaoExpeditor: orgaoExpeditor,
-      dataExpedicao: dataExpedicao,
-      estadoCivil: estado_civil,
       rg: rg,
       cpf: cpf,
       pessoaJuridica: pessoaJuridica,
@@ -183,19 +177,7 @@ export default function Home() {
 
               <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
                 
-                <div className="flex gap-5 w-[66%]">
-
-                  <motion.div 
-                  initial={{scale:0}}
-                  animate={{scale:1}}
-                  exit={{scale:0}}
-                  className="flex flex-col gap-2 w-full ">
-                    <motion.label 
-                    htmlFor="" 
-                    className="origin-left">Estado Civil</motion.label>
-                    <Civil value={estado_civil} onChange={(val) => {setEstado_civil(val)}} />
-                  </motion.div>
-
+                <div className="flex gap-5 w-full">
 
                   <motion.div 
                   initial={{scale:0}}
@@ -211,113 +193,78 @@ export default function Home() {
                     type="text" placeholder="Digite seu parentesco. Ex: Mãe" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                   </motion.div>
                   
+                  <motion.div 
+                  initial={{scale:0}}
+                  animate={{scale:1}}
+                  exit={{scale:0}}
+                  className="flex flex-col gap-2 w-full">
+                    <motion.label 
+                    htmlFor="" 
+                    className="origin-left">CPF / CNPJ</motion.label>
+                    <div className="w-full flex flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
 
+                      <div className="flex w-full gap-4">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <motion.input 
+                          whileHover={{ scale: 1.04}}
+                          whileTap={{ scale: 0.96}}
+                          required
+                          onChange={(e) => {if (e.target.checked) {setPessoaJuridica(false)}; }}
+                          type="radio" name="personType" value="fisica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
+                          Pessoa Física
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <motion.input 
+                          whileHover={{ scale: 1.04}}
+                          whileTap={{ scale: 0.96}}
+                          required
+                          onChange={(e) => {setPessoaJuridica(e.target.checked)}}
+                          type="radio" name="personType" value="juridica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
+                          Pessoa Jurídica
+                        </label>
+                      </div>
+
+                      <motion.div 
+                      initial={{scale:0}}
+                      animate={{scale:1}}
+                      exit={{scale:0}}
+                      className="flex flex-col gap-2 w-full ">
+                        <CpfInput onChange={(value) => {setCPF(value)}} disabled={false}/>
+                        
+                      </motion.div>
+
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                  initial={{scale:0}}
+                  animate={{scale:1}}
+                  exit={{scale:0}}
+                  className="flex flex-col gap-2 w-full ">
+                    <motion.label 
+                    htmlFor="" 
+                    className="origin-left">RG</motion.label>
+
+
+                    <div className="w-full flex sm:flex-row flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
+                      
+                      <motion.div 
+                      initial={{scale:0}}
+                      animate={{scale:1}}
+                      exit={{scale:0}}
+                      className="flex flex-col gap-2 w-full ">
+                        <motion.label 
+                        htmlFor="" 
+                        className="origin-left">N°</motion.label>
+                        <NumeroRG onChange={(value) => {setRG(value)}} disabled={false}/>
+                        
+                      </motion.div>
+
+                    </div>
+                    
+                  </motion.div>
                 </div>
 
-              </div>
-
-              <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
-                
-                <motion.div 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                className="flex flex-col gap-2 ">
-                  <motion.label 
-                  htmlFor="" 
-                  className="origin-left">CPF / CNPJ</motion.label>
-                  <div className="w-full flex flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
-
-                    <div className="flex w-full gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <motion.input 
-                        whileHover={{ scale: 1.04}}
-                        whileTap={{ scale: 0.96}}
-                        required
-                        onChange={(e) => {if (e.target.checked) {setPessoaJuridica(false)}; }}
-                        type="radio" name="personType" value="fisica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
-                        Pessoa Física
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <motion.input 
-                        whileHover={{ scale: 1.04}}
-                        whileTap={{ scale: 0.96}}
-                        required
-                        onChange={(e) => {setPessoaJuridica(e.target.checked)}}
-                        type="radio" name="personType" value="juridica" className="form-radio text-blue-500 cursor-pointer accent-yellow-400"/>
-                        Pessoa Jurídica
-                      </label>
-                    </div>
-
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2 w-full ">
-                      <motion.label 
-                      htmlFor="" 
-                      className="origin-left">CPF</motion.label>
-                      <CpfInput onChange={(value) => {setCPF(value)}} disabled={false}/>
-                      
-                    </motion.div>
-
-                  </div>
-              </motion.div>
-
-                <motion.div 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                className="flex flex-col gap-2 min-w-[66%] ">
-                  <motion.label 
-                  htmlFor="" 
-                  className="origin-left">RG</motion.label>
-
-
-                  <div className="w-full flex sm:flex-row flex-col justify-center items-center gap-4 rounded-[15px] border border-gray-400 min-h-[150px] p-3">
-                    
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2 w-full ">
-                      <motion.label 
-                      htmlFor="" 
-                      className="origin-left">N°</motion.label>
-                      <NumeroRG onChange={(value) => {setRG(value)}} disabled={false}/>
-                      
-                    </motion.div>
-
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2 w-full ">
-                      <motion.label 
-                      htmlFor="" 
-                      className="origin-left">Órgão Exp.</motion.label>
-                      <motion.input
-                      required
-                      onChange={(e) => {setOrgaoExpeditor(e.target.value)}}
-                      type="text" placeholder="Digite o órgão expedidor" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
-                      
-                    </motion.div>
-
-                    <motion.div 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    className="flex flex-col gap-2 w-full ">
-                      <motion.label 
-                      htmlFor="" 
-                      className="origin-left">Data de Exp.</motion.label>
-                      <DatePicker onChange={(val) => {setDataExpedicao(val)}} />
-                      
-                    </motion.div>
-
-                  </div>
-                  
-                </motion.div>
               </div>
 
             </div>

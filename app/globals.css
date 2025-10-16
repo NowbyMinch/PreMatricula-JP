@@ -56,6 +56,7 @@ body {
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 2px;
   background-color: transparent;
   border-radius: 30px;
 }
@@ -132,4 +133,22 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+@media(max-width:1280px){
+  .dadosBox{
+    max-width: clamp(100px, 40vw, 292px);
+  }
+}
+
+@media(max-width:500px){
+  .dadosBox{
+    max-width: clamp(100px, 32vw, 292px);
+  }
+}
+
+@media(max-width:410px){
+  .dadosBox{
+    max-width: clamp(100px, 27vw, 292px);
+  }
 }

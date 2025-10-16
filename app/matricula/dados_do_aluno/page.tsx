@@ -19,7 +19,6 @@ export default function Home() {
   const [ dataNascimento, setDataNascimento ] = useState<string>("");
   const [ cidadeNatal, setCidadeNatal ] = useState<string>("");
   const [ cpf, setCPF ] = useState<string>("");
-  const [ estado_civil, setEstado_civil ] = useState<string>("");
 
   const [ nacionalidade, setNacionalidade ] = useState("brasileiro(a)"); //FALTA DUDA COLOCAR NO BACKEND ----------------------------------------------------------
   
@@ -69,7 +68,6 @@ export default function Home() {
         cidadeNatal: cidadeNatal,
         nacionalidade: nacionalidade,
         cpf: cpf,
-        estadoCivil: estado_civil,
       }
 
       console.log(matriculaID)
@@ -184,17 +182,6 @@ export default function Home() {
               </div>
               
               <div className={` w-full max-w-full flex md:flex-row flex-col gap-4`}>
-                  
-                <motion.div 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                className="flex flex-col gap-2 w-full">
-                  <motion.label 
-                  htmlFor="" 
-                  className="origin-left">Estado Civíl</motion.label>
-                  <Civil value={estado_civil} onChange={(val) => {setEstado_civil(val)}} />
-                </motion.div>
 
                 <motion.div 
                 initial={{scale:0}}
@@ -224,10 +211,6 @@ export default function Home() {
                   type="text" placeholder="Digite sua nacionalidade" defaultValue="Brasileiro(a)" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                 </motion.div>
                 
-              </div>
-            
-              <div className={` w-[335px] max-w-full flex gap-4 md:flex-row flex-col`}>
-
                 <motion.div 
                 initial={{scale:0}}
                 animate={{scale:1}}
