@@ -2,9 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Account from "@imports/components/ui/account_icon";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
@@ -13,7 +11,6 @@ import Account from "@imports/components/ui/account_icon";
 
 export default function Home() {
     const router = useRouter();
-    const [ pop, setPop ] = useState(false);
     const [ ultima, setUltima ] = useState("");
 
     useEffect(() => {
@@ -71,7 +68,7 @@ export default function Home() {
                         whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
                         whileTap={{scale:0.98}}
                         transition={{duration: 0.3}}
-                        onClick={() => router.push('/matricula/dados_do_responsavel')}
+                        onClick={() => router.push('/matricula/dados_do_responsavel_financeiro')}
                         className="cursor-pointer rounded-[15px] max-w-full w-[230px] py-3 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold mb-10">Nova matrícula</motion.button>
 
                         <motion.button 
@@ -81,7 +78,7 @@ export default function Home() {
                         whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
                         whileTap={{scale:0.98}}
                         transition={{duration: 0.3, }}
-                        onClick={() => {if (ultima) {router.push(`/matriculas/${ultima}/dados_do_responsavel`)}}}
+                        onClick={() => {if (ultima) {router.push(`/matriculas/${ultima}/dados_do_responsavel_financeiro`)}}}
                         className="cursor-pointer rounded-[15px] max-w-full w-[230px] py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold mb-10">Ver matrículas</motion.button>
                     </div>
                 </div>

@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Civil, CpfInput, Genero, NumeroRG } from "@imports/components/ui/selectionboxes";
+import { CpfInput, Genero, NumeroRG } from "@imports/components/ui/selectionboxes";
 import DatePicker from "@imports/components/ui/datepicker";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
@@ -60,47 +60,44 @@ export default function Home() {
     const responsaveis = await Responsavel.json();
     console.log(responsaveis)
 
-
-    if (matricula?.message === "Unauthorized"){
-      setMessage("Erro na matricula. Por favor, logue novamente.")
-      return
+    const iniciar = {
+    nome: nome,
+    genero: genero,
+    dataNascimento: dataNascimento,
+    rg: rg,
+    cpf: cpf,
+    pessoaJuridica: pessoaJuridica,
+    parentesco: parentesco
     }
 
-    const dadosResponsavelDois = {
-      nome: nome,
-      genero: genero,
-      dataNascimento: dataNascimento,
-      rg: rg,
-      cpf: cpf,
-      pessoaJuridica: pessoaJuridica,
-      parentesco: parentesco
-    }
+    console.log(iniciar);
 
-    console.log(dadosResponsavelDois)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-1b/${matriculaID}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-    body: JSON.stringify(dadosResponsavelDois),
+    body: JSON.stringify(iniciar),
     });
     const dataRes = await res.json();
     console.log(dataRes);
     
     if (dataRes?.error){
-        if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
-            // dataRes.error exists and is a non-empty array
-            let errors = "";
-            for (let i = 0; i < dataRes.message.length; i++) {
-                errors += dataRes.message[i] + "\n";
-            }
-            setMessage(errors);
-        } else {
-        setMessage(dataRes.error.message)
-        }
-    } else if (dataRes?.message){
-        if (dataRes.message === "Etapa 1B (segundo responsável) concluída com sucesso."){
-            router.push("/matricula/endereco_e_comunicacao_responsavel")
-        }
-    }
+      if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
+          // dataRes.error exists and is a non-empty array
+          let errors = "";
+          for (let i = 0; i < dataRes.message.length; i++) {
+              errors += dataRes.message[i] + "\n";
+          }
+          setMessage(errors);
+      } else {
+      setMessage(dataRes.error.message)
+      }
+    } 
+    else if (dataRes?.message){
+      if (dataRes.message === "Pré-matrícula iniciada com sucesso."){
+          router.push("/matricula/endereco_e_comunicacao_responsavel")
+      }
+    } 
+    
   };
   
   return (
@@ -110,8 +107,7 @@ export default function Home() {
       )}
 
 
-
-      <div className={`  max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
+      <div className={` max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
         <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full  `} onSubmit={handleSubmit}>
           
           {/* <motion.img 
@@ -124,7 +120,7 @@ export default function Home() {
           initial={{scale:0}}
           animate={{scale:1}}
           exit={{scale:0}}
-          className="text-[35px] mx-auto mt-10 font-medium text-center">Dados do segundo responsável </motion.h1>
+          className="text-[35px] mx-auto mt-10 font-medium text-center">Dados do responsável Financeiro</motion.h1>
 
           <motion.p 
           initial={{scale:0}}
@@ -158,7 +154,6 @@ export default function Home() {
                   htmlFor="" 
                   className="origin-left">Gênero</motion.label>
                   <Genero value={genero} onChange={ value => {setGenero(value);}} />
-
                   
                 </motion.div>
                 
@@ -172,13 +167,11 @@ export default function Home() {
                   className="origin-left">Data de Nascimento</motion.label>
                   <DatePicker onChange={(val) => {setData(val)} } />
                 </motion.div>
-                
               </div>
 
               <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
                 
                 <div className="flex gap-5 w-full">
-
                   <motion.div 
                   initial={{scale:0}}
                   animate={{scale:1}}
@@ -229,6 +222,7 @@ export default function Home() {
                       animate={{scale:1}}
                       exit={{scale:0}}
                       className="flex flex-col gap-2 w-full ">
+                        
                         <CpfInput onChange={(value) => {setCPF(value)}} disabled={false}/>
                         
                       </motion.div>
@@ -261,11 +255,12 @@ export default function Home() {
                       </motion.div>
 
                     </div>
-                    
+                      
                   </motion.div>
                 </div>
 
               </div>
+
 
             </div>
           </AnimatePresence>

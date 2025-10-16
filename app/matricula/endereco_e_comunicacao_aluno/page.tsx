@@ -1,7 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { FaWhatsapp } from "react-icons/fa";
 import { Celular, CEP, Numero, Responsavel } from "@imports/components/ui/selectionboxes";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 import { useRouter } from "next/navigation";
@@ -13,7 +12,6 @@ export default function Home() {
   const [ cep, setCEP] = useState<string | null>(null);
   const [ rua, setRua] = useState<string | null>(null);
   const [ telefone, setTelefone] = useState<string | null>(null);
-  const [ whatsApp, setWhatsApp] = useState<string | null>(null);
   const [ numero, setNumero] = useState<string | null>(null);
   const [ complemento, setComplemento] = useState<string | null>(null);
   const [ uf, setUF] = useState<string | null>(null);
@@ -68,7 +66,6 @@ export default function Home() {
           telefone,
           celular,
           email,
-          whatsapp: whatsApp,
           moraComResponsavel: true,
           ...(responsavel ? { moraComResponsavelNome: responsavel } : {}),
         }
@@ -76,7 +73,6 @@ export default function Home() {
           telefone,
           celular,
           email,
-          whatsapp: whatsApp,
           moraComResponsavel: false,
           cep,
           rua,

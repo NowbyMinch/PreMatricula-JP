@@ -21,7 +21,7 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
     const [ enderecoAluno, setEnderecoAluno ] = useState(false);
 
     useEffect(() => {
-        if (pathname.startsWith("/matriculas/") && pathname.endsWith("/dados_do_responsavel")){
+        if (pathname.startsWith("/matriculas/") && pathname.endsWith("/dados_do_responsavel_financeiro")){
             setBar("1")
         } 
         else if (pathname.startsWith("/matriculas/") && pathname.endsWith("/endereco_e_comunicacao_responsavel")){
@@ -38,11 +38,6 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
             const data = await tok.json();
             if (!data.token) {return;}
             const token = data.token;
-            const MatriculaAtual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-            });
-            const matriculaAtual = await MatriculaAtual.json();
 
             const detalhe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${id}/detalhe`, {
                 method: 'GET',
@@ -53,12 +48,12 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
 
             
             const etapas = [
-                {value: 1, label: "1"},
-                {value: 2, label: "2"},
-                {value: 3, label: "1b"},
-                {value: 4, label: "2b"},
-                {value: 5, label: "3"},
-                {value: 6, label: "3b"},
+                {value: 1, label: "1", pagina: "dados_do_responsavel_financeiro"},
+                {value: 2, label: "2", pagina: "endereco_e_comunicacao_responsavel_financeiro"},
+                {value: 3, label: "1b", pagina: "dados_do_responsavel_financeiro"},
+                {value: 4, label: "2b", pagina: "endereco_e_comunicacao_responsavel"},
+                {value: 5, label: "3", pagina: "dados_do_aluno"},
+                {value: 6, label: "3b", pagina: "endereco_e_comunicacao_aluno"},
             ]
 
             const etapaAtual = etapas.find((item) => item.label === detalheRes.etapaAtualLabel)?.value;
@@ -67,8 +62,10 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
             if (etapaAtual){
                 if (etapaAtual > 2){
                     setEnderecoResponsavel(true);
-                } else if (etapaAtual > 5){
+                } 
+                if (etapaAtual > 5){
                     setDadosAluno(true);
+                    console.log("mas que merdaaaaaaaaaa")
                 }
             }
 
@@ -80,7 +77,7 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
 
         }; fetchToken();
 
-    },[pathname])
+    },[pathname, id])
 
     return (
         <>
@@ -96,7 +93,7 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
                             }}
                             whileTap={{scale:0.98}}
                             className="hover:text-yellow-300 relative text-center "
-                            href={`/matriculas/${id}/dados_do_responsavel`}>
+                            href={`/matriculas/${id}/dados_do_responsavel_financeiro`}>
                                 Dados do Responsável 
                                 <motion.div 
                                 initial={{ scaleX: 0 }}
@@ -170,11 +167,35 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
                             <Matricula value={matricula} onChange={(value) => {setMatricula(value); router.push(`/matriculas/${value}/${pathname.split("/")[3]}`)}} />
 
                             <Dados value={dado} onChange={(value) => {setDado(value); router.push(`/matriculas/${id}/${value}`)}} />
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                             <motion.button 
-                            whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+                            whileHover={{boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
                             whileTap={{scale:0.98}}
-                            onClick={() => router.push("/matricula/dados_do_responsavel")}
+                            onClick={() => router.push("/matricula/dados_do_responsavel_financeiro")}
                             className="cursor-pointer rounded-[15px] max-w-full w-fit text-nowrap px-2 text-[15px] bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold ">Nova Matrícula</motion.button>
                         </div> 
                     </div>

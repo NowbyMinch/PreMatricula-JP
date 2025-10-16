@@ -6,11 +6,11 @@ export function middleware(request: NextRequest){
     const isProtectedRoute = request.nextUrl.pathname.startsWith('/matricula');
     
     if (request.nextUrl.pathname === '/cadastro' && token) {
-      return NextResponse.redirect(new URL('/matricula/dados_do_responsavel', request.url));
+      return NextResponse.redirect(new URL('/matricula/dados_do_responsavel_financeiro', request.url));
     }
     
     if (request.nextUrl.pathname === '/registrar' && token) {
-      return NextResponse.redirect(new URL('/matricula/dados_do_responsavel', request.url));
+      return NextResponse.redirect(new URL('/matricula/dados_do_responsavel_financeiro', request.url));
     }
 
     if (isProtectedRoute && !token) {
@@ -18,7 +18,7 @@ export function middleware(request: NextRequest){
     }
     
     if (request.nextUrl.pathname === '/' && token) {
-      return NextResponse.redirect(new URL('/matricula/dados_do_responsavel', request.url));
+      return NextResponse.redirect(new URL('/matricula/dados_do_responsavel_financeiro', request.url));
     }
     
     if (request.nextUrl.pathname === '/' && !token) {

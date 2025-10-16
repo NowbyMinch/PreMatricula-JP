@@ -63,13 +63,13 @@ export default function Home() {
             // handleSubmit snippet
             if (Array.isArray(data?.message) && data.message.length > 0) {
                 if (data.message[0] === "Login realizado com sucesso") {
-                    router.push('/matricula/dados_do_responsavel');
+                    router.push('/matricula/dados_do_responsavel_financeiro');
             } else {
                 const errors = data.message.join("\n");
                 setMessage(errors);
             }
             } else if (data?.message === "Login realizado com sucesso") {
-                router.push('/matricula/dados_do_responsavel');
+                router.push('/matricula/dados_do_responsavel_financeiro');
             } else {
                 setMessage(data?.message || data?.error || "Erro desconhecido ao fazer login.");
             }

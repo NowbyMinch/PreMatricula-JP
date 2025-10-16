@@ -43,6 +43,7 @@ export default function Home() {
       console.log(dataRes, "Esse aqui é o de agora que está pegando as informações da pagina")
       setLoading(false);
     }; fetchToken();
+    
   },[id])
 
   if (loading) return <div className="h-[703px]"><Loading /></div>
@@ -212,7 +213,7 @@ export default function Home() {
           </div>
 
           { dados?.responsaveis[1] &&
-            <div key={0} className="flex flex-col justify-between w-full gap-5">
+            <div key={1} className="flex flex-col justify-between w-full gap-5">
               { dados?.responsaveis[1] && 
                 <motion.h1 
                 initial={{scale:0}}
@@ -364,10 +365,6 @@ export default function Home() {
 
               </div>
 
-              <div className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}>
-                
-                
-              </div>
             </div>
             
           }

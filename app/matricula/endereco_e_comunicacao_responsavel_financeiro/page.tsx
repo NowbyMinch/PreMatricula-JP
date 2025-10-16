@@ -102,7 +102,7 @@ export default function Home() {
         } else if (dataRes?.message){
             if (dataRes.message === "Etapa 2 concluída com sucesso."){
                 if (segundoResponsavel){
-                    router.push("/matricula/dados_do_responsavel_dois");
+                    router.push("/matricula/dados_do_responsavel_financeiro_dois");
                 } else {
                     router.push("/matricula/dados_do_aluno");
                 }

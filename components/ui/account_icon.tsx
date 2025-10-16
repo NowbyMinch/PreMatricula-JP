@@ -74,7 +74,7 @@ export default function Account() {
     }
     // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-  },[pathname])
+  },[pathname,finalizado])
   
   const Logout = async () => {
     try {
@@ -104,7 +104,7 @@ export default function Account() {
         router.push (`/matricula/endereco_e_comunicacao_responsavel_financeiro`)
       }
       else if (etapaAtual === "1b"){
-        router.push (`/matricula/dados_do_responsavel_dois`)
+        router.push (`/matricula/dados_do_responsavel`)
       }
       else if (etapaAtual === "2b"){
         router.push (`/matricula/endereco_e_comunicacao_responsavel`)
@@ -161,7 +161,7 @@ export default function Account() {
             exit={{scale:0}}
             whileHover={{scale:1.02, color: "oklch(90.5% 0.182 98.111)"}}
             whileTap={{scale:0.98}}
-            onClick={() => { if(ultima) {router.push(`/matriculas/${ultima}/dados_do_responsavel`)} }} // logout closes popover
+            onClick={() => { if(ultima) {router.push(`/matriculas/${ultima}/dados_do_responsavel_financeiro`)} }} // logout closes popover
             className={`w-fit h-10 my-auto  rounded-[15px] flex flex-col justify-center gap-2 items-center cursor-pointer z-100`}>
               Matrículas
             </motion.button>

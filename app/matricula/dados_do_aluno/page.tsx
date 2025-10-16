@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Civil, CpfInput, Genero } from "@imports/components/ui/selectionboxes";
+import { CpfInput, Genero } from "@imports/components/ui/selectionboxes";
 import DatePicker from "@imports/components/ui/datepicker";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">

@@ -1,9 +1,8 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import "../globals.css";
 import { useEffect } from "react";
-import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
 
 // const poppins = Poppins({
 //   subsets: ["latin"],   // charset usado
