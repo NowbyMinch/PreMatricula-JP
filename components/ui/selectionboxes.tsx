@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "./button";
 import { motion } from "framer-motion";
@@ -17,8 +17,9 @@ import {
   CommandItem,
 } from "./command";
 import { cn } from "../../lib/utils";
-import {LoadingSmaller} from "./loading";
-import { usePathname, useRouter } from "next/navigation";
+import {Loading, LoadingSmaller} from "./loading";
+import { usePathname } from "next/navigation";
+
 
 const inputClass = `w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 
     border-gray-400 max-w-[480px] bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed `;
@@ -357,7 +358,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
   const [open, setOpen] = useState(false);
   const [ matricula, setMatricula] = useState<{ value: string; label: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -473,12 +474,12 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
   const [atual, setAtual] = useState("");
   const id = pathname.split("/")[3]; 
   
-  const Dados = [
-    {value:"dados_do_responsavel", label:"Dados do responsável"}, 
-    {value:"endereco_e_comunicacao_responsavel", label:"Endereço/Comunicação do responsável"}, 
-    {value:"dados_do_aluno", label:"Dados do aluno"},  
-    {value:"endereco_e_comunicacao_aluno", label:"Endereço/Comunicação do aluno"}
-  ];
+  const Dados = useMemo(() => [
+    { value: "dados_do_responsavel", label: "Dados do responsável" },
+    { value: "endereco_e_comunicacao_responsavel", label: "Endereço/Comunicação do responsável" },
+    { value: "dados_do_aluno", label: "Dados do aluno" },
+    { value: "endereco_e_comunicacao_aluno", label: "Endereço/Comunicação do aluno" }
+  ], []); // <- empty array: only created once
 
   useEffect(() => {
     const found = Dados.find((item) => item.value === id);
@@ -487,7 +488,7 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
     } else {
       setAtual(""); // ou um texto padrão, tipo "Selecione"
     }
-  },[Dados, id])
+  }, [Dados, id]); // now Dados is stable, effect runs only when id changes
 
   return (
     <>
@@ -677,30 +678,278 @@ export function Numero({ value = "", onChange, placeholder = "000", disabled, ..
   )
 };
 
-export function Celular({ value = "", onChange, placeholder = "(00) 00000-0000", disabled,  ...props }: CpfInputProps) {
+export function Celular({
+  value = "",
+  onChange,
+  placeholder = "(00) 00000-0000",
+  disabled,
+  ...props
+}: CpfInputProps) {
   const [numero, setNumero] = useState(value);
+  const [prevRaw, setPrevRaw] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let v = e.target.value.replace(/\D/g, ""); // remove non-digits
-    if (v.length > 11) v = v.slice(0, 11); // limit to 11 digits
+    const input = e.target.value;
+    const isDeleting = input.length < prevRaw.length;
+    setPrevRaw(input);
 
-    v = v
-      .replace(/(\d{2})/, "($1) ",)
-      .replace(/(\d{5})(\d)/, "$1-$2",)
+    let digits = input.replace(/\D/g, "");
+    if (digits.length > 11) digits = digits.slice(0, 11);
 
-    setNumero(v);
-    onChange?.(v);
+    // 🧠 don't rebuild the mask while user is deleting the ")" or space
+    if (isDeleting && prevRaw.endsWith(") ") && input.length === prevRaw.length - 2) {
+      // User just tried to backspace past ") ", allow it to remove both
+      setNumero(input);
+      onChange?.(input);
+      return;
+    }
+
+    let masked = digits;
+
+    if (digits.length > 2) {
+      masked = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    } else if (digits.length > 0) {
+      masked = `(${digits}`;
+    }
+
+    if (digits.length > 6) {
+      masked = masked.replace(/(\d{5})(\d)/, "$1-$2");
+    }
+
+    setNumero(masked);
+    onChange?.(masked);
   };
 
   return (
     <motion.input
-    required
-    inputMode="numeric"
-    value={numero}
-    onChange={handleChange}
-    placeholder={placeholder}
-    {...props}
-    disabled={disabled}
-    className={`${disabled? inputClass : " w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"} `}/>
-  )
-};
+      required
+      inputMode="numeric"
+      value={numero}
+      onChange={handleChange}
+      placeholder={placeholder}
+      disabled={disabled}
+      {...props}
+      className={`${
+        disabled
+          ? "opacity-50 cursor-not-allowed"
+          : "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
+      }`}
+    />
+  );
+}
+
+interface ComboboxDemoPropsCursos {
+  value: string; 
+  onChange: (value: string) => void; 
+  onListChange?: (list: string[]) => void; 
+  cursos?: { value: string; label: string }[]; 
+}
+
+export function Cursos({ value, onChange, onListChange  }: ComboboxDemoPropsCursos) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [selectedName, setSelectedName] = useState<string[]>([]);
+  const [ cursos, setCursos] = useState<{ value: string; label: string }[]>([]);
+  const [ cursos2, setCursos2] = useState<{ value: string; label: string; tipoCurso: string }[]>([]);
+
+ 
+
+  useEffect(() => {
+
+    const Turmas = async () => {
+      const tok = await fetch('/api/token');
+      const data = await tok.json();
+      if (!data.token) {return}
+      const token = data.token;
+
+      
+      const Turma = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/cursos?sParametrosBusca=AnoLetivo=${new Date().getFullYear() + 1}`, { 
+        method: 'GET',
+        headers: { 'Content-Type' : 'application/json', Authorization: `Bearer ${token}`}
+      });
+      const turmaXML = await Turma.text();
+      console.log(turmaXML);
+
+      // Wrap in a root tag in case the response contains multiple <wsCurso> siblings
+      const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaXML}</root>`;
+
+      // parse
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(wrapped, "application/xml");
+
+      // now get all wsCurso elements
+      const wsCursos = Array.from(xmlDoc.getElementsByTagName("wsCurso"));
+
+      // extract course names (first <Nome> inside each wsCurso)
+      const Curso = wsCursos.map(curso => curso.getElementsByTagName("TipoCurso")[0]?.textContent?.trim() ?? "");
+      console.log(Curso, "Curso aqui------")
+      const uniqueCurso = Array.from(new Set(Curso));
+
+      const Res = [
+        { value: "", label: "Nenhum" }, // <- this will clear the selection
+        ...uniqueCurso.map(item => ({
+          value: item,
+          label: item
+        }))
+      ]
+
+      const Res2 = wsCursos.map(curso => ({
+        value: curso.getElementsByTagName("Nome")[0]?.textContent?.trim() ?? "",
+        label: curso.getElementsByTagName("Nome")[0]?.textContent?.trim() ?? "",
+        tipoCurso: curso.getElementsByTagName("TipoCurso")[0]?.textContent?.trim() ?? ""
+      }));
+
+      setCursos(Res);
+      setCursos2(Res2);
+      console.log(Res2, "Vamos ver se funcionou")
+
+      setLoading(false);
+    }; Turmas();
+
+
+  },[])
+
+  const handleSelect = (index: number) => {
+    setSelected((prev) => {
+      const isSelected = prev.includes(index);
+      const newSelected = isSelected
+        ? prev.filter((i) => i !== index)
+        : [...prev, index];
+
+      return newSelected;
+    });
+
+    setSelectedName((prev) => {
+      const isSelected = prev.includes(cursos2[index]?.label);
+      const newSelected = isSelected
+        ? prev.filter((i) => i !== cursos2[index]?.label)
+        : [...prev, cursos2[index]?.label];
+
+        return newSelected;
+    });
+
+  };
+
+  useEffect(() => {
+    if (onListChange) {
+      onListChange(selectedName);
+    }
+  }, [selectedName, onListChange]);
+
+  if (loading) return <Loading />
+
+  return (
+    <>
+      <motion.div
+      initial={{scale:0}}
+      animate={{scale:1}}
+      exit={{scale:0}} 
+      className="w-full flex flex-col gap-4">
+
+        <div className="flex gap-10">
+
+          <div className="flex flex-col gap-2 w-fit">
+            <motion.label className="cursor-text w-fit">Turma de interesse</motion.label>
+            <Popover open={open} onOpenChange={setOpen} >
+              <PopoverTrigger asChild className="">
+                <Button
+                  role="combobox"
+                  className={`pl-5 text-[16px] w-full border rounded-[15px] h-[50px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+                >
+                  <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
+                    {value
+                      ? <div className="">{cursos.find((framework) => framework.value === value)?.label as string}</div> 
+                      : <div className="text-[#9CA3AF]">Escolha o tipo de curso</div> 
+                    }
+                    
+                    <input
+                      type="text"
+                      name="genero"
+                      value={value}
+                      required
+                      onChange={() => {}}
+                      style={{
+                        opacity: 0,
+                        position: 'absolute',
+                        pointerEvents: 'none',
+                      }}
+                    />
+
+                  </span>
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="min-w-[200px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
+                <Command className="rounded-[15px] bg-transparent"> 
+                  <CommandList className="rounded-[10px] bg-[rgba(12,12,14,1)] cursor-pointer ">
+                    <CommandEmpty>No framework found.</CommandEmpty>
+                    <CommandGroup className="cursor-pointer  bg-[rgba(12,12,14,1)] ">
+                      {cursos.map((framework, index) => (
+                        <CommandItem
+                          key={index}
+                          value={framework.value}
+                          className="text-[16px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent"
+                          onSelect={(currentValue) => {
+                            onChange(currentValue === value ? "" : currentValue);
+                            setOpen(false);
+                          }}
+                        >
+                          {framework.label}
+                          <Check
+                            className={cn(
+                              "ml-auto transition-all ease-in-out duration-300",
+                              value === framework.value ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+
+        <div className="w-full h-[350px] overflow-y-auto border border-gray-400 rounded-[20px] pt-3 px-3 flex flex-col gap-3 "> 
+          {!value ?
+            cursos2.map((item,index) => (
+              <div key={index} 
+
+              className={`${index === cursos2.length-1 && "pb-3"} flex gap-2 items-center `}>
+                {/* Box */}
+                <motion.button 
+                onClick={() => {handleSelect(index)}}
+                whileHover={{scale:1.05}}
+                whileTap={{scale:0.95}}
+                className={`w-6 h-6  rounded-[8px] cursor-pointer ${selected.includes(index) ? "bg-yellow-400" : "border border-gray-400"}`}></motion.button>
+                <span>{item.label}</span>
+              </div>
+
+            ))
+            :
+            cursos2.filter((framework) => framework.tipoCurso === value).map((item,index) => (
+              <div key={index} 
+
+              className={`${index === cursos2.length-1 && "pb-3"} flex gap-2 items-center `}>
+                {/* Box */}
+                <motion.button 
+                onClick={() => {handleSelect(index)}}
+                whileHover={{scale:1.05}}
+                whileTap={{scale:0.95}}
+                className={`w-6 h-6  rounded-[8px] cursor-pointer ${selected.includes(index) ? "bg-yellow-400" : "border border-gray-400"}`}></motion.button>
+                <span>{item.label}</span>
+              </div>
+            ))}
+
+
+        </div>
+
+      </motion.div>
+    
+      <input type="hidden" name="genero" value={value} required />
+
+    </>
+  );
+}

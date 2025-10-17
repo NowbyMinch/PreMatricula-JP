@@ -23,7 +23,6 @@ export default function Home() {
   const [ parentesco, setParentesco ] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
   
-
   useEffect(() => {
     const fetchToken = async () => {
       const tok = await fetch('/api/token');
@@ -59,7 +58,6 @@ export default function Home() {
     const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
     const responsaveis = await Responsavel.json();
     console.log(responsaveis)
-
 
     if (matricula?.message === "Unauthorized"){
       setMessage("Erro na matricula. Por favor, logue novamente.")
@@ -101,6 +99,8 @@ export default function Home() {
             router.push("/matricula/endereco_e_comunicacao_responsavel")
         }
     }
+    
+
   };
   
   return (
@@ -109,17 +109,13 @@ export default function Home() {
           <ErrorModal message={message} onClose={() => setMessage(null)} />
       )}
 
-
-
       <div className={`  max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
         <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full  `} onSubmit={handleSubmit}>
-          
           {/* <motion.img 
           initial={{scale:0}}
           animate={{scale:1}}
           exit={{scale:0}}
           src="seice.png" alt="Seice Logo" className="w-[50%] h-auto mt-10"/> */}
-
           <motion.h1 
           initial={{scale:0}}
           animate={{scale:1}}
@@ -266,19 +262,33 @@ export default function Home() {
                 </div>
 
               </div>
-
+              
             </div>
           </AnimatePresence>
           
-          <motion.button 
-          initial={{scale:0}}
-          animate={{scale:1}}
-          exit={{scale:0}}
-          whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
-          whileTap={{scale:0.98}}
-          transition={{duration: 0.3, }}
-          type="submit"
-          className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
+          <div className="flex flex-1 gap-4 max-w-full justify-center items-center">
+            <motion.button 
+            initial={{scale:0}}
+            animate={{scale:1}}
+            exit={{scale:0}}
+            whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+            whileTap={{scale:0.98}}
+            transition={{duration: 0.3, }}
+            type="button"
+            onClick={() => {router.push("/matricula/endereco_e_comunicacao_responsavel_financeiro")}}
+            className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Voltar</motion.button>
+
+            <motion.button 
+            initial={{scale:0}}
+            animate={{scale:1}}
+            exit={{scale:0}}
+            whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+            whileTap={{scale:0.98}}
+            transition={{duration: 0.3, }}
+            type="submit"
+            className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
+
+          </div>
         </form>
       </div>
     </>

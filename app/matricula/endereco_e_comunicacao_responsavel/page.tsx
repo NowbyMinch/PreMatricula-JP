@@ -20,6 +20,8 @@ export default function Home() {
     const [ bairro, setBairro] = useState<string | null>(null);
     const [ celular, setCelular] = useState<string | null>(null);
     const [ email, setEmail] = useState<string | null>(null);
+    const [moraJunto, setMoraJunto] = useState(false);
+    const [disable, setDisable] = useState(false);
 
     useEffect(() => {
         const fetchToken = async () => {
@@ -60,15 +62,32 @@ export default function Home() {
         console.log(matricula);
         const matriculaID = matricula.id;
 
-        const endereco = {
-            cep: cep,
-            rua: rua,
-            numero: numero,
-            cidade: cidade,
-            bairro: bairro,
-            celular: celular,
-            email: email,
-        }
+
+        const EnderecoResponsavelFinanceiro = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${matriculaID}/detalhe`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+        });
+        const EnderecoResponsavelFinanceiroRes = await EnderecoResponsavelFinanceiro.json();
+        console.log(EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco, "Endereço do responsável financeiro vai vir daqui");
+
+
+        const endereco = moraJunto ? {
+            cep: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.cep,
+            rua: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.rua,
+            numero: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.numero,
+            cidade: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.cidade,
+            bairro: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.bairro,
+            celular,
+            email,
+        } : {
+            cep,
+            rua,
+            numero,
+            cidade,
+            bairro,
+            celular,
+            email,
+        };
 
         console.log(matriculaID)
         console.log(endereco)
@@ -102,7 +121,7 @@ export default function Home() {
                 router.push("/matricula/dados_do_aluno");
             }
         }
-        
+
     };
 
     return (
@@ -110,8 +129,6 @@ export default function Home() {
             {message && (
                 <ErrorModal message={message} onClose={() => setMessage(null)} />
             )}
-            
-            
 
             <div className={`  max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl`}>
                 <form className={`w-full flex flex-col items-center text-white max-w-[90%] h-full `} onSubmit={handleSubmit}>
@@ -119,7 +136,7 @@ export default function Home() {
                     initial={{scale:0}}
                     animate={{scale:1}}
                     exit={{scale:0}}
-                    className="text-[35px] mx-auto mt-10 font-medium text-center">Endereço/Comunicação do responsável</motion.h1>
+                    className="text-[35px] mx-auto mt-10 font-medium text-center">Endereço/Comunicação do segundo responsável</motion.h1>
 
                     <motion.p 
                     initial={{scale:0}}
@@ -145,7 +162,7 @@ export default function Home() {
                                 <motion.label 
                                 htmlFor="" 
                                 className="origin-left">C.E.P.</motion.label>
-                                <CEP onChange={(value) => setCEP(value) } disabled={false}/>
+                                <CEP onChange={(value) => setCEP(value) } disabled={disable && true}/>
                                 </motion.div>
 
                                 <motion.div 
@@ -158,8 +175,10 @@ export default function Home() {
                                 className="origin-left">Rua/Avenida</motion.label>
                                 <motion.input
                                 required
+                                disabled={disable && true}
                                 onChange={(e) => setRua(e.target.value) }
-                                type="text" placeholder="Digite sua Rua/Avenida" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                                type="text" placeholder="Digite sua Rua/Avenida" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] 
+                                ${disable ? "bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed " : "focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]" } `}/>
                                 </motion.div>
                                 
                                 <motion.div 
@@ -170,7 +189,7 @@ export default function Home() {
                                 <motion.label 
                                 htmlFor="" 
                                 className="origin-left">N°</motion.label>
-                                <Numero onChange={(value) => setNumero(value) } disabled={false}/>
+                                <Numero onChange={(value) => setNumero(value) } disabled={disable && true}/>
                                 </motion.div>
 
                                 
@@ -189,8 +208,10 @@ export default function Home() {
                                 className="origin-left">Cidade</motion.label>
                                 <motion.input
                                 required
+                                disabled={disable && true}
                                 onChange={(e) => setCidade(e.target.value) }
-                                type="text" placeholder="Digite sua cidade" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                                type="text" placeholder="Digite sua cidade" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] 
+                                ${disable ? "bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed" : "focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]" } `}/>
                                 </motion.div>
 
                                 <motion.div 
@@ -203,8 +224,10 @@ export default function Home() {
                                 className="origin-left">Bairro</motion.label>
                                 <motion.input
                                 required
+                                disabled={disable && true}
                                 onChange={(e) => setBairro(e.target.value) }
-                                type="text" placeholder="Digite seu bairro" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                                type="text" placeholder="Digite seu bairro" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] 
+                                ${disable ? "bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed" : "focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]" } `}/>
                                 </motion.div>
 
                             </div>
@@ -238,23 +261,59 @@ export default function Home() {
                                 <motion.input
                                 required
                                 onChange={(e) => setEmail(e.target.value) }
-                                type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
+                                type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] 
+                                focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                                 </motion.div>
 
                             </div>
-                            
+                            <motion.label 
+                            initial={{scale:0}}
+                            animate={{scale:1}}
+                            exit={{scale:0}}
+                            className="inline-flex items-center cursor-pointer mx-auto">
+                                {/* Hidden native checkbox */}
+                                <input onChange={() => {setMoraJunto(!moraJunto); setDisable(!disable)}} type="checkbox" className="sr-only peer" />
+
+                                {/* Custom checkbox */}
+                                <motion.div 
+                                whileHover={{scale:1.10}}
+                                whileTap={{scale:0.90}}
+                                className="w-5 h-5 border-2 border-gray-400 rounded-md flex items-center justify-center peer-checked:bg-yellow-400 peer-checked:border-yellow-400">
+                                    {/* Checkmark */}
+                                    <svg className="w-3 h-3 text-white hidden peer-checked:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                </motion.div>
+
+                                {/* Label text */}
+                                <span className="ml-2 select-none">O segundo responsável mora junto com o responsável financeiro</span>
+                            </motion.label>
                         </div>
                     </AnimatePresence>
                     
-                    <motion.button 
-                    initial={{scale:0}}
-                    animate={{scale:1}}
-                    exit={{scale:0}}
-                    whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
-                    whileTap={{scale:0.98}}
-                    transition={{duration: 0.3, }}
-                    type="submit"
-                    className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
+                    <div className="flex flex-1 gap-4 max-w-full justify-center items-center">
+                        <motion.button 
+                        initial={{scale:0}}
+                        animate={{scale:1}}
+                        exit={{scale:0}}
+                        whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+                        whileTap={{scale:0.98}}
+                        transition={{duration: 0.3, }}
+                        type="button"
+                        onClick={() => {router.push("/matricula/dados_do_responsavel")}}
+                        className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Voltar</motion.button>
+
+                        <motion.button 
+                        initial={{scale:0}}
+                        animate={{scale:1}}
+                        exit={{scale:0}}
+                        whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+                        whileTap={{scale:0.98}}
+                        transition={{duration: 0.3, }}
+                        type="submit"
+                        className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
+
+                    </div>
                 </form>
             </div>
         </>

@@ -24,92 +24,80 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
     const [ etapaAtual, setEtapaAtual ] = useState<string | undefined>("");
 
     useEffect(() => {
-
         const fetchToken = async () => {
-            const tok = await fetch('/api/token');
+            try {
+            setEnderecoResponsavel(false);
+            setDadosAluno(false);
+            setEnderecoAluno(false);
+            setFinalizado(false);
+            setEtapaAtual(undefined);
+
+            const tok = await fetch("/api/token");
             const data = await tok.json();
-            if (!data.token) {return;}
+            if (!data.token) return;
             const token = data.token;
 
-            const detalhe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${id}/detalhe`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-            });
-            const detalheRes = await detalhe.json();
-            console.log(detalheRes, "Agora isso aqui é de dentro de Matriculas!-----------------------------------------------------");
+            const detalheRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${matricula}/detalhe`, {
+                headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+                },
+            }).then(res => res.json());
 
-            const idAtual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-            });
-            const idAtualRes = await idAtual.json();
+            const idAtualRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {
+                headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+                },
+            }).then(res => res.json());
 
-            const detalheAtual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${idAtualRes.matriculaId}/detalhe`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-            });
-            const detalheResAtual = await detalheAtual.json();
+            const detalheResAtual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${idAtualRes.matriculaId}/detalhe`, {
+                headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+                },
+            }).then(res => res.json());
 
-
-            if (detalheResAtual.completo){
+            if (detalheResAtual.completo) {
                 setFinalizado(true);
             }
 
             const etapas = [
-                {value: 1, label: "1", pagina: "dados_do_responsavel_financeiro"},
-                {value: 2, label: "2", pagina: "endereco_e_comunicacao_responsavel_financeiro"},
-                {value: 3, label: "1b", pagina: "dados_do_responsavel"},
-                {value: 4, label: "2b", pagina: "endereco_e_comunicacao_responsavel"},
-                {value: 5, label: "3", pagina: "dados_do_aluno"},
-                {value: 6, label: "3b", pagina: "endereco_e_comunicacao_aluno"},
-            ]
+                { value: 1, label: "1", pagina: "dados_do_responsavel_financeiro" },
+                { value: 2, label: "2", pagina: "endereco_e_comunicacao_responsavel_financeiro" },
+                { value: 3, label: "1b", pagina: "dados_do_responsavel" },
+                { value: 4, label: "2b", pagina: "endereco_e_comunicacao_responsavel" },
+                { value: 5, label: "3", pagina: "dados_do_aluno" },
+                { value: 6, label: "3b", pagina: "endereco_e_comunicacao_aluno" },
+            ];
 
             const etapaPaginaAtual = etapas.find((item) => item.label === detalheResAtual.etapaAtualLabel);
-            const etapaAtual = etapas.find((item) => item.label === detalheRes.etapaAtualLabel)?.value;
-            const agora = etapas.find((item) => item.pagina === pathname.split("/")[3])?.value;
-            
+            const etapaAtualValor = etapas.find((item) => item.label === detalheRes.etapaAtualLabel)?.value;
+
             setEtapaAtual(etapaPaginaAtual?.pagina);
-            
-            if (!agora < !etapaPaginaAtual){
-                console.log("Agora = ", agora)
-                console.log("etapaPaginaAtual = ", etapaPaginaAtual)
-            } else {
-                console.log("etapaPaginaAtual = ", etapaPaginaAtual)
-                console.log("agora = ", agora)
+
+            if (etapaAtualValor) {
+                if (etapaAtualValor > 2) setEnderecoResponsavel(true);
+                if (etapaAtualValor > 5) setDadosAluno(true);
             }
 
-            if (etapaAtual){
-                console.log("vendo")
-                console.log(etapaAtual);
-                if (etapaAtual > 2){
-                    setEnderecoResponsavel(true);
-                } 
-                if (etapaAtual > 5){
-                    setDadosAluno(true);
-                }
-            }
-
-            if (detalheRes.completo){
+            if (detalheRes.completo) {
                 setEnderecoResponsavel(true);
                 setDadosAluno(true);
                 setEnderecoAluno(true);
-            } 
-        }; fetchToken();
+            }
 
-        if (pathname.startsWith("/matriculas/") && pathname.endsWith("/dados_do_responsavel")){
-            setBar("1")
-        } 
-        else if (pathname.startsWith("/matriculas/") && pathname.endsWith("/endereco_e_comunicacao_responsavel")){
-            setBar("2")
-        }
-        else if (pathname.startsWith("/matriculas/") && pathname.endsWith("/dados_do_aluno")){
-            setBar("3")
-        }
-        else {
-            setBar("4")
-        }
+            if (pathname.endsWith("/dados_do_responsavel")) setBar("1");
+            else if (pathname.endsWith("/endereco_e_comunicacao_responsavel")) setBar("2");
+            else if (pathname.endsWith("/dados_do_aluno")) setBar("3");
+            else setBar("4");
+            } catch (err) {
+            console.error("Erro ao buscar dados:", err);
+            }
+        };
+        fetchToken();
+        }, [matricula, pathname]); // 🔹 removido id — usar apenas matrícula e pathname
 
-    },[pathname, id])
 
     return (
         <>

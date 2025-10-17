@@ -188,7 +188,7 @@ export default function Home() {
                         initial={{scale:0}}
                         animate={{scale:1}}
                         exit={{scale:0}}
-                        onClick={() => router.push("/esqueci_senha")} className="mx-auto pt-2 w-full flex justify-end font-[600] cursor-pointer">
+                        onClick={() => router.push("/esqueci_senha")} className="ml-auto pt-2  flex justify-end font-[600] cursor-pointer">
                             <motion.button 
                             whileHover={{scale:1.01}}
                             whileTap={{scale:0.99}}

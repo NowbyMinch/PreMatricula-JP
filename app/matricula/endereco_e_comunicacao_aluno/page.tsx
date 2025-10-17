@@ -11,14 +11,14 @@ export default function Home() {
   const [ message, setMessage] = useState<string | null>(null);
   const [ cep, setCEP] = useState<string | null>(null);
   const [ rua, setRua] = useState<string | null>(null);
-  const [ telefone, setTelefone] = useState<string | null>(null);
+  const [ telefone, setTelefone] = useState<string | null>("");
   const [ numero, setNumero] = useState<string | null>(null);
   const [ complemento, setComplemento] = useState<string | null>(null);
   const [ uf, setUF] = useState<string | null>(null);
   const [ cidade, setCidade] = useState<string | null>(null);
   const [ bairro, setBairro] = useState<string | null>(null);
-  const [ celular, setCelular] = useState<string | null>(null);
-  const [ email, setEmail] = useState<string | null>(null);
+  const [ celular, setCelular] = useState<string | null>("");
+  const [ email, setEmail] = useState<string | null>("");
 
   // 🔹 Define se os campos devem ser desativados
   const [isDisabled, setIsDisabled] = useState(false);
@@ -90,43 +90,50 @@ export default function Home() {
         body: JSON.stringify(endereco),
       });
       const dataRes = await res.json();
+      console.log(dataRes, "Finalizando matricula -> finalizar_matricula");
 
-      const Atual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-      const AtualDado = await Atual.json();
-      console.log(AtualDado.matriculaId, "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk ")
-
-      const Sponte = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/integrar-sponte/${AtualDado.matriculaId}`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, },
-        body: JSON.stringify(endereco),
-      });
-      const IntegrarSponte = await Sponte.json();
-      console.log(IntegrarSponte, "Sponte aqui");
+      // const Atual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      // const AtualDado = await Atual.json();
 
 
-      if (dataRes?.error){
-        if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
 
-          // dataRes.error exists and is a non-empty array
-          let errors = "";
-          for (let i = 0; i < dataRes.message.length; i++) {
-              errors += dataRes.message[i] + "\n";
-          }
 
-          setMessage(errors);
-        } else if (dataRes?.error && dataRes?.message){
-            setMessage(dataRes.message)
-        }
+
+
+
+      
+      // const Sponte = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/integrar-sponte/${AtualDado.matriculaId}`, {
+      //   method: 'POST',
+      //   headers: { 
+      //     'Content-Type': 'application/json',
+      //     Authorization: `Bearer ${token}`, },
+      //   body: JSON.stringify(endereco),
+      // });
+      // const IntegrarSponte = await Sponte.json();
+      // console.log(IntegrarSponte, "Sponte aqui");
+
+
+      // if (IntegrarSponte?.error){
+      //   if (IntegrarSponte?.error && Array.isArray(IntegrarSponte?.message) && IntegrarSponte?.message.length > 0) {
+
+      //     // IntegrarSponte.error exists and is a non-empty array
+      //     let errors = "";
+      //     for (let i = 0; i < IntegrarSponte.message.length; i++) {
+      //         errors += IntegrarSponte.message[i] + "\n";
+      //     }
+
+      //     setMessage(errors);
+      //   } else if (IntegrarSponte?.error && IntegrarSponte?.message){
+      //       setMessage(IntegrarSponte.message)
+      //   }
         
-        console.log("deu certo1")
-      } 
-      else if (dataRes?.message){
-        if (dataRes.message === "Endereço do aluno (etapa 3B) concluído com sucesso."){
-          router.push("/matricula/matricula_finalizada");
-        }
-      }
+      //   console.log("deu certo1")
+      // } 
+      // else if (IntegrarSponte?.message){
+      //   if (IntegrarSponte.message === "Endereço do aluno (etapa 3B) concluído com sucesso."){
+      //     router.push("/matricula/matricula_finalizada");
+      //   }
+      // }
       
   };
   
@@ -141,7 +148,6 @@ export default function Home() {
       {message && (
           <ErrorModal message={message} onClose={() => setMessage(null)} />
       )}
-
 
 
       <div className="max-h-[95%] max-w-[95%] w-[1150px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl">
@@ -220,19 +226,19 @@ export default function Home() {
 
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
-                  <motion.label>Telefone</motion.label>
+                  <motion.label>Telefone (opicional)</motion.label>
                   <Celular onChange={(value) => (setTelefone(value))} disabled={false} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
-                  <motion.label>Celular</motion.label>
+                  <motion.label>Celular (opicional)</motion.label>
                   <Celular onChange={(value) => (setCelular(value))} disabled={false} />
                 </motion.div>
               </div>
 
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
-                  <motion.label>Email</motion.label>
+                  <motion.label>Email (opicional)</motion.label>
                   <motion.input onChange={(e) => (setEmail(e.target.value))} disabled={false} required type="email" placeholder="Digite seu email" className={
                     "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] bg-transparent text-white"} />
                 </motion.div>
@@ -248,18 +254,35 @@ export default function Home() {
             </div>
           </AnimatePresence>
 
-          <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)" }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.3 }}
-            type="submit"
-            className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10"
-          >
-            Próximo
-          </motion.button>
+          <div className="flex flex-1 gap-4 max-w-full justify-center items-center">
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)" }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.3 }}
+              type="button"
+              onClick={() => {router.push("/matricula/dados_do_aluno")}}
+              className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10"
+            >
+              Voltar
+            </motion.button>
+            
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)" }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.3 }}
+              type="submit"
+              className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10"
+            >
+              Próximo
+            </motion.button>
+
+          </div>
         </form>
       </div>
     </>

@@ -278,16 +278,30 @@ export default function Home() {
                         </motion.label>
                     </div>
                 </AnimatePresence>
-                
-                <motion.button 
-                initial={{scale:0}}
-                animate={{scale:1}}
-                exit={{scale:0}}
-                whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
-                whileTap={{scale:0.98}}
-                transition={{duration: 0.3, }}
-                type="submit"
-                className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
+
+                <div className="flex flex-1 gap-4 max-w-full justify-center items-center">
+                    <motion.button 
+                    initial={{scale:0}}
+                    animate={{scale:1}}
+                    exit={{scale:0}}
+                    whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+                    whileTap={{scale:0.98}}
+                    transition={{duration: 0.3, }}
+                    type="button"
+                    onClick={() => {router.push("/matricula/dados_do_responsavel_financeiro")}}
+                    className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Voltar</motion.button>
+
+                    <motion.button 
+                    initial={{scale:0}}
+                    animate={{scale:1}}
+                    exit={{scale:0}}
+                    whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
+                    whileTap={{scale:0.98}}
+                    transition={{duration: 0.3, }}
+                    type="submit"
+                    className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10">Próximo</motion.button>
+
+                </div>
                 </form>
             </div>
         </>
