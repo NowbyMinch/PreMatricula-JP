@@ -50,7 +50,7 @@ export function Genero({ value, onChange }: ComboboxDemoProps) {
         <PopoverTrigger asChild className="">
           <Button
             role="combobox"
-            className={`pl-5 text-[16px] w-full border rounded-[15px] h-[50px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+            className={` pl-5 max-w-[480px] text-[16px] w-full border rounded-[15px] h-[50px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
           >
             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
               {value
@@ -136,7 +136,6 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
       const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
       const dataResponsavel = await Responsavel.json();
       
-      console.log(dataResponsavel);
       
       const array: ResponsavelData[] = Array.isArray(dataResponsavel)
       ? dataResponsavel
@@ -288,7 +287,7 @@ export function Civil({ value, onChange }: ComboboxDemoProps) {
         <PopoverTrigger asChild className="">
           <Button
             role="combobox"
-            className={`pl-5 text-[16px] w-full border rounded-[15px] h-[50px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+            className={`pl-5 max-w-[480px] text-[16px] w-full border rounded-[15px] h-[50px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
           >
             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
               {value
@@ -597,16 +596,16 @@ export function CpfInput({ value = "", onChange, placeholder = "000.000.000-00",
   )
 };
 
-export function NumeroRG({ value = "", onChange, placeholder = "000.000.000-0",  ...props }: CpfInputProps) {
+export function NumeroRG({ value = "", onChange, placeholder = "00.000.000-0",  ...props }: CpfInputProps) {
   const [numeroRG, setNumeroRG] = useState(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let v = e.target.value.replace(/\D/g, ""); // remove non-digits
-    if (v.length > 10) v = v.slice(0, 10); // limit to 11 digits
+    if (v.length > 9) v = v.slice(0, 9); // limit to 11 digits
 
     // apply mask
     v = v
-      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{2})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 
@@ -738,22 +737,81 @@ export function Celular({
   );
 }
 
+export function CelularNotRequired({
+  value = "",
+  onChange,
+  placeholder = "(00) 00000-0000",
+  disabled,
+  ...props
+}: CpfInputProps) {
+  const [numero, setNumero] = useState(value);
+  const [prevRaw, setPrevRaw] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    const isDeleting = input.length < prevRaw.length;
+    setPrevRaw(input);
+
+    let digits = input.replace(/\D/g, "");
+    if (digits.length > 11) digits = digits.slice(0, 11);
+
+    // 🧠 don't rebuild the mask while user is deleting the ")" or space
+    if (isDeleting && prevRaw.endsWith(") ") && input.length === prevRaw.length - 2) {
+      // User just tried to backspace past ") ", allow it to remove both
+      setNumero(input);
+      onChange?.(input);
+      return;
+    }
+
+    let masked = digits;
+
+    if (digits.length > 2) {
+      masked = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    } else if (digits.length > 0) {
+      masked = `(${digits}`;
+    }
+
+    if (digits.length > 6) {
+      masked = masked.replace(/(\d{5})(\d)/, "$1-$2");
+    }
+
+    setNumero(masked);
+    onChange?.(masked);
+  };
+
+  return (
+    <motion.input
+      inputMode="numeric"
+      value={numero}
+      onChange={handleChange}
+      placeholder={placeholder}
+      disabled={disabled}
+      {...props}
+      className={`${
+        disabled
+          ? "opacity-50 cursor-not-allowed"
+          : "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
+      }`}
+    />
+  );
+}
+
 interface ComboboxDemoPropsCursos {
   value: string; 
   onChange: (value: string) => void; 
   onListChange?: (list: string[]) => void; 
+  onListChangeID?: (list: string[]) => void; 
   cursos?: { value: string; label: string }[]; 
 }
 
-export function Cursos({ value, onChange, onListChange  }: ComboboxDemoPropsCursos) {
+export function Cursos({ value, onChange, onListChange, onListChangeID }: ComboboxDemoPropsCursos) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<number[]>([]);
   const [selectedName, setSelectedName] = useState<string[]>([]);
+  const [cursoID, setCursoID] = useState<string[]>([]);
   const [ cursos, setCursos] = useState<{ value: string; label: string }[]>([]);
-  const [ cursos2, setCursos2] = useState<{ value: string; label: string; tipoCurso: string }[]>([]);
-
- 
+  const [ cursos2, setCursos2] = useState<{ value: string; label: string; tipoCurso: string, cursoID: string }[]>([]);
 
   useEffect(() => {
 
@@ -769,7 +827,6 @@ export function Cursos({ value, onChange, onListChange  }: ComboboxDemoPropsCurs
         headers: { 'Content-Type' : 'application/json', Authorization: `Bearer ${token}`}
       });
       const turmaXML = await Turma.text();
-      console.log(turmaXML);
 
       // Wrap in a root tag in case the response contains multiple <wsCurso> siblings
       const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaXML}</root>`;
@@ -783,7 +840,6 @@ export function Cursos({ value, onChange, onListChange  }: ComboboxDemoPropsCurs
 
       // extract course names (first <Nome> inside each wsCurso)
       const Curso = wsCursos.map(curso => curso.getElementsByTagName("TipoCurso")[0]?.textContent?.trim() ?? "");
-      console.log(Curso, "Curso aqui------")
       const uniqueCurso = Array.from(new Set(Curso));
 
       const Res = [
@@ -797,12 +853,12 @@ export function Cursos({ value, onChange, onListChange  }: ComboboxDemoPropsCurs
       const Res2 = wsCursos.map(curso => ({
         value: curso.getElementsByTagName("Nome")[0]?.textContent?.trim() ?? "",
         label: curso.getElementsByTagName("Nome")[0]?.textContent?.trim() ?? "",
-        tipoCurso: curso.getElementsByTagName("TipoCurso")[0]?.textContent?.trim() ?? ""
+        tipoCurso: curso.getElementsByTagName("TipoCurso")[0]?.textContent?.trim() ?? "",
+        cursoID: curso.getElementsByTagName("CursoID")[0]?.textContent?.trim() ?? ""
       }));
 
       setCursos(Res);
       setCursos2(Res2);
-      console.log(Res2, "Vamos ver se funcionou")
 
       setLoading(false);
     }; Turmas();
@@ -828,6 +884,15 @@ export function Cursos({ value, onChange, onListChange  }: ComboboxDemoPropsCurs
 
         return newSelected;
     });
+    
+    setCursoID((prev) => {
+      const isSelected = prev.includes(cursos2[index]?.cursoID);
+      const newSelected = isSelected
+        ? prev.filter((i) => i !== cursos2[index]?.cursoID)
+        : [...prev, cursos2[index]?.cursoID];
+
+        return newSelected;
+    });
 
   };
 
@@ -835,6 +900,11 @@ export function Cursos({ value, onChange, onListChange  }: ComboboxDemoPropsCurs
     if (onListChange) {
       onListChange(selectedName);
     }
+
+    if (onListChangeID) {
+      onListChangeID(cursoID);
+    }
+    
   }, [selectedName, onListChange]);
 
   if (loading) return <Loading />
@@ -860,7 +930,7 @@ export function Cursos({ value, onChange, onListChange  }: ComboboxDemoPropsCurs
                   <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
                     {value
                       ? <div className="">{cursos.find((framework) => framework.value === value)?.label as string}</div> 
-                      : <div className="text-[#9CA3AF]">Escolha o tipo de curso</div> 
+                      : <div className="text-[#9CA3AF]">Escolha a turma de interesse</div> 
                     }
                     
                     <input

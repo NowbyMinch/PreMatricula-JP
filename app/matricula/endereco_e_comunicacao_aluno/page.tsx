@@ -1,7 +1,7 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Celular, CEP, Numero, Responsavel } from "@imports/components/ui/selectionboxes";
+import { CelularNotRequired, CEP, Numero, Responsavel } from "@imports/components/ui/selectionboxes";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 import { useRouter } from "next/navigation";
 
@@ -24,6 +24,7 @@ export default function Home() {
   const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
+    setIsDisabled(false);
     const fetchToken = async () => {
       const tok = await fetch('/api/token');
       const data = await tok.json();
@@ -90,50 +91,68 @@ export default function Home() {
         body: JSON.stringify(endereco),
       });
       const dataRes = await res.json();
-      console.log(dataRes, "Finalizando matricula -> finalizar_matricula");
+      console.log(dataRes)
 
-      // const Atual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-      // const AtualDado = await Atual.json();
+      if (dataRes?.error){
+        if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
 
+          // dataRes.error exists and is a non-empty array
+          let errors = "";
+          for (let i = 0; i < dataRes.message.length; i++) {
+              errors += dataRes.message[i] + "\n";
+          }
 
+          setMessage(errors);
+          return
 
+        } else if (dataRes?.error && dataRes?.message){
+            setMessage(dataRes.message)
+            return
 
-
-
-
-      
-      // const Sponte = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/integrar-sponte/${AtualDado.matriculaId}`, {
-      //   method: 'POST',
-      //   headers: { 
-      //     'Content-Type': 'application/json',
-      //     Authorization: `Bearer ${token}`, },
-      //   body: JSON.stringify(endereco),
-      // });
-      // const IntegrarSponte = await Sponte.json();
-      // console.log(IntegrarSponte, "Sponte aqui");
-
-
-      // if (IntegrarSponte?.error){
-      //   if (IntegrarSponte?.error && Array.isArray(IntegrarSponte?.message) && IntegrarSponte?.message.length > 0) {
-
-      //     // IntegrarSponte.error exists and is a non-empty array
-      //     let errors = "";
-      //     for (let i = 0; i < IntegrarSponte.message.length; i++) {
-      //         errors += IntegrarSponte.message[i] + "\n";
-      //     }
-
-      //     setMessage(errors);
-      //   } else if (IntegrarSponte?.error && IntegrarSponte?.message){
-      //       setMessage(IntegrarSponte.message)
-      //   }
+        }
         
-      //   console.log("deu certo1")
-      // } 
-      // else if (IntegrarSponte?.message){
-      //   if (IntegrarSponte.message === "Endereço do aluno (etapa 3B) concluído com sucesso."){
-      //     router.push("/matricula/matricula_finalizada");
-      //   }
-      // }
+        console.log("deu certo1")
+      } 
+
+      const Atual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+      const AtualDado = await Atual.json();
+
+
+      console.log("Cheguei aqui")
+      
+      const Sponte = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/integrar-sponte/${AtualDado.matriculaId}`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, },
+        body: JSON.stringify(endereco),
+      });
+      const IntegrarSponte = await Sponte.json();
+      console.log(IntegrarSponte, "Sponte aqui");
+
+
+
+      if (IntegrarSponte?.erro){
+        if (IntegrarSponte?.detalhe && Array.isArray(IntegrarSponte?.detalhe) && IntegrarSponte?.detalhe.length > 0) {
+
+          // IntegrarSponte.error exists and is a non-empty array
+          let errors = "";
+          for (let i = 0; i < IntegrarSponte.detalhe.length; i++) {
+              errors += IntegrarSponte.detalhe[i] + "\n";
+          }
+
+          setMessage(errors);
+        } else if (IntegrarSponte?.erro && IntegrarSponte?.detalhe){
+          setMessage(IntegrarSponte.detalhe)
+        }
+        
+        console.log("deu certo1")
+      } 
+      else if (IntegrarSponte?.detalhe){
+        if (IntegrarSponte.detalhe === "Operação Realizada com Sucesso."){
+          router.push("/matricula/finalizar_matricula");
+        }
+      }
       
   };
   
@@ -227,19 +246,19 @@ export default function Home() {
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Telefone (opicional)</motion.label>
-                  <Celular onChange={(value) => (setTelefone(value))} disabled={false} />
+                  <CelularNotRequired onChange={(value) => (setTelefone(value))} disabled={false} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Celular (opicional)</motion.label>
-                  <Celular onChange={(value) => (setCelular(value))} disabled={false} />
+                  <CelularNotRequired onChange={(value) => (setCelular(value))} disabled={false} />
                 </motion.div>
               </div>
 
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                   <motion.label>Email (opicional)</motion.label>
-                  <motion.input onChange={(e) => (setEmail(e.target.value))} disabled={false} required type="email" placeholder="Digite seu email" className={
+                  <motion.input onChange={(e) => (setEmail(e.target.value))} disabled={false} type="email" placeholder="Digite seu email" className={
                     "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] bg-transparent text-white"} />
                 </motion.div>
 

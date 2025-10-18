@@ -51,10 +51,8 @@ export default function Account() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
       });
       const detalheRes = await detalhe.json();
-      console.log(detalheRes, "detalhe novo atual");
 
       if (detalheRes.completo){
-        console.log(detalheRes.status)
         setFinalizado(true);
       } 
 

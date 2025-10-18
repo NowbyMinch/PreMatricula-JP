@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CpfInput, Genero, NumeroRG } from "@imports/components/ui/selectionboxes";
-import DatePicker from "@imports/components/ui/datepicker";
+import {DatePicker} from "@imports/components/ui/datepicker";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
@@ -58,7 +58,7 @@ export default function Home() {
     const matriculaID = matricula.id;
     const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
     const responsaveis = await Responsavel.json();
-    console.log(responsaveis)
+    // console.log(responsaveis)
 
     const iniciar = {
     nome: nome,
@@ -70,27 +70,29 @@ export default function Home() {
     parentesco: parentesco
     }
 
-    console.log(iniciar);
-
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
     body: JSON.stringify(iniciar),
     });
     const dataRes = await res.json();
-    console.log(dataRes);
+    
+    console.log(dataRes?.error);
     
     if (dataRes?.error){
       if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
-          // dataRes.error exists and is a non-empty array
-          let errors = "";
-          for (let i = 0; i < dataRes.message.length; i++) {
-              errors += dataRes.message[i] + "\n";
-          }
-          setMessage(errors);
-      } else {
-      setMessage(dataRes.error.message)
-      }
+        // dataRes.error exists and is a non-empty array
+        let errors = "";
+        for (let i = 0; i < dataRes.message.length; i++) {
+          errors += dataRes.message[i] + "\n";
+        }
+        setMessage(errors);
+
+      } else if (dataRes?.error && dataRes?.message){
+          setMessage(dataRes.message)
+          return
+
+        }
     } 
     else if (dataRes?.message){
       if (dataRes.message === "Pré-matrícula iniciada com sucesso."){
@@ -100,6 +102,7 @@ export default function Home() {
     
   };
   
+
   return (
     <>
       {message && (

@@ -191,8 +191,8 @@ export default function RootLayout({children,}: { children: React.ReactNode;} ) 
                             <motion.button 
                             whileHover={{boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
                             whileTap={{scale:0.98}}
-                            onClick={() => {if (finalizado) {router.push(`/matricula/dados_do_responsavel_financeiro`)} else { router.push(`/matricula/${etapaAtual}`) }  }}
-                            className="cursor-pointer rounded-[15px] max-w-full w-fit text-nowrap px-2 text-[15px] bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold ">Nova Matrícula</motion.button>
+                            onClick={() => {if (finalizado) {router.push(`/matricula/dados_do_responsavel_financeiro`)} else { if (etapaAtual){ router.push(`/matricula/${etapaAtual}`) }}  }}
+                            className="cursor-pointer rounded-[15px] max-w-full w-fit text-nowrap px-2 text-[15px] bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold ">Nova matrícula</motion.button>
                         </div> 
                     </div>
                     <hr className="w-full h-[1px] text-[#ffffff33]"/>

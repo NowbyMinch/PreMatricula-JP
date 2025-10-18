@@ -49,7 +49,6 @@ export default function Home() {
 
         const tok = await fetch("/api/token", { credentials: "include" });
         const data = await tok.json();
-        console.log(data.token);
         if (!data.token) return
         const token = data.token;
         const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
@@ -59,7 +58,6 @@ export default function Home() {
             return
         }
         
-        console.log(matricula);
         const matriculaID = matricula.id;
 
         const endereco = {
@@ -73,8 +71,6 @@ export default function Home() {
             temSegundoResponsavel: segundoResponsavel
         }
 
-        console.log(matriculaID)
-        console.log(endereco)
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/${matriculaID}`, {
           method: 'POST',
           headers: { 
@@ -97,8 +93,9 @@ export default function Home() {
 
                 setMessage(errors);
             } else if (dataRes?.error && dataRes?.message){
-                setMessage(dataRes.error.message)
+                setMessage(dataRes.message)
             }
+
         } else if (dataRes?.message){
             if (dataRes.message === "Etapa 2 concluída com sucesso."){
                 if (segundoResponsavel){

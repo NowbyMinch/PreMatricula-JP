@@ -79,6 +79,7 @@ export default function Home() {
             bairro: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.bairro,
             celular,
             email,
+            moraComResponsavelPrincipal: true
         } : {
             cep,
             rua,
@@ -87,6 +88,7 @@ export default function Home() {
             bairro,
             celular,
             email,
+            moraComResponsavelPrincipal: false
         };
 
         console.log(matriculaID)

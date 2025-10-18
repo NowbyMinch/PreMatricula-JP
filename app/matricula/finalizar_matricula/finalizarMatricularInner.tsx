@@ -7,118 +7,154 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 import { Cursos } from "@imports/components/ui/selectionboxes";
+import { XMLParser } from "fast-xml-parser";
+
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 
 //   {/* Example: will show 2026 automatically if current year is 2025 */}
 // </span>
 
 
+type alunosUpdate = {
+    nAlunoID: number;
+    sNome: string;
+    sMidia: string;
+    dDataNascimento: string;
+    sCidade: string;
+    sBairro: string;
+    sCEP: string;
+    sEndereco: string;
+    nNumeroEndereco: string | number;
+    sComplementoEndereco: string;
+    sCPF: string;
+    sRG: string;
+    nResponsavelFinanceiroID: string | number;
+    nResponsavelDidaticoID: string | number;
+    sEmail: string;
+    sTelefone: string;
+    sCelular: string;
+    sObservacao: string;
+    sSexo: string;
+    sProfissao: string;
+    sCidadeNatal: string;
+    sRa: string;
+    sNumeroMatricula: string;
+    sSituacao: string;
+    sCursoInteresse: string;
+    sInfoBloqueada: string;
+    sOrigemNome: string;
+}
 export default function Finalizar() {
     const router = useRouter();
     // const [ ultima, setUltima ] = useState("");
     const [ message, setMessage ] = useState<string | null>("");
     const [ curso, setCurso ] = useState<string>("");
-    const [ turmasSelecionadas, setTurmasSelecionadas] = useState<string[]>([]);
+    const [ cursoID, serCursoID] = useState<string[]>([]);
     const params = useSearchParams();
     const [step, setStep] = useState(Number(params.get("step")) || 1);
-
+    
+    const [ update, setUpdate ] = useState<alunosUpdate>({} as alunosUpdate);
+    
+    // useEffect(() => {
+    //     router.replace(`/matricula/finalizar_matricula?step=${step}`);
+    // }, [step, router]);
+    
     useEffect(() => {
-        router.replace(`/matricula/finalizar_matricula?step=${step}`);
-    }, [step, router]);
+        console.log(update);
+    }, [update]);
 
-    useEffect(() => {
-        console.log(turmasSelecionadas)
-    }, [turmasSelecionadas]);
 
-    useEffect(() => {
-        // Bloco completo necessário ------------------------------------------------------------------------------------------------------------------------------------------------------------
-        const fetchToken = async () => {
-            const tok = await fetch('/api/token');
-            const data = await tok.json();
-            if (!data.token) {return;}
-            const token = data.token;
+    // useEffect(() => {
+    //     // Bloco completo necessário ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //     const fetchToken = async () => {
+    //         const tok = await fetch('/api/token');
+    //         const data = await tok.json();
+    //         if (!data.token) {return;}
+    //         const token = data.token;
             
-            const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-            });
-            const usuarioIDRetorno = await usuarioID.json();
-            const usuarioId = usuarioIDRetorno.usuarioId; 
+    //         const usuarioID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario-id`, {
+    //             method: 'GET',
+    //             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+    //         });
+    //         const usuarioIDRetorno = await usuarioID.json();
+    //         const usuarioId = usuarioIDRetorno.usuarioId; 
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-            });
-            const dataRes = await res.json();
-            console.log(dataRes)
-            // setUltima(dataRes.items[0].id);
+    //         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/usuario/${usuarioId}`, {
+    //         method: 'GET',
+    //         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
+    //         });
+    //         const dataRes = await res.json();
+    //         console.log(dataRes)
+    //         // setUltima(dataRes.items[0].id);
             
-    }; fetchToken();
+    // }; fetchToken();
   
-    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-    },[])
+    // },[])
     
     
-    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault(); // prevent page reload
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault(); // prevent page reload
 
-    //     const tok = await fetch("/api/token", { credentials: "include" });
-    //     const data = await tok.json();
-    //     if (!data.token) return
-    //     const token = data.token;
-    //     const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-    //     const matricula = await Matricula.json();
-    //     if (matricula?.message === "Unauthorized"){
-    //         setMessage("Erro na matricula. Por favor, logue novamente.")
-    //         return;
-    //     }
-
-    //     const matriculaID = matricula.id;
-
-    //     const AlunoID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/aluno-id`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-    //     const Alunoid = await AlunoID.json();
-    //     const alunoID = Alunoid.alunoId;
-       
-
-    //     const Atual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-    //     const AtualDado = await Atual.json();
+        const tok = await fetch("/api/token", { credentials: "include" });
+        const data = await tok.json();
+        if (!data.token) return
+        const token = data.token;
+        const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+        const matricula = await Matricula.json();
+        if (matricula?.message === "Unauthorized"){
+            setMessage("Erro na matricula. Por favor, logue novamente.")
+            return;
+        }
+        const matriculaID = matricula.id;
 
 
-    //     // const Sponte = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/integrar-sponte/${AtualDado.matriculaId}`, {
-    //     //   method: 'POST',
-    //     //   headers: { 
-    //     //     'Content-Type': 'application/json',
-    //     //     Authorization: `Bearer ${token}`, },
-    //     //   body: JSON.stringify(endereco),
-    //     // });
-    //     // const IntegrarSponte = await Sponte.json();
-    //     // console.log(IntegrarSponte, "Sponte aqui");
+        const AlunoSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/matriculas/sponte-id?id=${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+        const Alunoid = await AlunoSponteID.json();
+    
 
+        setUpdate(prev => ({...prev, nAlunoID: Alunoid.sponteAlunoId }));
 
-    //     // if (IntegrarSponte?.error){
-    //     //   if (IntegrarSponte?.error && Array.isArray(IntegrarSponte?.message) && IntegrarSponte?.message.length > 0) {
-
-    //     //     // IntegrarSponte.error exists and is a non-empty array
-    //     //     let errors = "";
-    //     //     for (let i = 0; i < IntegrarSponte.message.length; i++) {
-    //     //         errors += IntegrarSponte.message[i] + "\n";
-    //     //     }
-
-    //     //     setMessage(errors);
-    //     //   } else if (IntegrarSponte?.error && IntegrarSponte?.message){
-    //     //       setMessage(IntegrarSponte.message)
-    //     //   }
+        if (cursoID.length > 1){
+            setUpdate(prev => ({...prev, sCursoInteresse:cursoID.join(";") + ";" }));
             
-    //     //   console.log("deu certo1")
-    //     // } 
-    //     // else if (IntegrarSponte?.message){
-    //     //   if (IntegrarSponte.message === "Endereço do aluno (etapa 3B) concluído com sucesso."){
-    //     //     router.push("/matricula/matricula_finalizada");
-    //     //   }
-    //     // }
+        } else {
+
+            setUpdate(prev => ({...prev, sCursoInteresse:cursoID.join(";")}) );
+        }
         
-    // };
+        const updatedAluno: alunosUpdate = {
+            ...update,
+            nAlunoID: Alunoid.sponteAlunoId,
+            sCursoInteresse: cursoID.length > 1 ? cursoID.join(";") + ";" : cursoID.join(";")
+        };
+
+        const Turma = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/update`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, },
+          body: JSON.stringify(updatedAluno),
+        });
+        const turmaRes= await Turma.text();
+        console.log(turmaRes);
+        const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
+        
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(wrapped, "application/xml");
+
+        // Get all <RetornoOperacao> elements
+        const retornoElements = Array.from(xmlDoc.getElementsByTagName("RetornoOperacao"));
+
+        const retornoOperacaoValues = retornoElements.map(el => el.textContent);
+
+        if (retornoOperacaoValues[0] === "01 - Operação Realizada com Sucesso."){
+            router.push(`/matriculas/${matriculaID}/dados_do_responsavel`)
+        }
+
+        
+    };
     
     return (
         <>
@@ -134,7 +170,7 @@ export default function Finalizar() {
                     initial={{scale:0}}
                     animate={{scale:1}}
                     exit={{scale:0}}
-                    className={`${step === 1 ? "" : "text-center" } text-[20px] mb-6 `}>
+                    className={`text-center text-[20px] mb-6 `}>
                         {step === 1 ?
                             "Matricula quase concluída! Escolha sua turma de interesse"
                         :
@@ -143,12 +179,16 @@ export default function Finalizar() {
                         
                         </motion.p>
                     
-                    {step === 1 &&
-                        <Cursos value={curso} onChange={(value) => setCurso(value)} onListChange={setTurmasSelecionadas} />
-                    }
+                    <div style={{ display: step === 1 ? "block" : "none", width: "100%", height: "100%" }}>
+                        <Cursos
+                            value={curso}
+                            onChange={(value) => setCurso(value)}
+                            onListChangeID={serCursoID}
+                        />
+                    </div>
                 </div>
                 
-                <div className="flex flex-1 gap-4 max-w-full justify-center items-center ">
+                <form onSubmit={handleSubmit} className="flex flex-1 gap-4 max-w-full justify-center items-center ">
 
                     {step === 2 &&
                         <motion.button 
@@ -180,8 +220,7 @@ export default function Finalizar() {
                     exit={{scale:0}}
                     whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
                     whileTap={{scale:0.98}}
-                    type={`${step === 1 ? "button" : "submit" }`}
-                    onClick={() => { if (step === 1 ) {setStep(2)}  }}
+                    onClick={(e) => { if (step === 1) { e.preventDefault(); setStep(2)} }}
                     className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-3 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold ">Próximo</motion.button>
                     
                     {/* <motion.button 
@@ -203,7 +242,7 @@ export default function Finalizar() {
                     transition={{duration: 0.3, }}
                     onClick={() => {if (ultima) {router.push(`/matriculas/${ultima}/dados_do_responsavel_financeiro`)}}}
                     className="cursor-pointer rounded-[15px] max-w-full w-[230px] py-3 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold ">Ver matrículas</motion.button> */}
-                </div>
+                </form>
             </div>
         </>
 

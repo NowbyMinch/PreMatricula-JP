@@ -2,14 +2,15 @@
 import { useEffect, useState, useRef } from 'react';
 import { format, parse, isValid, startOfMonth, endOfMonth, startOfWeek, addDays, addMonths, subMonths, isSameMonth, isSameDay } from 'date-fns';
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, MotionProps } from 'framer-motion';
 import React from 'react';
+import ErrorModal from './ErrorModal';
 
 type DatePickerProps = {
   onChange: (date: string) => void; // formato "YYYY-MM-DD"
 };
 
-export default function DatePicker({ onChange }: DatePickerProps ) {
+export function DatePicker({ onChange }: DatePickerProps ) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showPicker, setShowPicker] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -152,10 +153,10 @@ export default function DatePicker({ onChange }: DatePickerProps ) {
   }, [inputValue, inputValue2, inputValue3, onChange]);
 
   return (
-    <div className="relative">
+    <div className="relative max-w-[480px]">
       <div className="relative ">
 
-        <div className={`${focused || focused2 || focused3 ? "border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.2)]" : "border-gray-400"} relative cursor-text py-[14px] px-3 pr-8 h-[54px] gap-1 text-[16px] flex w-full rounded-[15px] border `}>
+        <div className={`${focused || focused2 || focused3 ? "border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.2)]" : "border-gray-400"}  relative cursor-text py-[14px] px-3 pr-8 h-[54px] gap-1 text-[16px] flex w-full rounded-[15px] border `}>
           <div className="relative text-gray-400 block w-[31px]">
             {!focused && !inputValue && <div className='w-full rounded-[5px] absolute text-center'>dd</div>}
             <input required ref={ValueRef} value={inputValue} onBlur={() => {
@@ -261,5 +262,108 @@ export default function DatePicker({ onChange }: DatePickerProps ) {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+
+interface DataEditarProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+export function DataEditar({
+  value = "",
+  onChange,
+  disabled,
+  placeholder = "dd / mm / aaaa",
+  ...props
+}: DataEditarProps) {
+  // displayed masked value
+  const [inputValue, setInputValue] = useState(value);
+  const [isValid, setIsValid] = useState(true);
+  const [ message, setMessage ] = useState<string | null>("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let raw = e.target.value.replace(/\D/g, ""); // remove non-numeric
+    if (raw.length > 8) raw = raw.slice(0, 8);
+
+    // format to dd / mm / yyyy
+    let masked = raw
+      .replace(/^(\d{2})(\d)/, "$1 / $2")
+      .replace(/^(\d{2}) \/ (\d{2})(\d)/, "$1 / $2 / $3");
+
+    setInputValue(masked);
+
+    if (raw.length === 8) {
+      const day = parseInt(raw.slice(0, 2));
+      const month = parseInt(raw.slice(2, 4));
+      const year = parseInt(raw.slice(4, 8));
+      const valid = validateDate(day, month, year);
+      setIsValid(valid);
+
+      if (valid) {
+        const formatted = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        onChange?.(formatted);
+      }
+    } else {
+      // incomplete → no validation, neutral state
+      setIsValid(true);
+    }
+  };
+
+  // validate actual date values
+  const validateDate = (day: number, month: number, year: number) => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    if (month < 1 || month > 12) return false;
+    if (year < 1900 || year > currentYear) return false;
+
+    const daysInMonth = new Date(year, month, 0).getDate();
+    if (day < 1 || day > daysInMonth) return false;
+
+    // optional: disallow future dates
+    const inputDate = new Date(year, month - 1, day);
+    if (inputDate > now) return false;
+
+    return true;
+  };
+
+  // helper to show prefilled yyyy-mm-dd as dd / mm / yyyy
+  function formatDisplay(val: string): string {
+    if (!val || !/^\d{4}-\d{2}-\d{2}$/.test(val)) return "";
+    const [y, m, d] = val.split("-");
+    return `${d} / ${m} / ${y}`;
+  }
+
+  useEffect(() =>{
+    if (!isValid){
+      setMessage("Data inválida. Verifique o dia, mês e ano.")
+    }
+  },[isValid])
+  return (
+    <>
+      {message && (
+        <ErrorModal message={message} onClose={() => setMessage(null)} />
+      )}
+
+      <motion.div className="w-full max-w-[480px]">
+        <input
+          inputMode="numeric"
+          value={inputValue}
+          onChange={handleChange}
+          placeholder={placeholder}
+          disabled={disabled}
+          {...props}
+          className={`w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] 
+          }`}
+        />
+        {!isValid && (
+
+          <p className="text-red-500 text-sm mt-1"></p>
+        )}
+      </motion.div>
+    </>
   );
 }
