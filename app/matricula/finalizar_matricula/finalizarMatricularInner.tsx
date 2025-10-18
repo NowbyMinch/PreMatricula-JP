@@ -137,6 +137,10 @@ export default function Finalizar() {
           body: JSON.stringify(updatedAluno),
         });
         const turmaRes= await Turma.text();
+
+        if ( turmaRes.split('"')[3] === "Aluno não possui curso de interesse no Sponte. Adicione ao menos um curso de interesse e tente novamente."){
+            setMessage(turmaRes.split('"')[3])
+        }
         console.log(turmaRes);
         const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
         
@@ -150,7 +154,7 @@ export default function Finalizar() {
 
         if (retornoOperacaoValues[0] === "01 - Operação Realizada com Sucesso."){
             router.push(`/matriculas/${matriculaID}/dados_do_responsavel`)
-        }
+        } 
 
         
     };

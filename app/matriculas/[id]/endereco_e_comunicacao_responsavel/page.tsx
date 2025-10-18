@@ -1,7 +1,7 @@
 "use client";
 
 import { Loading } from "@imports/components/ui/loading";
-import { Celular } from "@imports/components/ui/selectionboxes";
+import { Celular, CelularVariation } from "@imports/components/ui/selectionboxes";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -198,6 +198,7 @@ export default function Home() {
                 <motion.label className="origin-left">C.E.P.</motion.label>
                 <motion.input
                   type="text"
+                  disabled
                   onChange={(e) => {setUpdate(prev => ({...prev, sCEP: e.target.value}))}}
                   defaultValue={update.sCEP}
                   className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -208,6 +209,7 @@ export default function Home() {
                 <motion.label className="origin-left">Rua/Avenida</motion.label>
                 <motion.input
                   type="text"
+                  disabled
                   onChange={(e) => {setUpdate(prev => ({...prev, sEndereco: e.target.value}))}}
                   defaultValue={update.sEndereco}
                   className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -218,6 +220,7 @@ export default function Home() {
                 <motion.label className="origin-left">N°</motion.label>
                 <motion.input
                   type="text"
+                  disabled
                   maxLength={3}
                   onChange={(e) => {setUpdate(prev => ({...prev, nNumeroEndereco: e.target.value}))}}
                   defaultValue={update.nNumeroEndereco}
@@ -231,6 +234,7 @@ export default function Home() {
                 <motion.label className="origin-left">Cidade</motion.label>
                 <motion.input
                   type="text"
+                  disabled
                   onChange={(e) => {setUpdate(prev => ({...prev, sCidade: e.target.value}))}}
                   defaultValue={update.sCidade}
                   className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -241,6 +245,7 @@ export default function Home() {
                 <motion.label className="origin-left">Bairro</motion.label>
                 <motion.input
                   type="text"
+                  disabled
                   onChange={(e) => {setUpdate(prev => ({...prev, sBairro: e.target.value}))}}
                   defaultValue={update.sBairro}
                   className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -260,7 +265,7 @@ export default function Home() {
             <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                 <motion.label className="origin-left">Celular</motion.label>
-                <Celular disabled={false} onChange={(value) => {setUpdate(prev => ({...prev, sCelular: value}))}} value={dados?.responsaveis[0].celular}/>
+                <CelularVariation disabled={true} onChange={(value) => {setUpdate(prev => ({...prev, sCelular: value}))}} value={dados?.responsaveis[0].celular}/>
                 
               </motion.div>
 
@@ -268,6 +273,7 @@ export default function Home() {
                 <motion.label className="origin-left">Email</motion.label>
                 <motion.input
                   type="email"
+                  disabled
                   onChange={(e) => {setUpdate(prev => ({...prev, sEmail: e.target.value}))}}
                   defaultValue={update.sEmail}
                   className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -303,6 +309,7 @@ export default function Home() {
                     <motion.label className="origin-left">C.E.P.</motion.label>
                     <motion.input
                       type="text"
+                      disabled
                       onChange={(e) => {setUpdate2(prev => ({...prev, sCEP: e.target.value}))}}
                       defaultValue={update2.sCEP}
                       className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -313,6 +320,7 @@ export default function Home() {
                     <motion.label className="origin-left">Rua/Avenida</motion.label>
                     <motion.input
                       type="text"
+                      disabled
                       onChange={(e) => {setUpdate2(prev => ({...prev, sEndereco: e.target.value}))}}
                       defaultValue={update2.sEndereco}
                       className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -323,6 +331,7 @@ export default function Home() {
                     <motion.label className="origin-left">N°</motion.label>
                     <motion.input
                       type="text"
+                      disabled
                       maxLength={3}
                       onChange={(e) => {setUpdate2(prev => ({...prev, nNumeroEndereco: e.target.value}))}}
                       defaultValue={update2.nNumeroEndereco}
@@ -336,6 +345,7 @@ export default function Home() {
                     <motion.label className="origin-left">Cidade</motion.label>
                     <motion.input
                       type="text"
+                      disabled
                       onChange={(e) => {setUpdate2(prev => ({...prev, sCidade: e.target.value}))}}
                       defaultValue={update2.sCidade}
                       className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -346,6 +356,7 @@ export default function Home() {
                     <motion.label className="origin-left">Bairro</motion.label>
                     <motion.input
                       type="text"
+                      disabled
                       onChange={(e) => {setUpdate2(prev => ({...prev, sBairro: e.target.value}))}}
                       defaultValue={update2.sBairro}
                       className="w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
@@ -365,8 +376,7 @@ export default function Home() {
                 <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
                     <motion.label className="origin-left">Celular</motion.label>
-                    <Celular disabled={false} onChange={(value) => {setUpdate2(prev => ({...prev, sCelular: value}))}} value={dados?.responsaveis[1].celular}/>
-
+                    <CelularVariation disabled={true} onChange={(value) => {setUpdate(prev => ({...prev, sCelular: value}))}} value={dados?.responsaveis[0].celular}/>
                   </motion.div>
 
                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
@@ -384,7 +394,7 @@ export default function Home() {
             )}
         </AnimatePresence>
       </div>
-      <div className=" h-full mt-auto">
+      {/* <div className=" h-full mt-auto">
         <motion.button 
         initial={{scale:0}}
         animate={{scale:1}}
@@ -393,7 +403,7 @@ export default function Home() {
         whileTap={{scale:0.98}}
         onClick={handleUpdate}
         className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-3 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold mx-auto mt-auto ">Salvar mudanças</motion.button>
-      </div>
+      </div> */}
     </>
   );
 }

@@ -404,7 +404,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
         <PopoverTrigger asChild className="">
           <Button
             role="combobox"
-            className={` text-[15px] px-3 w-fit max-w-[100px] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+            className={` text-[15px] px-3 w-fit max-w-[110px] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
           >
             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
               {value
@@ -429,7 +429,7 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
 
         </PopoverTrigger>
 
-        <PopoverContent className="w-[130px] text-[15px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
+        <PopoverContent className="w-[150px] text-[15px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
 
           <Command className="rounded-[15px] bg-transparent"> 
             <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)]">
@@ -731,6 +731,66 @@ export function Celular({
       className={`${
         disabled
           ? "opacity-50 cursor-not-allowed"
+          : "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
+      }`}
+    />
+  );
+}
+
+export function CelularVariation({
+  value = "",
+  onChange,
+  placeholder = "(00) 00000-0000",
+  disabled,
+  ...props
+}: CpfInputProps) {
+  const [numero, setNumero] = useState(value);
+  const [prevRaw, setPrevRaw] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    const isDeleting = input.length < prevRaw.length;
+    setPrevRaw(input);
+
+    let digits = input.replace(/\D/g, "");
+    if (digits.length > 11) digits = digits.slice(0, 11);
+
+    // 🧠 don't rebuild the mask while user is deleting the ")" or space
+    if (isDeleting && prevRaw.endsWith(") ") && input.length === prevRaw.length - 2) {
+      // User just tried to backspace past ") ", allow it to remove both
+      setNumero(input);
+      onChange?.(input);
+      return;
+    }
+
+    let masked = digits;
+
+    if (digits.length > 2) {
+      masked = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    } else if (digits.length > 0) {
+      masked = `(${digits}`;
+    }
+
+    if (digits.length > 6) {
+      masked = masked.replace(/(\d{5})(\d)/, "$1-$2");
+    }
+
+    setNumero(masked);
+    onChange?.(masked);
+  };
+
+  return (
+    <motion.input
+      required
+      inputMode="numeric"
+      value={`(${numero.slice(0,2)}) ${numero.slice(2,7)}-${numero.slice(7,11)}`}
+      onChange={handleChange}
+      placeholder={placeholder}
+      disabled={disabled}
+      {...props}
+      className={`${
+        disabled
+          ? "pointer-events-auto w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
           : "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
       }`}
     />
