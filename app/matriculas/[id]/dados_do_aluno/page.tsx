@@ -1,6 +1,6 @@
 "use client";
 
-import {DataEditar, DatePicker} from "@imports/components/ui/datepicker";
+import {DataEditar} from "@imports/components/ui/datepicker";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 import {Loading} from "@imports/components/ui/loading";
 import { Genero } from "@imports/components/ui/selectionboxes";

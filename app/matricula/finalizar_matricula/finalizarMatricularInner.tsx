@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 import { Cursos } from "@imports/components/ui/selectionboxes";
-import { XMLParser } from "fast-xml-parser";
 
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
 //   {new Date().getFullYear() + 1} 

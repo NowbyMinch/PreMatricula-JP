@@ -905,7 +905,7 @@ export function Cursos({ value, onChange, onListChange, onListChangeID }: Combob
       onListChangeID(cursoID);
     }
     
-  }, [selectedName, onListChange]);
+  }, [selectedName, onListChange, cursoID, onListChangeID]);
 
   if (loading) return <Loading />
 

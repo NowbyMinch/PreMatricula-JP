@@ -5,7 +5,6 @@ import ErrorModal from "@imports/components/ui/ErrorModal";
 import {Loading} from "@imports/components/ui/loading";
 import { Genero } from "@imports/components/ui/selectionboxes";
 import { AnimatePresence, motion } from "framer-motion";
-import { SquarePen } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 

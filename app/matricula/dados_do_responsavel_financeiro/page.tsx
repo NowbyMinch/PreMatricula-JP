@@ -53,11 +53,11 @@ export default function Home() {
     const data = await tok.json();
     if (!data.token) {return;}
     const token = data.token;
-    const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-    const matricula = await Matricula.json();
-    const matriculaID = matricula.id;
-    const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-    const responsaveis = await Responsavel.json();
+    // const Matricula = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+    // const matricula = await Matricula.json();
+    // const matriculaID = matricula.id;
+    // const Responsavel = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+    // const responsaveis = await Responsavel.json();
     // console.log(responsaveis)
 
     const iniciar = {

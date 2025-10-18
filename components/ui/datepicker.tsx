@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { format, parse, isValid, startOfMonth, endOfMonth, startOfWeek, addDays, addMonths, subMonths, isSameMonth, isSameDay } from 'date-fns';
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
-import { AnimatePresence, motion, MotionProps } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import ErrorModal from './ErrorModal';
 
@@ -289,7 +289,7 @@ export function DataEditar({
     if (raw.length > 8) raw = raw.slice(0, 8);
 
     // format to dd / mm / yyyy
-    let masked = raw
+    const masked = raw
       .replace(/^(\d{2})(\d)/, "$1 / $2")
       .replace(/^(\d{2}) \/ (\d{2})(\d)/, "$1 / $2 / $3");
 
@@ -331,11 +331,11 @@ export function DataEditar({
   };
 
   // helper to show prefilled yyyy-mm-dd as dd / mm / yyyy
-  function formatDisplay(val: string): string {
-    if (!val || !/^\d{4}-\d{2}-\d{2}$/.test(val)) return "";
-    const [y, m, d] = val.split("-");
-    return `${d} / ${m} / ${y}`;
-  }
+  // function formatDisplay(val: string): string {
+  //   if (!val || !/^\d{4}-\d{2}-\d{2}$/.test(val)) return "";
+  //   const [y, m, d] = val.split("-");
+  //   return `${d} / ${m} / ${y}`;
+  // }
 
   useEffect(() =>{
     if (!isValid){
