@@ -1,7 +1,7 @@
 "use client";
 
 import { Loading } from "@imports/components/ui/loading";
-import { Celular, CelularVariation } from "@imports/components/ui/selectionboxes";
+import { CelularVariation } from "@imports/components/ui/selectionboxes";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -103,67 +103,65 @@ export default function Home() {
          
      },[dados])
 
-
    
      useEffect(() => {
        console.log(update, "update");
        console.log(update2, "update2");
      },[update, update2])
      
-     const handleUpdate = async () => {
-       const tok = await fetch("/api/token", { credentials: "include" });
-       const data = await tok.json();
-       if (!data.token) return
-       const token = data.token;
+    //  const handleUpdate = async () => {
+    //    const tok = await fetch("/api/token", { credentials: "include" });
+    //    const data = await tok.json();
+    //    if (!data.token) return
+    //    const token = data.token;
        
-       const AlunoSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/matriculas/sponte-id?id=${id}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-       const Alunoid = await AlunoSponteID.json();
+    //    const AlunoSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/matriculas/sponte-id?id=${id}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+    //    const Alunoid = await AlunoSponteID.json();
        
-       const ResponsavelSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/responsaveis?id=${Alunoid.sponteAlunoId}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-       const Responsavelid = await ResponsavelSponteID.json();
+    //    const ResponsavelSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/responsaveis?id=${Alunoid.sponteAlunoId}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+    //    const Responsavelid = await ResponsavelSponteID.json();
        
-       console.log(Responsavelid?.responsavelIds[0]);
-       setUpdate(prev => ({...prev, nResponsavelID: Responsavelid?.responsavelIds[0] }));
-       setUpdate2(prev => ({...prev, nResponsavelID: Responsavelid?.responsavelIds[1] }));
+    //    console.log(Responsavelid?.responsavelIds[0]);
+    //    setUpdate(prev => ({...prev, nResponsavelID: Responsavelid?.responsavelIds[0] }));
+    //    setUpdate2(prev => ({...prev, nResponsavelID: Responsavelid?.responsavelIds[1] }));
       
   
-       const updatedResponsavel1: responsavelUpdate = {
-        ...update,
-        nResponsavelID: Responsavelid?.responsavelIds[0],
-       };
+    //    const updatedResponsavel1: responsavelUpdate = {
+    //     ...update,
+    //     nResponsavelID: Responsavelid?.responsavelIds[0],
+    //    };
        
-       const updatedResponsavel2: responsavelUpdate = {
-        ...update2,
-        nResponsavelID: Responsavelid?.responsavelIds[1],
-       };
+    //    const updatedResponsavel2: responsavelUpdate = {
+    //     ...update2,
+    //     nResponsavelID: Responsavelid?.responsavelIds[1],
+    //    };
        
-       console.log(updatedResponsavel1, "updatedResponsavel1 ---")
-       console.log(updatedResponsavel2, "updatedResponsavel2 ---")
+    //    console.log(updatedResponsavel1, "updatedResponsavel1 ---")
+    //    console.log(updatedResponsavel2, "updatedResponsavel2 ---")
    
-      //  const Turma = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/responsaveis/update`, {
-      //    method: 'POST',
-      //    headers: { 
-      //      'Content-Type': 'application/json',
-      //      Authorization: `Bearer ${token}`, },
-      //    body: JSON.stringify(updatedResponsavel),
-      //  });
+    //   //  const Turma = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/responsaveis/update`, {
+    //   //    method: 'POST',
+    //   //    headers: { 
+    //   //      'Content-Type': 'application/json',
+    //   //      Authorization: `Bearer ${token}`, },
+    //   //    body: JSON.stringify(updatedResponsavel),
+    //   //  });
        
-      //  const turmaRes= await Turma.text();
-      //  const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
+    //   //  const turmaRes= await Turma.text();
+    //   //  const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
        
-      //  const parser = new DOMParser();
-      //  const xmlDoc = parser.parseFromString(wrapped, "application/xml");
+    //   //  const parser = new DOMParser();
+    //   //  const xmlDoc = parser.parseFromString(wrapped, "application/xml");
    
-      //  // Get all <RetornoOperacao> elements
-      //  const retornoElements = Array.from(xmlDoc.getElementsByTagName("RetornoOperacao"));
+    //   //  // Get all <RetornoOperacao> elements
+    //   //  const retornoElements = Array.from(xmlDoc.getElementsByTagName("RetornoOperacao"));
    
-      //  const retornoOperacaoValues = retornoElements.map(el => el.textContent);
+    //   //  const retornoOperacaoValues = retornoElements.map(el => el.textContent);
        
-      //  console.log(retornoOperacaoValues);
+    //   //  console.log(retornoOperacaoValues);
              
-     };
+    //  };
   
-
   if (loading) return <div className="h-[703px]"><Loading /></div>;
 
   return (

@@ -3,7 +3,6 @@
 import { DataEditar } from "@imports/components/ui/datepicker";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 import {Loading} from "@imports/components/ui/loading";
-import { Genero } from "@imports/components/ui/selectionboxes";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -54,8 +53,8 @@ export default function Home() {
   const [dados, setDados] = useState<DadosResponsavel | null>(null);
   const [loading, setLoading] = useState(true);
   const [ message, setMessage ] = useState<string | null>("");
-  const [ genero, setGenero ] = useState<string>("");
-  const [ genero2, setGenero2 ] = useState<string>("");
+  // const [ genero, setGenero ] = useState<string>("");
+  // const [ genero2, setGenero2 ] = useState<string>("");
 
 
   useEffect(() => {
@@ -72,8 +71,8 @@ export default function Home() {
       const dataRes = await res.json();
 
       setDados(dataRes);
-      setGenero(dataRes ? dataRes?.responsaveis[0]?.genero : "");
-      setGenero2(dataRes ? dataRes?.responsaveis[1]?.genero : "");
+      // setGenero(dataRes ? dataRes?.responsaveis[0]?.genero : "");
+      // setGenero2(dataRes ? dataRes?.responsaveis[1]?.genero : "");
       setLoading(false);
     }; fetchToken();
     
@@ -123,85 +122,85 @@ export default function Home() {
      console.log(update2, "update2");
    },[update, update2])
    
-   const handleUpdate = async () => {
-     const tok = await fetch("/api/token", { credentials: "include" });
-     const data = await tok.json();
-     if (!data.token) return
-     const token = data.token;
+  //  const handleUpdate = async () => {
+  //    const tok = await fetch("/api/token", { credentials: "include" });
+  //    const data = await tok.json();
+  //    if (!data.token) return
+  //    const token = data.token;
      
-     const AlunoSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/matriculas/sponte-id?id=${id}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-     const Alunoid = await AlunoSponteID.json();
+  //    const AlunoSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/matriculas/sponte-id?id=${id}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+  //    const Alunoid = await AlunoSponteID.json();
     
      
-     const ResponsavelSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/responsaveis?id=${Alunoid.sponteAlunoId}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
-     const Responsavelid = await ResponsavelSponteID.json();
+  //    const ResponsavelSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/responsaveis?id=${Alunoid.sponteAlunoId}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
+  //    const Responsavelid = await ResponsavelSponteID.json();
      
-     console.log(Responsavelid?.responsavelIds[0]);
-     setUpdate(prev => ({...prev, nResponsavelID: Responsavelid?.responsavelIds[0] }));
-     setUpdate2(prev => ({...prev, nResponsavelID: Responsavelid?.responsavelIds[1] }));
+  //    console.log(Responsavelid?.responsavelIds[0]);
+  //    setUpdate(prev => ({...prev, nResponsavelID: Responsavelid?.responsavelIds[0] }));
+  //    setUpdate2(prev => ({...prev, nResponsavelID: Responsavelid?.responsavelIds[1] }));
     
 
-     const updatedResponsavel1: responsavelUpdate = {
-      ...update,
-      nResponsavelID: Responsavelid?.responsavelIds[0],
-      nAlunoID: Alunoid.sponteAlunoId
-     };
+  //    const updatedResponsavel1: responsavelUpdate = {
+  //     ...update,
+  //     nResponsavelID: Responsavelid?.responsavelIds[0],
+  //     nAlunoID: Alunoid.sponteAlunoId
+  //    };
      
-     const updatedResponsavel2: responsavelUpdate = {
-      ...update2,
-      nResponsavelID: Responsavelid?.responsavelIds[1],
-      nAlunoID: Alunoid.sponteAlunoId
+  //    const updatedResponsavel2: responsavelUpdate = {
+  //     ...update2,
+  //     nResponsavelID: Responsavelid?.responsavelIds[1],
+  //     nAlunoID: Alunoid.sponteAlunoId
 
-     };
+  //    };
      
-     console.log(updatedResponsavel1, "updatedResponsavel1 ---")
-    //  console.log(updatedResponsavel2, "updatedResponsavel2 ---")
+  //    console.log(updatedResponsavel1, "updatedResponsavel1 ---")
+  //   //  console.log(updatedResponsavel2, "updatedResponsavel2 ---")
  
-     const Turma = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/responsaveis/update-v1`, {
-       method: 'POST',
-       headers: { 
-         'Content-Type': 'application/json',
-         Authorization: `Bearer ${token}`, },
-       body: JSON.stringify(updatedResponsavel1),
-     });
+  //    const Turma = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/responsaveis/update-v1`, {
+  //      method: 'POST',
+  //      headers: { 
+  //        'Content-Type': 'application/json',
+  //        Authorization: `Bearer ${token}`, },
+  //      body: JSON.stringify(updatedResponsavel1),
+  //    });
      
-     const turmaRes= await Turma.text();
-     const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
+  //    const turmaRes= await Turma.text();
+  //    const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
      
-     const parser = new DOMParser();
-     const xmlDoc = parser.parseFromString(wrapped, "application/xml");
+  //    const parser = new DOMParser();
+  //    const xmlDoc = parser.parseFromString(wrapped, "application/xml");
  
-     // Get all <RetornoOperacao> elements
-     const retornoElements = Array.from(xmlDoc.getElementsByTagName("RetornoOperacao"));
+  //    // Get all <RetornoOperacao> elements
+  //    const retornoElements = Array.from(xmlDoc.getElementsByTagName("RetornoOperacao"));
  
-     const retornoOperacaoValues = retornoElements.map(el => el.textContent);
+  //    const retornoOperacaoValues = retornoElements.map(el => el.textContent);
      
-     console.log(retornoOperacaoValues);
-     console.log(turmaRes);
+  //    console.log(retornoOperacaoValues);
+  //    console.log(turmaRes);
 
 
-    //  const Turma2 = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/responsaveis/update`, {
-    //    method: 'POST',
-    //    headers: { 
-    //      'Content-Type': 'application/json',
-    //      Authorization: `Bearer ${token}`, },
-    //    body: JSON.stringify(updatedResponsavel2),
-    //  });
+  //   //  const Turma2 = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/responsaveis/update`, {
+  //   //    method: 'POST',
+  //   //    headers: { 
+  //   //      'Content-Type': 'application/json',
+  //   //      Authorization: `Bearer ${token}`, },
+  //   //    body: JSON.stringify(updatedResponsavel2),
+  //   //  });
      
-    //  const turmaRes2= await Turma2.text();
-    //  const wrapped2 = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes2}</root>`;
+  //   //  const turmaRes2= await Turma2.text();
+  //   //  const wrapped2 = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes2}</root>`;
      
-    //  const parser2 = new DOMParser();
-    //  const xmlDoc2 = parser2.parseFromString(wrapped2, "application/xml");
+  //   //  const parser2 = new DOMParser();
+  //   //  const xmlDoc2 = parser2.parseFromString(wrapped2, "application/xml");
  
-    //  // Get all <RetornoOperacao> elements
-    //  const retornoElements2 = Array.from(xmlDoc2.getElementsByTagName("RetornoOperacao"));
+  //   //  // Get all <RetornoOperacao> elements
+  //   //  const retornoElements2 = Array.from(xmlDoc2.getElementsByTagName("RetornoOperacao"));
  
-    //  const retornoOperacaoValues2 = retornoElements2.map(el => el.textContent);
+  //   //  const retornoOperacaoValues2 = retornoElements2.map(el => el.textContent);
      
-    //  console.log(retornoOperacaoValues2);
+  //   //  console.log(retornoOperacaoValues2);
            
-   };
+  //  };
 
 
 

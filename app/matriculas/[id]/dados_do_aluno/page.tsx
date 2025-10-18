@@ -106,9 +106,8 @@ export default function Home() {
     setUpdate(prev => ({...prev, nAlunoID: Alunoid.sponteAlunoId }));
     
     const updatedAluno: alunosUpdate = {
-        ...update,
-        nAlunoID: Alunoid.sponteAlunoId,
-
+      ...update,
+      nAlunoID: Alunoid.sponteAlunoId,
     };
     
     console.log(updatedAluno, "updatedAluno")
