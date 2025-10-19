@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ErrorModal from "@imports/components/ui/ErrorModal";
@@ -78,7 +78,26 @@ export default function Home() {
         ) as HTMLInputElement | null;
         if (prevInput) prevInput.focus();
         }
+
     };
+
+    useEffect(() => {
+        const handlePaste = (e: ClipboardEvent) => {
+            const pastedText = e.clipboardData?.getData("text");
+            if (pastedText) {
+            const newCode = [...codigo];
+            for (let i = 0; i < pastedText.length && i < 6; i++) {
+                newCode[i] = pastedText[i];
+                const input = document.querySelector(`input[name=codigo${i}]`) as HTMLInputElement;
+                if (input) input.value = pastedText[i];
+            }
+            setCodigo(newCode);
+            }
+        };
+
+        window.addEventListener("paste", handlePaste);
+        return () => window.removeEventListener("paste", handlePaste);
+    }, [codigo]);
      
 
     return (
@@ -120,7 +139,7 @@ export default function Home() {
                                     className="origin-left">Email</motion.label>
                                     <motion.input
                                     required
-                                    onChange={(e) => {setEmail(e.target.value); console.log(email)}}
+                                    onChange={(e) => {setEmail(e.target.value); }}
                                     type="email" placeholder="Digite seu email" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
                                 </motion.div>
 

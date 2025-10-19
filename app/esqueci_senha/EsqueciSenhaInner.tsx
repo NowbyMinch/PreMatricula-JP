@@ -140,33 +140,26 @@ export default function Home() {
 
             if (prevInput) prevInput.focus();
         }
-            
+
+    };
+
+    useEffect(() => {
         const handlePaste = (e: ClipboardEvent) => {
             const pastedText = e.clipboardData?.getData("text");
-            console.log("Pasted:", pastedText);
-
-            if (pastedText){
-                
-                for (let n = 0; n < pastedText?.length; n ++){
-                    let inputs = document.querySelector(
-                        `input[name=codigo${i + n}]`
-                    ) as HTMLInputElement | null;
-
-                    if (inputs) {inputs.value = pastedText[n]; inputs.focus();};
-
-                }
-
+            if (pastedText) {
+            const newCode = [...codigo];
+            for (let i = 0; i < pastedText.length && i < 6; i++) {
+                newCode[i] = pastedText[i];
+                const input = document.querySelector(`input[name=codigo${i}]`) as HTMLInputElement;
+                if (input) input.value = pastedText[i];
             }
-            // Example: do something with the text
+            setCodigo(newCode);
+            }
         };
 
         window.addEventListener("paste", handlePaste);
-        
-        return () => {
-            window.removeEventListener("paste", handlePaste);
-        };
-
-    };
+        return () => window.removeEventListener("paste", handlePaste);
+    }, [codigo]);
 
 
     return (

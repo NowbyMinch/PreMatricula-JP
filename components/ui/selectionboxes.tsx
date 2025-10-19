@@ -583,7 +583,7 @@ export function CpfInput({ value = "", onChange, placeholder, cnpj }: CpfInputPr
 
       temp1 = temp1.slice(0, 14);
 
-      let temp = temp1
+      const temp = temp1
       .replace(/^(\d{2})(\d{3})/, "$1.$2")
       .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
       .replace(/\.(\d{3})(\d)/, ".$1/$2")
@@ -598,7 +598,7 @@ export function CpfInput({ value = "", onChange, placeholder, cnpj }: CpfInputPr
       temp1 = cpf.replaceAll(".", "").replaceAll("/", "").replaceAll("-", "");
       temp1 = temp1.slice(0, 11);
 
-      let temp = temp1
+      const temp = temp1
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
@@ -608,7 +608,7 @@ export function CpfInput({ value = "", onChange, placeholder, cnpj }: CpfInputPr
     }
 
     setPh(placeholder || (cnpj ? "00.000.000/0000-00" : "000.000.000-00"));
-  }, [placeholder, cnpj]);
+  }, [placeholder, cnpj, cpf, onChange]);
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let v = e.target.value.replace(/\D/g, ""); // remove non-digits
