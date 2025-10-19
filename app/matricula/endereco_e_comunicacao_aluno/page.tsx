@@ -245,19 +245,19 @@ export default function Home() {
 
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
-                  <motion.label>Telefone (opicional)</motion.label>
+                  <motion.label>Telefone (opcional)</motion.label>
                   <CelularNotRequired onChange={(value) => (setTelefone(value))} disabled={false} />
                 </motion.div>
 
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
-                  <motion.label>Celular (opicional)</motion.label>
+                  <motion.label>Celular (opcional)</motion.label>
                   <CelularNotRequired onChange={(value) => (setCelular(value))} disabled={false} />
                 </motion.div>
               </div>
 
               <div className="w-full max-w-full flex gap-4 md:flex-row flex-col">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex flex-col gap-2 w-full">
-                  <motion.label>Email (opicional)</motion.label>
+                  <motion.label>Email (opcional)</motion.label>
                   <motion.input onChange={(e) => (setEmail(e.target.value))} disabled={false} type="email" placeholder="Digite seu email" className={
                     "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] bg-transparent text-white"} />
                 </motion.div>

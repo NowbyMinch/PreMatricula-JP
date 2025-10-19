@@ -41,6 +41,8 @@ export default function Home() {
           setMessage("Erro na matricula. Por favor, logue novamente.")
       }
       console.log(dataRes);
+    
+      
     };
     fetchToken();
 
