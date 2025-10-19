@@ -255,7 +255,10 @@ export default function Home() {
                 <motion.input 
                 type="text" 
                 maxLength={2}
-                onChange={(e) => {setUpdate(prev => ({...prev, sCidade: dados ? `${dados?.aluno.cidade}|${(dados?.aluno.uf).toUpperCase()}` : "" }))}}
+                onChange={(e) => {setUpdate(prev => ({...prev, sCidade: dados ? 
+                  `${dados?.aluno.cidade}${dados?.aluno?.uf && `|${(dados?.aluno?.uf).toUpperCase()}`} ` : "" }
+                
+                ))}}
                 defaultValue={dados ? dados.aluno.uf : ""}
                 className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] bg-transparent text-white  text-center`} />
               </motion.div>
