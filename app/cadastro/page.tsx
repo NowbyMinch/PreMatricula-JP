@@ -194,7 +194,7 @@ export default function Home() {
                             whileTap={{scale:0.99}}
                             type="button"
                             className="cursor-pointer hover:text-yellow-300 transition-all ease-in-out duration-300">
-                                Esqueci a a senha
+                                Esqueci a senha
                             </motion.button> 
                         </motion.span>
                     }

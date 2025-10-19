@@ -130,8 +130,6 @@ export default function Home() {
       const IntegrarSponte = await Sponte.json();
       console.log(IntegrarSponte, "Sponte aqui");
 
-
-
       if (IntegrarSponte?.erro){
         if (IntegrarSponte?.detalhe && Array.isArray(IntegrarSponte?.detalhe) && IntegrarSponte?.detalhe.length > 0) {
 
