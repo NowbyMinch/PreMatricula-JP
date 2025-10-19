@@ -91,8 +91,8 @@ export default function Home() {
                 errors += dataRes.message[i] + "\n";
             }
             setMessage(errors);
-        } else {
-        setMessage(dataRes.error.message)
+        } else if (dataRes?.error && dataRes?.message){
+          setMessage(dataRes.message)
         }
     } else if (dataRes?.message){
         if (dataRes.message === "Etapa 1B (segundo responsável) concluída com sucesso."){

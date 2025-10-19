@@ -134,11 +134,38 @@ export default function Home() {
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, i: number) => {
         if (e.key === "Backspace" && !e.currentTarget.value && i > 0) {
-        const prevInput = document.querySelector(
-            `input[name=codigo${i - 1}]`
-        ) as HTMLInputElement | null;
-        if (prevInput) prevInput.focus();
+            const prevInput = document.querySelector(
+                `input[name=codigo${i - 1}]`
+            ) as HTMLInputElement | null;
+
+            if (prevInput) prevInput.focus();
         }
+            
+        const handlePaste = (e: ClipboardEvent) => {
+            const pastedText = e.clipboardData?.getData("text");
+            console.log("Pasted:", pastedText);
+
+            if (pastedText){
+                
+                for (let n = 0; n < pastedText?.length; n ++){
+                    let inputs = document.querySelector(
+                        `input[name=codigo${i + n}]`
+                    ) as HTMLInputElement | null;
+
+                    if (inputs) {inputs.value = pastedText[n]; inputs.focus();};
+
+                }
+
+            }
+            // Example: do something with the text
+        };
+
+        window.addEventListener("paste", handlePaste);
+        
+        return () => {
+            window.removeEventListener("paste", handlePaste);
+        };
+
     };
 
 
