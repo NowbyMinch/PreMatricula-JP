@@ -240,7 +240,7 @@ export default function Home() {
               htmlFor="" 
               className="origin-left">Cidade</motion.label>
               <motion.input
-              disabled
+              onChange={(e) => {setUpdate(prev => ({...prev, sCidade: e.target.value}))}}
               type="text" defaultValue={update.sCidade} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
@@ -254,7 +254,8 @@ export default function Home() {
                 className="origin-left">UF</motion.label>
                 <motion.input 
                 type="text" 
-                disabled
+                maxLength={2}
+                onChange={(e) => {setUpdate(prev => ({...prev, sCidade: dados ? `${dados?.aluno.cidade}|${(dados?.aluno.uf).toUpperCase()}` : "" }))}}
                 defaultValue={dados ? dados.aluno.uf : ""}
                 className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] bg-transparent text-white  text-center`} />
               </motion.div>
@@ -268,7 +269,7 @@ export default function Home() {
               htmlFor="" 
               className="origin-left">Bairro</motion.label>
               <motion.input
-              disabled
+              onChange={(e) => {setUpdate(prev => ({...prev, sBairro: e.target.value}))}}
               type="text" defaultValue={update.sBairro} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
