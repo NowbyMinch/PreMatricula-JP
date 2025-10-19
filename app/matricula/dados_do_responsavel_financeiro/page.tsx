@@ -71,6 +71,7 @@ export default function Home() {
     pessoaJuridica: pessoaJuridica,
     parentesco: parentesco
     }
+    console.log(iniciar);
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`, {
     method: 'POST',
@@ -228,7 +229,7 @@ export default function Home() {
                       exit={{scale:0}}
                       className="flex flex-col gap-2 w-full ">
                         
-                        <CpfInput onChange={(value) => {setCPF(value)}} disabled={false}/>
+                        <CpfInput cnpj={pessoaJuridica} onChange={(value) => {setCPF(value)}} disabled={false}/>
                         
                       </motion.div>
 

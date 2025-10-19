@@ -565,33 +565,83 @@ interface CpfInputProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   disabled: boolean;
+  cnpj?: boolean;
   // className?: string;
 }
 
-export function CpfInput({ value = "", onChange, placeholder = "000.000.000-00", }: CpfInputProps) {
+export function CpfInput({ value = "", onChange, placeholder, cnpj }: CpfInputProps) {
   const [cpf, setCpf] = useState(value);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let v = e.target.value.replace(/\D/g, ""); // remove non-digits
-    if (v.length > 11) v = v.slice(0, 11); // limit to 11 digits
+  const [ph, setPh] = useState("");
 
-    // apply mask
-    v = v
+  useEffect(() => {
+    // update placeholder dynamically when cnpj changes
+    if (cnpj) {
+      let temp1: string;
+      temp1 = cpf.replaceAll(".", "").replaceAll("/", "").replaceAll("-", "");
+      console.log(temp1.length)
+
+      temp1 = temp1.slice(0, 14);
+
+      let temp = temp1
+      .replace(/^(\d{2})(\d{3})/, "$1.$2")
+      .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1/$2")
+      .replace(/(\d{4})(\d)/, "$1-$2");
+
+      setCpf(temp);
+      onChange?.(temp);  
+      
+    } else {
+
+      let temp1: string;
+      temp1 = cpf.replaceAll(".", "").replaceAll("/", "").replaceAll("-", "");
+      temp1 = temp1.slice(0, 11);
+
+      let temp = temp1
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 
+      setCpf(temp);
+      onChange?.(temp);  
+    }
+
+    setPh(placeholder || (cnpj ? "00.000.000/0000-00" : "000.000.000-00"));
+  }, [placeholder, cnpj]);
+
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let v = e.target.value.replace(/\D/g, ""); // remove non-digits
+    // if (v.length > 11) v = v.slice(0, 11); // limit to 11 digits
+
+    // apply mask
+     if (cnpj) {
+      // --- format as CNPJ ---
+      if (v.length > 14) v = v.slice(0, 14);
+      v = v
+        .replace(/^(\d{2})(\d)/, "$1.$2")
+        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1/$2")
+        .replace(/(\d{4})(\d)/, "$1-$2");
+        
+    } else {
+      // --- format as CPF ---
+      if (v.length > 11) v = v.slice(0, 11);
+      v = v
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    }
+    
     setCpf(v);
-    onChange?.(v);
+    onChange?.(v);  
   };
 
   return (
     <motion.input
-    required
-    inputMode="numeric"
     value={cpf}
     onChange={handleChange}
-    placeholder={placeholder}
+    placeholder={ph}
     type="text" className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
   )
 };

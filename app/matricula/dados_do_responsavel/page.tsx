@@ -225,7 +225,7 @@ export default function Home() {
                       animate={{scale:1}}
                       exit={{scale:0}}
                       className="flex flex-col gap-2 w-full ">
-                        <CpfInput onChange={(value) => {setCPF(value)}} disabled={false}/>
+                        <CpfInput cnpj={pessoaJuridica} onChange={(value) => {setCPF(value)}} disabled={false}/>
                         
                       </motion.div>
 
