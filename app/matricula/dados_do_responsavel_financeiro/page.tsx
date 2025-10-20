@@ -71,7 +71,6 @@ export default function Home() {
     pessoaJuridica: pessoaJuridica,
     parentesco: parentesco
     }
-    console.log(iniciar);
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`, {
     method: 'POST',
@@ -80,7 +79,6 @@ export default function Home() {
     });
     const dataRes = await res.json();
     
-    console.log(dataRes?.error);
     
     if (dataRes?.error){
       if (dataRes?.error && Array.isArray(dataRes?.message) && dataRes?.message.length > 0) {
