@@ -143,23 +143,31 @@ export default function Home() {
 
     };
 
-    useEffect(() => {
-        const handlePaste = (e: ClipboardEvent) => {
-            const pastedText = e.clipboardData?.getData("text");
-            if (pastedText) {
-            const newCode = [...codigo];
-            for (let i = 0; i < pastedText.length && i < 6; i++) {
-                newCode[i] = pastedText[i];
-                const input = document.querySelector(`input[name=codigo${i}]`) as HTMLInputElement;
-                if (input) input.value = pastedText[i];
-            }
-            setCodigo(newCode);
-            }
-        };
+    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>, index: number) => {
+        e.preventDefault(); // prevent default paste behavior
 
-        window.addEventListener("paste", handlePaste);
-        return () => window.removeEventListener("paste", handlePaste);
-    }, [codigo]);
+        const pastedText = e.clipboardData?.getData("text") || "";
+        if (!pastedText) return;
+
+        const newCode = [...codigo];
+
+        // Start inserting from the current input index
+        for (let i = 0; i < pastedText.length && index + i < newCode.length; i++) {
+            newCode[index + i] = pastedText[i];
+
+            const input = document.querySelector(
+            `input[name=codigo${index + i}]`
+            ) as HTMLInputElement;
+            if (input) input.value = pastedText[i];
+        }
+
+        setCodigo(newCode);
+    };
+    // useEffect(() => {
+    
+    //     window.addEventListener("paste", handlePaste);
+    //     return () => window.removeEventListener("paste", handlePaste);
+    // }, [codigo]);
 
 
     return (
@@ -267,6 +275,7 @@ export default function Home() {
                                             name={`codigo${i}`}
                                             id={`codigo${i}`}
                                             value={codigo[i]}
+                                            onPaste={(e) => handlePaste(e,i)}
                                             onChange={(e) => handleChange(e, i)}
                                             onKeyDown={(e) => handleKeyDown(e, i)}
                                             type="text" 

@@ -108,10 +108,8 @@ export default function Finalizar() {
         }
         const matriculaID = matricula.id;
 
-
         const AlunoSponteID = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/matriculas/sponte-id?id=${matriculaID}`, {method: 'GET', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`, } });
         const Alunoid = await AlunoSponteID.json();
-    
 
         setUpdate(prev => ({...prev, nAlunoID: Alunoid.sponteAlunoId }));
 
@@ -141,6 +139,7 @@ export default function Finalizar() {
         if ( turmaRes.split('"')[3] === "Aluno não possui curso de interesse no Sponte. Adicione ao menos um curso de interesse e tente novamente."){
             setMessage(turmaRes.split('"')[3])
         }
+
         console.log(turmaRes);
         const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
         
@@ -177,7 +176,7 @@ export default function Finalizar() {
                         {step === 1 ?
                             "Matricula quase concluída! Escolha sua turma de interesse"
                         :
-                            "Desejas mesmo terminar a matrícula? Nem todos os dados poderão ser alterados após a conclusão"
+                            "Deseja mesmo terminar a matrícula? Nem todos os dados poderão ser alterados após a conclusão"
                         }   
                         
                         </motion.p>
@@ -222,7 +221,7 @@ export default function Finalizar() {
                     animate={{scale:1}}
                     exit={{scale:0}}
                     whileHover={{scale:1.02, boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)"}}
-                    whileTap={{scale:0.98}}
+                    whileTap={{scale:0.98}} 
                     onClick={(e) => { if (step === 1) { e.preventDefault(); setStep(2)} }}
                     className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-3 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold ">Próximo</motion.button>
                     

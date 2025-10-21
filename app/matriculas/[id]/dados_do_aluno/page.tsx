@@ -83,7 +83,7 @@ export default function Home() {
   
   useEffect(() => {
     setUpdate(prev => ({...prev, sNome: dados ? dados.aluno.nome : "" }));
-    setUpdate(prev => ({...prev, sSexo: dados ? (dados.aluno.genero.toLowerCase()[0].toUpperCase() + dados.aluno.genero.toLowerCase().slice(1)) : "" }));
+    setUpdate(prev => ({...prev, sSexo: dados && dados?.aluno?.genero ? (dados.aluno.genero.toLowerCase()[0].toUpperCase() + dados.aluno.genero.toLowerCase().slice(1)) : "" }));
     setUpdate(prev => ({...prev, dDataNascimento: dados ? dados.aluno.dataNascimento : "" }));
     setUpdate(prev => ({...prev, sCidadeNatal: dados ? dados.aluno.cidadeNatal : "" }));
     setUpdate(prev => ({...prev, sCPF: dados ? dados.aluno.cpf : "" }));
@@ -135,7 +135,6 @@ export default function Home() {
           
   };
 
-  
   if (loading) return <div className="h-[703px]"><Loading /></div>
 
   return (
@@ -198,7 +197,7 @@ export default function Home() {
                 className="origin-left">Cidade Natal</motion.label>
                 <motion.input
                 type="text" 
-                disabled
+                onChange={(e) => {setUpdate(prev => ({...prev, sCidadeNatal: e.target.value}))}}
                 defaultValue={update.sCidadeNatal} className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 

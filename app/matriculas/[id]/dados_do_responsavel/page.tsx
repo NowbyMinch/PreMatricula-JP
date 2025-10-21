@@ -284,7 +284,12 @@ export default function Home() {
                   type="text" 
                   disabled
                   // onChange={(e) => {setUpdate(prev => ({...prev, sNome: e.target.value}))}} PARENTESCO????????????????????????????????????????????????????????????????????????????????????????????
-                  defaultValue={dados ? (((dados.responsaveis[0].tipoParentesco).toLowerCase())[0].toUpperCase()) + (dados.responsaveis[0].tipoParentesco).toLowerCase().slice(1): ""} 
+                  defaultValue={
+                    dados?.responsaveis?.[0]?.tipoParentesco
+                      ? dados.responsaveis[0].tipoParentesco.charAt(0).toUpperCase() +
+                        dados.responsaveis[0].tipoParentesco.slice(1).toLowerCase()
+                      : ""
+                  }
                   className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
               </motion.div>
 
@@ -435,7 +440,12 @@ export default function Home() {
                     type="text" 
                     disabled
                     // onChange={(e) => {setUpdate(prev => ({...prev, sNome: e.target.value}))}} PARENTESCO????????????????????????????????????????????????????????????????????????????????????????????
-                    defaultValue={dados ? (((dados.responsaveis[1].tipoParentesco).toLowerCase())[0].toUpperCase()) + (dados.responsaveis[1].tipoParentesco).toLowerCase().slice(1): ""} 
+                    defaultValue={
+                      dados?.responsaveis?.[0]?.tipoParentesco
+                        ? dados.responsaveis[0].tipoParentesco.charAt(0).toUpperCase() +
+                          dados.responsaveis[0].tipoParentesco.slice(1).toLowerCase()
+                        : ""
+                    }
                     className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}/>
 
                 </motion.div>
