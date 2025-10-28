@@ -4,7 +4,7 @@ import { Menu } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Account() {
+export default function   Account() {
   const router = useRouter();
   const pathname = usePathname();
   const [ ultima, setUltima ] = useState("");
