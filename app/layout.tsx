@@ -33,7 +33,7 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
         playsInline
         className="fixed top-0 left-0 w-full h-full object-cover object-bottom -z-10"
       >
-        <source src="/file.MOV" type="video/mp4" />
+        <source src="/file.mov" type="video/mp4" />
         </video>
 
 
