@@ -9,7 +9,7 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "Pré Matrícula - SEICE",
+  title: "Pré-Matrícula - SEICE",
 };
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",

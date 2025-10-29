@@ -117,7 +117,7 @@ export default function Home() {
             exit={{ scale: 0 }}
             className="mb-4 "
           >
-            Coloque a sua conta para poder realizar a pré matricula
+            Coloque a sua conta para poder realizar a pré-matrícula
           </motion.p>
 
           {registrar ? (
