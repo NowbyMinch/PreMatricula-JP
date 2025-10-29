@@ -242,9 +242,9 @@ export default function Home() {
               </div>
 
               <div
-                className={` w-full max-w-full flex gap-4 md:flex-row flex-col`}
+                className={` w-full max-w-full flex gap-4 `}
               >
-                <div className="flex gap-5 w-full">
+                <div className="flex gap-5 w-full md:flex-row flex-col">
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
