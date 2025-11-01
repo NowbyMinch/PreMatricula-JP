@@ -1,31 +1,160 @@
-'use client';
-import { useEffect, useState, useRef } from 'react';
-import { format, parse, isValid, startOfMonth, endOfMonth, startOfWeek, addDays, addMonths, subMonths, isSameMonth, isSameDay } from 'date-fns';
-import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
-import ErrorModal from './ErrorModal';
+"use client";
+import { useEffect, useState, useRef } from "react";
+import {
+  format,
+  parse,
+  isValid,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  addDays,
+  addMonths,
+  subMonths,
+  isSameMonth,
+  isSameDay,
+} from "date-fns";
+import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
+import ErrorModal from "./ErrorModal";
+import { usePathname } from "next/navigation";
 
 type DatePickerProps = {
+  onChangePreset?: (date: string) => void; // formato "YYYY-MM-DD"
   onChange: (date: string) => void; // formato "YYYY-MM-DD"
 };
 
-export function DatePicker({ onChange }: DatePickerProps ) {
+export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
+  const pathname = usePathname();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showPicker, setShowPicker] = useState(false);
   const [focused, setFocused] = useState(false);
   const [focused2, setFocused2] = useState(false);
   const [focused3, setFocused3] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [inputValue2, setInputValue2] = useState('');
-  const [inputValue3, setInputValue3] = useState('');
+  const [inputValue, setInputValue] = useState("");
+  const [inputValue2, setInputValue2] = useState("");
+  const [inputValue3, setInputValue3] = useState("");
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const ValueRef = useRef<HTMLInputElement | null>(null);
   const ValueRef2 = useRef<HTMLInputElement | null>(null);
   const ValueRef3 = useRef<HTMLInputElement | null>(null);
-  
-  const handleKeyUp = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace') {
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const tok = await fetch("/api/token");
+      const data = await tok.json();
+      if (!data.token) {
+        return;
+      }
+      const token = data.token;
+      console.log(token);
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const dataRes = await res.json();
+
+      const idAtualRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const IDpreset = await idAtualRes.json();
+
+      const PresetFetch = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/matriculas/${IDpreset.matriculaId}/detalhe`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const preset = await PresetFetch.json();
+      const etapas = [
+        { value: 1, label: "1", pagina: "dados_do_responsavel_financeiro" },
+        {
+          value: 2,
+          label: "2",
+          pagina: "endereco_e_comunicacao_responsavel_financeiro",
+        },
+        { value: 3, label: "1b", pagina: "dados_do_responsavel" },
+        {
+          value: 4,
+          label: "2b",
+          pagina: "endereco_e_comunicacao_responsavel",
+        },
+        { value: 5, label: "3", pagina: "dados_do_aluno" },
+        { value: 6, label: "3b", pagina: "endereco_e_comunicacao_aluno" },
+      ];
+
+      const AtualValor = etapas.filter(
+        (item) =>
+          item.pagina === pathname.split("/")[pathname.split("/").length - 1]
+      )[0].value;
+      const PresetValor = etapas.filter(
+        (item) => item.label === preset.etapaAtualLabel
+      )[0].value;
+
+      if (!preset.completo && PresetValor > AtualValor) {
+        if (pathname.endsWith("dados_do_responsavel_financeiro")) {
+          console.log("Termina 1");
+          const v = preset.responsavelPrincipal.dataNascimento
+            .split("/")
+            .reverse()
+            .join("-");
+          const vI = preset.responsavelPrincipal.dataNascimento.split("/");
+          setInputValue(vI[0]);
+          setInputValue2(vI[1]);
+          setInputValue3(vI[2]);
+          onChangePreset?.(v);
+        } else if (pathname.endsWith("dados_do_responsavel")) {
+          console.log("Termina 2");
+
+          const v = preset.segundoResponsavel.dataNascimento
+            .split("/")
+            .reverse()
+            .join("-");
+          const vI = preset.segundoResponsavel.dataNascimento.split("/");
+          setInputValue(vI[0]);
+          setInputValue2(vI[1]);
+          setInputValue3(vI[2]);
+          onChangePreset?.(v);
+        } else if (pathname.endsWith("dados_do_aluno")) {
+          console.log("Termina 3");
+
+          const v = preset.aluno.dataNascimento.split("/").reverse().join("-");
+
+          const vI = preset.aluno.dataNascimento.split("/");
+          setInputValue(vI[0]);
+          setInputValue2(vI[1]);
+          setInputValue3(vI[2]);
+          onChangePreset?.(v);
+        }
+      }
+
+      console.log(dataRes);
+    };
+    fetchToken();
+  }, [onChangePreset, pathname]);
+
+  const handleKeyUp = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Backspace") {
       if (index === 3 && ValueRef3.current?.value === "") {
         ValueRef2.current?.focus();
       } else if (index === 2 && ValueRef2.current?.value === "") {
@@ -33,83 +162,87 @@ export function DatePicker({ onChange }: DatePickerProps ) {
       }
     }
   };
-  
+
   useEffect(() => {
-    if (isNaN(parseInt(inputValue.slice(-1)))){
-        setInputValue(inputValue.slice(0,-1))
-    ;}
-    else if (inputValue === "00"){
+    if (isNaN(parseInt(inputValue.slice(-1)))) {
+      setInputValue(inputValue.slice(0, -1));
+    } else if (inputValue === "00") {
       setInputValue("01");
-    }
-    else if (parseInt(inputValue) > 31){
+    } else if (parseInt(inputValue) > 31) {
       setInputValue("31");
-    } else if (inputValue2 === "1" || inputValue2 === "3" || inputValue2 === "5" || inputValue2 === "7" || inputValue2 === "8" || inputValue2 === "10" || inputValue2 === "12"){
-      console.log(inputValue2)
+    } else if (
+      inputValue2 === "1" ||
+      inputValue2 === "3" ||
+      inputValue2 === "5" ||
+      inputValue2 === "7" ||
+      inputValue2 === "8" ||
+      inputValue2 === "10" ||
+      inputValue2 === "12"
+    ) {
+      console.log(inputValue2);
       if (parseInt(inputValue) > 31) {
         setInputValue("31");
       }
-    } else if (inputValue2 === "4" || inputValue2 === "6" || inputValue2 === "9" || inputValue2 === "11" ) {
-      console.log(inputValue2)
+    } else if (
+      inputValue2 === "4" ||
+      inputValue2 === "6" ||
+      inputValue2 === "9" ||
+      inputValue2 === "11"
+    ) {
+      console.log(inputValue2);
 
       if (parseInt(inputValue) > 30) {
         setInputValue("30");
       }
-    } else if (inputValue2 === "2"){
-      console.log(inputValue2)
+    } else if (inputValue2 === "2") {
+      console.log(inputValue2);
 
       if (parseInt(inputValue) > 28) {
         setInputValue("28");
       }
     } else {
-      if (inputValue.length === 2){
-        ValueRef2.current?.focus();    
-        setInputValue(inputValue.slice(0,2))
-      };
-
-    };
-
-  }, [inputValue,inputValue2]);
+      if (inputValue.length === 2) {
+        ValueRef2.current?.focus();
+        setInputValue(inputValue.slice(0, 2));
+      }
+    }
+  }, [inputValue, inputValue2]);
 
   useEffect(() => {
-    if (isNaN(parseInt(inputValue2.slice(-1)))){
-        setInputValue2(inputValue2.slice(0,-1))
-    ;}
-    else if (inputValue2 === "00"){
+    if (isNaN(parseInt(inputValue2.slice(-1)))) {
+      setInputValue2(inputValue2.slice(0, -1));
+    } else if (inputValue2 === "00") {
       setInputValue2("01");
     } else if (parseInt(inputValue2) > 12) {
       setInputValue2("12");
     } else {
-      if (inputValue2.length === 2){
-        ValueRef3.current?.focus();    
-        setInputValue2(inputValue2.slice(0,2))
+      if (inputValue2.length === 2) {
+        ValueRef3.current?.focus();
+        setInputValue2(inputValue2.slice(0, 2));
       }
-    };
-
+    }
   }, [inputValue2]);
-  
+
   useEffect(() => {
     if (parseInt(inputValue3) > new Date().getFullYear()) {
       if (new Date().getFullYear() !== undefined) {
         setInputValue3(new Date().getFullYear().toString());
       }
     } else {
-      if (inputValue3.length === 4){
-        ValueRef3.current?.blur();    
-        setInputValue3(inputValue3.slice(0,4))
-        if(parseInt(inputValue3) < 1901){
+      if (inputValue3.length === 4) {
+        ValueRef3.current?.blur();
+        setInputValue3(inputValue3.slice(0, 4));
+        if (parseInt(inputValue3) < 1901) {
           setInputValue3("1900");
         }
-      } 
+      }
     }
-
   }, [inputValue3]);
-  
-  
-  useEffect(() => {
-    if (isNaN(parseInt(inputValue3.slice(-1)))){
-        setInputValue3(inputValue3.slice(0,-1))
-    ;}
 
+  useEffect(() => {
+    if (isNaN(parseInt(inputValue3.slice(-1)))) {
+      setInputValue3(inputValue3.slice(0, -1));
+    }
   }, [inputValue3]);
 
   const currentYear = new Date().getFullYear();
@@ -119,9 +252,9 @@ export function DatePicker({ onChange }: DatePickerProps ) {
     // console.log(date);
     const formatted = format(date, "dd/MM/yyyy");
     setSelectedDate(date);
-    setInputValue(formatted.slice(0,2));
-    setInputValue2(formatted.slice(3,5));
-    setInputValue3(formatted.slice(6,10));
+    setInputValue(formatted.slice(0, 2));
+    setInputValue2(formatted.slice(3, 5));
+    setInputValue3(formatted.slice(6, 10));
     setCalendarMonth(date);
     setShowPicker(false);
     onChange(date.toISOString().split("T")[0]); // mantém "YYYY-MM-DD"
@@ -140,10 +273,18 @@ export function DatePicker({ onChange }: DatePickerProps ) {
 
     return days;
   };
-  
+
   useEffect(() => {
-    if (inputValue.length === 2 && inputValue2.length === 2 && inputValue3.length === 4) {
-      const typedDate = parse(`${inputValue3}-${inputValue2}-${inputValue}`, "yyyy-MM-dd", new Date());
+    if (
+      inputValue.length === 2 &&
+      inputValue2.length === 2 &&
+      inputValue3.length === 4
+    ) {
+      const typedDate = parse(
+        `${inputValue3}-${inputValue2}-${inputValue}`,
+        "yyyy-MM-dd",
+        new Date()
+      );
       if (isValid(typedDate)) {
         setCalendarMonth(typedDate);
         setSelectedDate(typedDate);
@@ -155,83 +296,145 @@ export function DatePicker({ onChange }: DatePickerProps ) {
   return (
     <div className="relative max-w-[480px]">
       <div className="relative ">
-
-        <div className={`${focused || focused2 || focused3 ? "border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.2)]" : "border-gray-400"}  relative cursor-text py-[14px] px-3 pr-8 h-[54px] gap-1 text-[16px] flex w-full rounded-[15px] border `}>
+        <div
+          className={`${
+            focused || focused2 || focused3
+              ? "border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.2)]"
+              : "border-gray-400"
+          }  relative cursor-text py-[14px] px-3 pr-8 h-[54px] gap-1 text-[16px] flex w-full rounded-[15px] border `}
+        >
           <div className="relative text-gray-400 block w-[31px]">
-            {!focused && !inputValue && <div className='w-full rounded-[5px] absolute text-center'>dd</div>}
-            <input required ref={ValueRef} value={inputValue} onBlur={() => {
-              setFocused(false);
-              if (inputValue && inputValue.length === 1) {
-                setInputValue(inputValue.padStart(2, "0")); // "2" → "02"
-              }
-              else if(parseInt(inputValue) < 1){
-                setInputValue("1");
-              };
-            }} type="number" onFocus={() => setFocused(true)} onChange={(e) => setInputValue(e.target.value)} className={`${focused  ? "bg-[rgba(255,238,88,0.1)]" : "bg-transparent" } text-center text-white absolute w-full rounded-[5px] border-none outline-none transition-all ease-in-out duration-100 `}/>
-          </div>  
+            {!focused && !inputValue && (
+              <div className="w-full rounded-[5px] absolute text-center">
+                dd
+              </div>
+            )}
+            <input
+              required
+              ref={ValueRef}
+              value={inputValue}
+              onBlur={() => {
+                setFocused(false);
+                if (inputValue && inputValue.length === 1) {
+                  setInputValue(inputValue.padStart(2, "0")); // "2" → "02"
+                } else if (parseInt(inputValue) < 1) {
+                  setInputValue("1");
+                }
+              }}
+              type="number"
+              onFocus={() => setFocused(true)}
+              onChange={(e) => setInputValue(e.target.value)}
+              className={`${
+                focused ? "bg-[rgba(255,238,88,0.1)]" : "bg-transparent"
+              } text-center text-white absolute w-full rounded-[5px] border-none outline-none transition-all ease-in-out duration-100 `}
+            />
+          </div>
 
           <div className="text-gray-400 ">/</div>
 
           <div className="relative text-gray-400 block w-[31px]">
-            {!focused2 && !inputValue2 && <div className='w-full rounded-[5px] absolute text-center'>mm</div>}
+            {!focused2 && !inputValue2 && (
+              <div className="w-full rounded-[5px] absolute text-center">
+                mm
+              </div>
+            )}
 
-            <input required ref={ValueRef2} onKeyUp={(e) => handleKeyUp(2,e)} value={inputValue2} type="number" onFocus={() => setFocused2(true)} onBlur={() => {
-              setFocused2(false);
-              if (inputValue2 && inputValue2.length === 1) {
-                setInputValue2(inputValue2.padStart(2, "0")); // "2" → "02"
-              }
-            }} onChange={(e) => setInputValue2(e.target.value)} className={`${focused2  ? "bg-[rgba(255,238,88,0.1)]" : "bg-transparent" } text-center  absolute w-full rounded-[5px] text-white border-none outline-none transition-all ease-in-out duration-100 `}/>
+            <input
+              required
+              ref={ValueRef2}
+              onKeyUp={(e) => handleKeyUp(2, e)}
+              value={inputValue2}
+              type="number"
+              onFocus={() => setFocused2(true)}
+              onBlur={() => {
+                setFocused2(false);
+                if (inputValue2 && inputValue2.length === 1) {
+                  setInputValue2(inputValue2.padStart(2, "0")); // "2" → "02"
+                }
+              }}
+              onChange={(e) => setInputValue2(e.target.value)}
+              className={`${
+                focused2 ? "bg-[rgba(255,238,88,0.1)]" : "bg-transparent"
+              } text-center  absolute w-full rounded-[5px] text-white border-none outline-none transition-all ease-in-out duration-100 `}
+            />
           </div>
 
           <div className="text-gray-400 ">/</div>
 
           <div className="relative text-gray-400 block w-[42px]">
-            {!focused3 && !inputValue3 && <div className='w-full rounded-[5px] absolute text-center'>aaaa</div>}
+            {!focused3 && !inputValue3 && (
+              <div className="w-full rounded-[5px] absolute text-center">
+                aaaa
+              </div>
+            )}
 
-            <input required ref={ValueRef3} value={inputValue3} onKeyUp={(e) => handleKeyUp(3,e)} type="number" onFocus={() => setFocused3(true)} onBlur={() => {setFocused3(false); 
-              
-            }} onChange={(e) => setInputValue3(e.target.value)} className={`${focused3  ? "bg-[rgba(255,238,88,0.1)]" : "bg-transparent" } text-center  absolute w-full rounded-[5px] text-white border-none outline-none transition-all ease-in-out duration-100 `}/>
+            <input
+              required
+              ref={ValueRef3}
+              value={inputValue3}
+              onKeyUp={(e) => handleKeyUp(3, e)}
+              type="number"
+              onFocus={() => setFocused3(true)}
+              onBlur={() => {
+                setFocused3(false);
+              }}
+              onChange={(e) => setInputValue3(e.target.value)}
+              className={`${
+                focused3 ? "bg-[rgba(255,238,88,0.1)]" : "bg-transparent"
+              } text-center  absolute w-full rounded-[5px] text-white border-none outline-none transition-all ease-in-out duration-100 `}
+            />
           </div>
-
         </div>
 
         <motion.button
-        whileHover={{scale: 1.05}}
-        whileTap={{scale: 0.95}}
-        type="button"
-        onClick={() => setShowPicker(!showPicker)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-all ease-in-out duration-100 hover:text-yellow-400 cursor-pointer"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          type="button"
+          onClick={() => setShowPicker(!showPicker)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-all ease-in-out duration-100 hover:text-yellow-400 cursor-pointer"
         >
           <CalendarDays size={18} />
         </motion.button>
       </div>
-      
+
       <AnimatePresence>
         {showPicker && (
-          <motion.div 
+          <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0, transition:{ duration: 0.15, ease: "easeInOut"} }}
-            id='date-box'
+            exit={{
+              scale: 0,
+              opacity: 0,
+              transition: { duration: 0.15, ease: "easeInOut" },
+            }}
+            id="date-box"
             className="absolute right-0 z-10 mt-2  min-w-[210px] rounded-[25px] border border-gray-400 bg-[rgba(12,12,14,0.985)] p-4 shadow-xl origin-top-right"
           >
             {/* Calendar Header */}
             <div className="mb-3 flex items-center justify-between px-2 text-white">
-              <button type='button' onClick={() => setCalendarMonth(subMonths(calendarMonth, 1))}>
-                <ChevronLeft size={20} className='cursor-pointer'/>
+              <button
+                type="button"
+                onClick={() => setCalendarMonth(subMonths(calendarMonth, 1))}
+              >
+                <ChevronLeft size={20} className="cursor-pointer" />
               </button>
               <span className="text-[20px] font-medium">
-                {format(calendarMonth, 'MMMM yyyy')}
+                {format(calendarMonth, "MMMM yyyy")}
               </span>
-              <button type='button' onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}>
-                <ChevronRight size={20} className='cursor-pointer' />
+              <button
+                type="button"
+                onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
+              >
+                <ChevronRight size={20} className="cursor-pointer" />
               </button>
             </div>
 
             {/* Week Days */}
             <div className="grid grid-cols-7 gap-1 text-[20px] px-1 pb-1 text-white">
-              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                <div key={i} className="text-center ">{day}</div>
+              {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
+                <div key={i} className="text-center ">
+                  {day}
+                </div>
               ))}
             </div>
 
@@ -247,10 +450,10 @@ export function DatePicker({ onChange }: DatePickerProps ) {
                     onClick={() => handleDateSelect(day)}
                     className={`rounded-md p-1 cursor-pointer text-center transition text-[18px] ${
                       isSelected
-                        ? 'bg-yellow-400 text-black font-medium'
+                        ? "bg-yellow-400 text-black font-medium"
                         : inCurrentMonth
-                        ? 'hover:bg-[rgba(255,238,88,0.1)]'
-                        : 'text-zinc-500 p-1 cursor-pointer'
+                        ? "hover:bg-[rgba(255,238,88,0.1)]"
+                        : "text-zinc-500 p-1 cursor-pointer"
                     }`}
                   >
                     {day.getDate()}
@@ -264,7 +467,6 @@ export function DatePicker({ onChange }: DatePickerProps ) {
     </div>
   );
 }
-
 
 interface DataEditarProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
@@ -282,7 +484,7 @@ export function DataEditar({
   // displayed masked value
   const [inputValue, setInputValue] = useState(value);
   const [isValid, setIsValid] = useState(true);
-  const [ message, setMessage ] = useState<string | null>("");
+  const [message, setMessage] = useState<string | null>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let raw = e.target.value.replace(/\D/g, ""); // remove non-numeric
@@ -303,7 +505,9 @@ export function DataEditar({
       setIsValid(valid);
 
       if (valid) {
-        const formatted = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const formatted = `${year}-${String(month).padStart(2, "0")}-${String(
+          day
+        ).padStart(2, "0")}`;
         onChange?.(formatted);
       }
     } else {
@@ -337,11 +541,11 @@ export function DataEditar({
   //   return `${d} / ${m} / ${y}`;
   // }
 
-  useEffect(() =>{
-    if (!isValid){
-      setMessage("Data inválida. Verifique o dia, mês e ano.")
+  useEffect(() => {
+    if (!isValid) {
+      setMessage("Data inválida. Verifique o dia, mês e ano.");
     }
-  },[isValid])
+  }, [isValid]);
   return (
     <>
       {message && (
@@ -359,10 +563,7 @@ export function DataEditar({
           className={`w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] 
           }`}
         />
-        {!isValid && (
-
-          <p className="text-red-500 text-sm mt-1"></p>
-        )}
+        {!isValid && <p className="text-red-500 text-sm mt-1"></p>}
       </motion.div>
     </>
   );

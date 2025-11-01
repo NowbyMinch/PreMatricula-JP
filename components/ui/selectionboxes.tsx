@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import { Check } from "lucide-react";
 import { Button } from "./button";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Popover, PopoverTrigger, PopoverContent } from "./popover";
 import {
   Command,
@@ -23,10 +23,17 @@ interface ComboboxDemoProps {
   onChange: (value: string) => void;
 }
 
-interface ComboboxDemoProps2 {
+// interface ComboboxDemoProps2 {
+//   value: string;
+//   onChange: (value: string) => void;
+//   disabled?: (value: boolean) => void;
+// }
+
+interface ComboboxDemoProps2Check {
   value: string;
+  checked: boolean;
   onChange: (value: string) => void;
-  disabled?: (value: boolean) => void;
+  enabled?: (value: boolean) => void;
 }
 
 const generos = [
@@ -184,12 +191,18 @@ type ResponsavelData = {
   id?: number;
 };
 
-export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
+export function Responsavel({
+  value,
+  checked,
+  onChange,
+  enabled,
+}: ComboboxDemoProps2Check) {
   const [responsaveis, setResponsaveis] = useState<
     { value: string; label: string }[]
   >([]);
 
   useEffect(() => {
+    console.log(checked, "CHECKED FROM INSIDE");
     const Responsaveis = async () => {
       const tok = await fetch("/api/token", { credentials: "include" });
       const data = await tok.json();
@@ -232,10 +245,19 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
       setResponsaveis(Res);
     };
     Responsaveis();
-  }, []);
+  }, [checked]);
 
   const [open, setOpen] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  useEffect(() => {
+    setIsEnabled(checked || false);
+    console.log(isEnabled, "checked", checked);
+  }, [checked, isEnabled]);
+
+  useEffect(() => {
+    enabled?.(isEnabled); // call on mount with the initial checked value
+  }, [checked, enabled, isEnabled]);
 
   return (
     <>
@@ -243,14 +265,15 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0 }}
-        className="inline-flex items-center cursor-pointer mt-2"
+        className="inline-flex items-center cursor-pointer mt-2 w-full"
       >
         {/* Hidden native checkbox */}
         <input
+          defaultChecked={isEnabled}
           onChange={() => {
-            setIsDisabled(!isDisabled);
-            if (disabled) disabled(isDisabled);
-            if (!isDisabled) {
+            setIsEnabled(!isEnabled);
+            if (enabled) enabled(!isEnabled);
+            if (!isEnabled) {
               onChange("");
             }
           }}
@@ -279,7 +302,7 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
         </motion.div>
 
         {/* Label text */}
-        <span className="ml-2 select-none">
+        <span className="ml-2 select-none w-full">
           Mora junto com algum dos seus responsáveis?
         </span>
       </motion.label>
@@ -289,14 +312,14 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
         <PopoverTrigger asChild className="">
           <Button
             role="combobox"
-            disabled={isDisabled}
+            disabled={!isEnabled}
             className={`${
-              isDisabled
+              !isEnabled
                 ? "bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed "
                 : "focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] bg-transparent text-white"
             } pl-5 text-[16px] w-full border rounded-[15px] h-[50px] border-gray-400 hover:border-yellow-400 ${
               value ? "border-yellow-400" : ""
-            } hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+            } max-w-[480px] hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
           >
             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
               {value ? (
@@ -369,6 +392,215 @@ export function Responsavel({ value, onChange, disabled }: ComboboxDemoProps2) {
         </PopoverContent>
       </Popover>
     </>
+  );
+}
+
+interface LocalidadeProps {
+  value?: string;
+  exists?: boolean;
+  disabled?: boolean;
+  onChange?: (value: string, exists: boolean) => void;
+}
+
+export function Localidade({ disabled, onChange }: LocalidadeProps) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [cidade, setCidade] = useState("");
+  const [cidadeList, setCidadeList] = useState<
+    { nome: string; id: number; estado: string }[]
+  >([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null); // 🟡 track focus
+
+  useEffect(() => {
+    try {
+      const fetchToken = async () => {
+        const tok = await fetch("/api/token");
+        const data = await tok.json();
+        if (!data.token) return;
+        const token = data.token;
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const dataRes = await res.json();
+
+        const idAtualRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const IDpreset = await idAtualRes.json();
+
+        const PresetFetch = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/matriculas/${IDpreset.matriculaId}/detalhe`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const preset = await PresetFetch.json();
+
+        const etapas = [
+          { value: 1, label: "1", pagina: "dados_do_responsavel_financeiro" },
+          {
+            value: 2,
+            label: "2",
+            pagina: "endereco_e_comunicacao_responsavel_financeiro",
+          },
+          { value: 3, label: "1b", pagina: "dados_do_responsavel" },
+          {
+            value: 4,
+            label: "2b",
+            pagina: "endereco_e_comunicacao_responsavel",
+          },
+          { value: 5, label: "3", pagina: "dados_do_aluno" },
+          { value: 6, label: "3b", pagina: "endereco_e_comunicacao_aluno" },
+        ];
+
+        const AtualValor = etapas.filter(
+          (item) =>
+            item.pagina === pathname.split("/")[pathname.split("/").length - 1]
+        )[0].value;
+        const PresetValor = etapas.filter(
+          (item) => item.label === preset.etapaAtualLabel
+        )[0].value;
+
+        if (!preset.completo && PresetValor > AtualValor) {
+          console.log(preset.aluno?.cidadeNatal);
+
+          if (pathname.endsWith("/endereco_e_comunicacao_responsavel")) {
+            setCidade(preset.segundoResponsavel?.endereco?.cidade || "");
+          } else if (
+            pathname.endsWith("/endereco_e_comunicacao_responsavel_financeiro")
+          ) {
+            setCidade(preset.responsavelPrincipal?.endereco?.cidade || "");
+          } else if (pathname.endsWith("/dados_do_aluno")) {
+            console.log(preset.aluno?.endereco?.cidadeNatal, "CIDADE NATAL");
+            setCidade(preset.aluno?.cidadeNatal || "");
+          } else if (pathname.endsWith("/endereco_e_comunicacao_aluno")) {
+            setCidade(preset.aluno?.cidade || "");
+          }
+        }
+
+        console.log(dataRes);
+      };
+      fetchToken();
+    } catch {
+    } finally {
+      setOpen(false);
+    }
+  }, [pathname]);
+
+  // Fetch cidades
+  useEffect(() => {
+    if (cidade.length > 1) {
+      fetch(`https://brasilapi.com.br/api/cptec/v1/cidade/${cidade}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setCidadeList(data);
+            if (document.activeElement === inputRef.current) {
+              // ✅ only open if this input is focused
+              setOpen(true);
+            }
+            onChange?.(cidade, true);
+          } else {
+            onChange?.(cidade, false);
+            setCidadeList([]);
+            setOpen(false);
+          }
+        })
+        .catch(() => {
+          setCidadeList([]);
+          setOpen(false);
+          onChange?.(cidade, false);
+        });
+    } else {
+      setCidadeList([]);
+      setOpen(false);
+      onChange?.(cidade, false);
+    }
+  }, [cidade, onChange]);
+
+  // Close when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative w-full max-w-sm">
+      <input
+        ref={inputRef} // 🟡 attach ref here
+        type="text"
+        value={cidade}
+        onChange={(e) => setCidade(e.target.value)}
+        onFocus={() => {
+          if (cidadeList.length > 0) setOpen(true);
+        }}
+        placeholder="Digite sua cidade"
+        disabled={disabled}
+        className={`w-full bg-[rgba(12,12,14,1)] h-[50px] border-1 border-gray-400 rounded-[15px] px-4 py-2 text-white placeholder-gray-400 focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] focus:ring-yellow-400 transition-all duration-300 outline-none ${
+          disabled
+            ? "bg-gray-700 opacity-[0.15] text-gray-400 cursor-not-allowed "
+            : ""
+        }`}
+      />
+
+      <AnimatePresence>
+        {open && cidadeList.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="absolute mt-2 w-full min-w-[220px] max-h-[200px] overflow-y-auto border border-gray-400 bg-[rgba(12,12,14,1)] rounded-[15px] shadow-lg z-[1100] scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent"
+          >
+            {cidadeList.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  setCidade(item.nome);
+                  setOpen(false);
+                }}
+                className="flex items-center justify-between px-4 py-2 text-[15px] text-gray-200 cursor-pointer hover:bg-[rgba(255,215,0,0.1)] transition-colors duration-200"
+              >
+                <span>
+                  {item.nome}{" "}
+                  <span className="text-gray-500 text-sm">({item.estado})</span>
+                </span>
+                {cidade.toLowerCase() === item.nome.toLowerCase() && (
+                  <Check className="text-yellow-400 h-4 w-4" />
+                )}
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -866,92 +1098,58 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
   );
 }
 
-interface CpfInputProps {
+type CpfInputProps = {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  disabled: boolean;
+  disabled?: boolean;
   cnpj?: boolean;
-  // className?: string;
-}
+};
 
 export function CpfInput({
   value = "",
   onChange,
   placeholder,
-  cnpj,
+  disabled,
+  cnpj = false,
 }: CpfInputProps) {
-  const [cpf, setCpf] = useState(value);
+  const maskCPF = (v: string) =>
+    v
+      .replace(/\D/g, "")
+      .slice(0, 11)
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 
-  const [ph, setPh] = useState("");
+  const maskCNPJ = (v: string) =>
+    v
+      .replace(/\D/g, "")
+      .slice(0, 14)
+      .replace(/^(\d{2})(\d)/, "$1.$2")
+      .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1/$2")
+      .replace(/(\d{4})(\d)/, "$1-$2");
 
-  useEffect(() => {
-    // update placeholder dynamically when cnpj changes
-    if (cnpj) {
-      let temp1: string;
-      temp1 = cpf.replaceAll(".", "").replaceAll("/", "").replaceAll("-", "");
-      console.log(temp1.length);
-
-      temp1 = temp1.slice(0, 14);
-
-      const temp = temp1
-        .replace(/^(\d{2})(\d{3})/, "$1.$2")
-        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-        .replace(/\.(\d{3})(\d)/, ".$1/$2")
-        .replace(/(\d{4})(\d)/, "$1-$2");
-
-      setCpf(temp);
-      onChange?.(temp);
-    } else {
-      let temp1: string;
-      temp1 = cpf.replaceAll(".", "").replaceAll("/", "").replaceAll("-", "");
-      temp1 = temp1.slice(0, 11);
-
-      const temp = temp1
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-
-      setCpf(temp);
-      onChange?.(temp);
-    }
-
-    setPh(placeholder || (cnpj ? "00.000.000/0000-00" : "000.000.000-00"));
-  }, [placeholder, cnpj, cpf, onChange]);
+  const maskedValue = cnpj ? maskCNPJ(value) : maskCPF(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let v = e.target.value.replace(/\D/g, ""); // remove non-digits
-    // if (v.length > 11) v = v.slice(0, 11); // limit to 11 digits
-
-    // apply mask
-    if (cnpj) {
-      // --- format as CNPJ ---
-      if (v.length > 14) v = v.slice(0, 14);
-      v = v
-        .replace(/^(\d{2})(\d)/, "$1.$2")
-        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-        .replace(/\.(\d{3})(\d)/, ".$1/$2")
-        .replace(/(\d{4})(\d)/, "$1-$2");
-    } else {
-      // --- format as CPF ---
-      if (v.length > 11) v = v.slice(0, 11);
-      v = v
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-    }
-
-    setCpf(v);
-    onChange?.(v);
+    const raw = e.target.value;
+    const next = cnpj ? maskCNPJ(raw) : maskCPF(raw);
+    onChange?.(next);
   };
 
   return (
     <motion.input
-      value={cpf}
+      value={maskedValue}
       onChange={handleChange}
-      placeholder={ph}
+      placeholder={
+        placeholder || (cnpj ? "00.000.000/0000-00" : "000.000.000-00")
+      }
+      disabled={disabled}
       type="text"
-      className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
+      className={`w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      }`}
     />
   );
 }
@@ -963,7 +1161,9 @@ export function NumeroRG({
   ...props
 }: CpfInputProps) {
   const [numeroRG, setNumeroRG] = useState(value);
-
+  useEffect(() => {
+    setNumeroRG(value || "");
+  }, [value]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let v = e.target.value.replace(/\D/g, ""); // remove non-digits
     if (v.length > 9) v = v.slice(0, 9); // limit to 11 digits
@@ -997,17 +1197,24 @@ export function CEP({
   placeholder = "00000-000",
   disabled,
 }: CpfInputProps) {
-  const [CEP, setCEP] = useState(value);
+  const [CEP, setCEP] = useState("");
+
+  // Helper to format CEP
+  const formatCEP = (v: string) => {
+    let val = v.replace(/\D/g, "");
+    if (val.length > 8) val = val.slice(0, 8);
+    return val.replace(/(\d{5})(\d{3})$/, "$1-$2");
+  };
+
+  // Keep formatted value in sync when prop changes
+  useEffect(() => {
+    setCEP(formatCEP(value || ""));
+  }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let v = e.target.value.replace(/\D/g, ""); // remove non-digits
-    if (v.length > 8) v = v.slice(0, 8); // limit to 11 digits
-
-    // apply mask
-    v = v.replace(/(\d{5})(\d{3})$/, "$1-$2");
-
-    setCEP(v);
-    onChange?.(v);
+    const formatted = formatCEP(e.target.value);
+    setCEP(formatted);
+    onChange?.(formatted);
   };
 
   return (
@@ -1035,12 +1242,16 @@ export function Numero({
   disabled,
   ...props
 }: CpfInputProps) {
-  const [numero, setNumero] = useState(value);
+  const [numero, setNumero] = useState("");
+
+  // Keep state updated when prop changes
+  useEffect(() => {
+    setNumero(value || "");
+  }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let v = e.target.value.replace(/\D/g, ""); // remove non-digits
-    if (v.length > 3) v = v.slice(0, 3); // limit to 11 digits
-
+    if (v.length > 3) v = v.slice(0, 3); // limit to 3 digits
     setNumero(v);
     onChange?.(v);
   };
@@ -1058,7 +1269,7 @@ export function Numero({
       className={`${
         disabled
           ? inputClass
-          : "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] "
+          : "w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)]"
       }`}
     />
   );
@@ -1071,41 +1282,32 @@ export function Celular({
   disabled,
   ...props
 }: CpfInputProps) {
-  const [numero, setNumero] = useState(value);
-  const [prevRaw, setPrevRaw] = useState("");
+  const [numero, setNumero] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const isDeleting = input.length < prevRaw.length;
-    setPrevRaw(input);
-
+  // ✅ Masking function (returns empty string if no digits)
+  const maskPhone = (input: string) => {
     let digits = input.replace(/\D/g, "");
+    if (!digits) return ""; // <- avoid showing "(" when empty
+
     if (digits.length > 11) digits = digits.slice(0, 11);
 
-    // 🧠 don't rebuild the mask while user is deleting the ")" or space
-    if (
-      isDeleting &&
-      prevRaw.endsWith(") ") &&
-      input.length === prevRaw.length - 2
-    ) {
-      // User just tried to backspace past ") ", allow it to remove both
-      setNumero(input);
-      onChange?.(input);
-      return;
+    if (digits.length <= 2) return `(${digits}`;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  };
+
+  // 🧩 Apply mask instantly when the value prop changes
+  useEffect(() => {
+    if (value) {
+      const masked = maskPhone(value);
+      setNumero(masked);
+    } else {
+      setNumero("");
     }
+  }, [value]);
 
-    let masked = digits;
-
-    if (digits.length > 2) {
-      masked = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-    } else if (digits.length > 0) {
-      masked = `(${digits}`;
-    }
-
-    if (digits.length > 6) {
-      masked = masked.replace(/(\d{5})(\d)/, "$1-$2");
-    }
-
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskPhone(e.target.value);
     setNumero(masked);
     onChange?.(masked);
   };

@@ -20,39 +20,55 @@ import { useEffect } from "react";
 //   subsets: ["latin"],
 // });
 
-export default function RootLayout({children,}: { children: React.ReactNode;}) {
-    const pathname = usePathname();
-    const id = pathname.split("/")[2];
-  
-    useEffect(() => {
-      const fetchToken = async () => {
-        const tok = await fetch('/api/token');
-        const data = await tok.json();
-        if (!data.token) {return;}
-        const token = data.token;
-        
-        const MatriculaAtual = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-        });
-        const matriculaAtual = await MatriculaAtual.json();
-        
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matriculas/${matriculaAtual.matriculaId}/detalhe`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, },
-        });
-        const dataRes = await res.json();
-  
-        console.log(dataRes)
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const id = pathname.split("/")[2];
 
-      }; fetchToken();
+  useEffect(() => {
+    const fetchToken = async () => {
+      const tok = await fetch("/api/token");
+      const data = await tok.json();
+      if (!data.token) {
+        return;
+      }
+      const token = data.token;
 
-    },[id, pathname])
+      const MatriculaAtual = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const matriculaAtual = await MatriculaAtual.json();
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/matriculas/${matriculaAtual.matriculaId}/detalhe`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const dataRes = await res.json();
+
+      console.log(dataRes);
+    };
+    fetchToken();
+  }, [id, pathname]);
 
   return (
-    <main className="w-screen  flex justify-center items-center overflow-hidden relative py-4 ">
+    <main className="w-screen  flex justify-center items-center  relative py-4 ">
       {children}
-    
     </main>
   );
 }

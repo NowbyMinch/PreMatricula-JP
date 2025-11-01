@@ -256,7 +256,7 @@ export default function Home() {
         <ErrorModal message={message} onClose={() => setMessage(null)} />
       )}
 
-      <div className="flex flex-col gap-10 pb-10 w-full">
+      <div className="flex flex-col gap-5 pb-10 w-full">
         <AnimatePresence>
           <div key={0} className="flex flex-col justify-between w-full gap-5">
             {dados?.responsaveis[0] && (
@@ -463,7 +463,7 @@ export default function Home() {
                   exit={{ scale: 0 }}
                   className="text-[30px] w-full mt-5 font-medium "
                 >
-                  Segundo responsável
+                  Segundo Responsável
                 </motion.h1>
               )}
 
@@ -550,14 +550,16 @@ export default function Home() {
                     disabled
                     // onChange={(e) => {setUpdate(prev => ({...prev, sNome: e.target.value}))}} PARENTESCO????????????????????????????????????????????????????????????????????????????????????????????
                     defaultValue={
-                      dados?.responsaveis?.[0]?.tipoParentesco
-                        ? dados.responsaveis[0].tipoParentesco
+                      (dados?.responsaveis?.[1]?.tipoParentesco
+                        ? dados.responsaveis[1].tipoParentesco
                             .charAt(0)
                             .toUpperCase() +
-                          dados.responsaveis[0].tipoParentesco
+                          dados.responsaveis[1].tipoParentesco
                             .slice(1)
                             .toLowerCase()
-                        : ""
+                        : "") === "Mae"
+                        ? "Mãe"
+                        : "Pai"
                     }
                     className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[420px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
                   />
