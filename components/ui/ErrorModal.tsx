@@ -11,21 +11,22 @@ type Props = {
 const ErrorModal: React.FC<Props> = ({ message, onClose }) => {
   return (
     <AnimatePresence>
-      <motion.div 
-      initial={{ opacity: 0, y: 0 }}
-      animate={{ opacity: 1, y: 10 }}
-      exit={{ opacity: 0, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="fixed inset-0 z-50 flex items-end justify-end ml-auto mt-auto pb-7 pr-4 w-[385px] max-w-[80%] h-min ">
+      <motion.div
+        initial={{ opacity: 0, y: 0 }}
+        animate={{ opacity: 1, y: 10 }}
+        exit={{ opacity: 0, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="fixed inset-0 z-50 flex items-end justify-end ml-auto mt-auto pb-7 pr-4 w-[385px] max-w-[80%] h-min "
+      >
         <div className="bg-[#b24040] rounded-[25px] shadow-lg px-6 py-2 max-w-sm w-full flex text-white">
           <div className="">
-              <h2 className="text-lg font-semibold mb-2 ">Error</h2>
-              <p className="text-[18px] mb-4 ">{message}</p>
+            <h2 className="text-lg font-semibold mb-2 ">Error</h2>
+            <p className="text-[18px] mb-4 break-all">{message}</p>
           </div>
           <div className="ml-auto ">
-              <button onClick={onClose} className="mt-1">
-                  <X/>
-              </button>
+            <button onClick={onClose} className="mt-1 cursor-pointer">
+              <X />
+            </button>
           </div>
         </div>
       </motion.div>
