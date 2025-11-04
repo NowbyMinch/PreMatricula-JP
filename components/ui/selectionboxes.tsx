@@ -251,7 +251,6 @@ export function Responsavel({
   const [isEnabled, setIsEnabled] = useState(false);
 
   useEffect(() => {
-    setIsEnabled(checked || false);
     console.log(isEnabled, "checked", checked);
   }, [checked, isEnabled]);
 
@@ -399,7 +398,7 @@ interface LocalidadeProps {
   value?: string;
   exists?: boolean;
   disabled?: boolean;
-  onChange?: (value: string, exists: boolean) => void;
+  onChange?: (value: string, exists: boolean, estado: string | null) => void;
 }
 
 export function Localidade({ disabled, onChange }: LocalidadeProps) {
@@ -476,9 +475,11 @@ export function Localidade({ disabled, onChange }: LocalidadeProps) {
           (item) =>
             item.pagina === pathname.split("/")[pathname.split("/").length - 1]
         )[0].value;
-        const PresetValor = etapas.filter(
+        const etapaEncontrada = etapas.find(
           (item) => item.label === preset.etapaAtualLabel
-        )[0].value;
+        );
+
+        const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
         if (!preset.completo && PresetValor > AtualValor) {
           console.log(preset.aluno?.cidadeNatal);
@@ -507,35 +508,71 @@ export function Localidade({ disabled, onChange }: LocalidadeProps) {
   }, [pathname]);
 
   // Fetch cidades
+  // Fetch cidades
+  // Fetch cidades
   useEffect(() => {
-    if (cidade.length > 1) {
-      fetch(`https://brasilapi.com.br/api/cptec/v1/cidade/${cidade}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (Array.isArray(data)) {
-            setCidadeList(data);
-            if (document.activeElement === inputRef.current) {
-              // ✅ only open if this input is focused
-              setOpen(true);
-            }
-            onChange?.(cidade, true);
-          } else {
-            onChange?.(cidade, false);
-            setCidadeList([]);
-            setOpen(false);
-          }
-        })
-        .catch(() => {
-          setCidadeList([]);
-          setOpen(false);
-          onChange?.(cidade, false);
-        });
-    } else {
+    if (cidade.length <= 1) {
       setCidadeList([]);
       setOpen(false);
-      onChange?.(cidade, false);
+      // Only reset estado if input is cleared
+      onChange?.(cidade, false, null);
+      return;
     }
+
+    let canceled = false; // to ignore outdated fetches
+
+    const fetchCidades = async () => {
+      try {
+        const res = await fetch(
+          `https://brasilapi.com.br/api/cptec/v1/cidade/${cidade}`
+        );
+        const data = await res.json();
+
+        if (canceled) return;
+
+        if (Array.isArray(data) && data.length > 0) {
+          setCidadeList(data);
+
+          if (document.activeElement === inputRef.current) setOpen(true);
+
+          // Auto-select exact match
+          const match = data.find(
+            (item: { nome: string; estado: string }) =>
+              item.nome.toLowerCase() === cidade.toLowerCase()
+          );
+
+          if (match) {
+            onChange?.(match.nome, true, match.estado); // ✅ set estado only once
+          } else {
+            onChange?.(cidade, false, null);
+          }
+        } else {
+          setCidadeList([]);
+          setOpen(false);
+          onChange?.(cidade, false, null);
+        }
+      } catch {
+        if (!canceled) {
+          setCidadeList([]);
+          setOpen(false);
+          onChange?.(cidade, false, null);
+        }
+      }
+    };
+
+    fetchCidades();
+
+    return () => {
+      canceled = true; // cancel outdated fetches
+    };
   }, [cidade, onChange]);
+
+  // When user clicks a city
+  const handleSelectCidade = (item: { nome: string; estado: string }) => {
+    setCidade(item.nome);
+    setOpen(false);
+    onChange?.(item.nome, true, item.estado); // ✅ only set estado on selection
+  };
 
   // Close when clicking outside
   useEffect(() => {
@@ -582,10 +619,7 @@ export function Localidade({ disabled, onChange }: LocalidadeProps) {
             {cidadeList.map((item) => (
               <div
                 key={item.id}
-                onClick={() => {
-                  setCidade(item.nome);
-                  setOpen(false);
-                }}
+                onClick={() => handleSelectCidade(item)}
                 className="flex items-center justify-between px-4 py-2 text-[15px] text-gray-200 cursor-pointer hover:bg-[rgba(255,215,0,0.1)] transition-colors duration-200"
               >
                 <span>
@@ -825,186 +859,24 @@ export function Matricula({ value, onChange }: ComboboxDemoProps) {
   );
 }
 
-// export function CidadeSearch({ value }: ComboboxDemoProps) {
-//   const [open, setOpen] = useState(false);
-//   const [loading, setLoading] = useState(true);
-//   // const router = useRouter();
-
-//   useEffect(() => {
-//     if (value.length > 2) {
-//       async function fetchCidades() {
-//         setLoading(true);
-//         try {
-//           const res = await fetch(`https://brasilapi.com.br/api/cptec/v1/cidade/${value}`);
-//           const data = await res.json();
-//           console.log(data, "Data");
-//           // setTodasCidades(data);
-
-//         } catch (err) {
-//           console.error("Erro ao buscar cidades:", err);
-//         } finally {
-//           setLoading(false);
-//         }
-
-//       } fetchCidades();
-//     }
-
-//   }, [value]);
-
-//   if (loading) return <div className="w-[120px] border rounded-[15px] h-[45px] border-gray-400 "><LoadingSmaller /></div>
-
-//   return (
-//     <>
-//       <input type="hidden" value={value} required />
-
-//         <Popover open={open} onOpenChange={setOpen} >
-//           <PopoverTrigger asChild className="">
-//             <Button
-//               className={` text-[15px] px-3 w-fit max-w-[110px] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
-//             >
-//               <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
-
-//                 {/* {value
-//                   ? matricula.find((framework) => framework.value === value)?.label as string
-//                   : <span className="text-[#9CA3AF]">Matriculas </span>
-//                 } */}
-
-//                 <input
-//                   type="text"
-//                   name="genero"
-//                   value={value}
-//                   required
-//                   onChange={() => {}}
-//                   style={{
-//                     opacity: 0,
-//                     position: 'absolute',
-//                     pointerEvents: 'none',
-//                   }}
-//                 />
-//               </span>
-//             </Button>
-
-//           </PopoverTrigger>
-
-//           <PopoverContent className="w-[150px] text-[15px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
-
-//             <Command className="rounded-[15px] bg-transparent">
-//               <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)]">
-//                 <CommandGroup className="cursor-pointer  bg-[rgba(12,12,14,1)] relative">
-
-//                   {/* {matricula.map((framework) => (
-//                     <CommandItem
-//                       key={framework.value}
-//                       value={framework.value}
-//                       className="text-[15px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent"
-//                       onSelect={(currentValue) => {
-//                         onChange(currentValue);
-//                         setOpen(false);
-//                       }}
-//                     >
-//                       {framework.label}
-//                       <Check
-//                         className={cn(
-//                           "ml-auto transition-all ease-in-out duration-300",
-//                           value === framework.value ? "opacity-100" : "opacity-0"
-//                         )}
-//                       />
-//                     </CommandItem>
-//                   ))} */}
-//                 </CommandGroup>
-//               </CommandList>
-//             </Command>
-//           </PopoverContent>
-
-//         </Popover>
-
-//     </>
-//   );
-// }
-
-// export function Cidade({ value, onChange }: ComboboxDemoProps) {
-//   const [open, setOpen] = useState(false);
-//   const [ matricula, setMatricula] = useState<{ value: string; label: string }[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   // const router = useRouter();
-
-//   if (loading) return <div className="w-[120px] border rounded-[15px] h-[45px] border-gray-400 "><LoadingSmaller /></div>
-
-//   return (
-//     <>
-//       <input type="hidden" value={value} required />
-
-//       <Popover open={open} onOpenChange={setOpen} >
-//         <PopoverTrigger asChild className="">
-//           <Button
-//             role="combobox"
-//             className={` text-[15px] px-3 w-fit max-w-[110px] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
-//           >
-//             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap ">
-//               {value
-//                 ? matricula.find((framework) => framework.value === value)?.label as string
-//                 : <span className="text-[#9CA3AF]">Matriculas </span>
-//               }
-
-//               <input
-//                 type="text"
-//                 name="genero"
-//                 value={value}
-//                 required
-//                 onChange={() => {}}
-//                 style={{
-//                   opacity: 0,
-//                   position: 'absolute',
-//                   pointerEvents: 'none',
-//                 }}
-//               />
-//             </span>
-//           </Button>
-
-//         </PopoverTrigger>
-
-//         <PopoverContent className="w-[150px] text-[15px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
-
-//           <Command className="rounded-[15px] bg-transparent">
-//             <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)]">
-//               <CommandEmpty className="text-white mx-auto text-center py-2 my-auto bg-[rgba(12,12,14,1)]">Nenhuma matrícula encontrada</CommandEmpty>
-//               <CommandGroup className="cursor-pointer  bg-[rgba(12,12,14,1)] relative">
-
-//                 {matricula.map((framework) => (
-//                   <CommandItem
-//                     key={framework.value}
-//                     value={framework.value}
-//                     className="text-[15px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent"
-//                     onSelect={(currentValue) => {
-//                       onChange(currentValue);
-//                       setOpen(false);
-//                     }}
-//                   >
-//                     {framework.label}
-//                     <Check
-//                       className={cn(
-//                         "ml-auto transition-all ease-in-out duration-300",
-//                         value === framework.value ? "opacity-100" : "opacity-0"
-//                       )}
-//                     />
-//                   </CommandItem>
-//                 ))}
-//               </CommandGroup>
-//             </CommandList>
-//           </Command>
-//         </PopoverContent>
-
-//       </Popover>
-
-//     </>
-//   );
-// }
-
 export function Dados({ value, onChange }: ComboboxDemoProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [atual, setAtual] = useState("");
-  const id = pathname.split("/")[3];
+  const [dadosAtivos, setDadosAtivos] = useState<number>();
+
+  useEffect(() => {
+    // Example: set value based on the current pathname
+    const currentPage = pathname.split("/")[3];
+    const defaultOption = Dados.find((item) => item.value === currentPage);
+
+    if (defaultOption) {
+      onChange(defaultOption.value); // set value automatically
+    } else {
+      // or set a fallback
+      onChange("dados_do_responsavel");
+    }
+  }, [pathname]);
 
   const Dados = useMemo(
     () => [
@@ -1023,14 +895,77 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
   ); // <- empty array: only created once
 
   useEffect(() => {
-    const found = Dados.find((item) => item.value === id);
-    if (found) {
-      setAtual(found.label);
-    } else {
-      setAtual(""); // ou um texto padrão, tipo "Selecione"
-    }
-  }, [Dados, id]); // now Dados is stable, effect runs only when id changes
+    const atualDado = Dados.filter(
+      (item) => item.value === pathname.split("/")[3]
+    )[0].label;
 
+    setAtual(atualDado);
+    const fetchToken = async () => {
+      try {
+        const tok = await fetch("/api/token");
+        const data = await tok.json();
+        if (!data.token) return;
+        const token = data.token;
+
+        const detalheResAtual = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/matriculas/${
+            pathname.split("/")[2]
+          }/detalhe`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        ).then((res) => res.json());
+
+        const etapas = [
+          { value: 1, label: "1", pagina: "dados_do_responsavel_financeiro" },
+          {
+            value: 2,
+            label: "2",
+            pagina: "endereco_e_comunicacao_responsavel_financeiro",
+          },
+          { value: 3, label: "1b", pagina: "dados_do_responsavel" },
+          {
+            value: 4,
+            label: "2b",
+            pagina: "endereco_e_comunicacao_responsavel",
+          },
+          { value: 5, label: "3", pagina: "dados_do_aluno" },
+          { value: 6, label: "3b", pagina: "endereco_e_comunicacao_aluno" },
+        ];
+
+        const etapaAtualValor = etapas.find(
+          (item) => item.label === detalheResAtual.etapaAtualLabel
+        )?.value;
+
+        if (etapaAtualValor) {
+          console.log(etapaAtualValor, "etapaAtualValor 1");
+          setDadosAtivos(0);
+
+          if (etapaAtualValor > 2) {
+            console.log("setEnderecoResponsavel(true);");
+            console.log(etapaAtualValor, "etapaAtualValor 2");
+            setDadosAtivos(1);
+          }
+          if (etapaAtualValor > 5) {
+            console.log("setDadosAluno(true);");
+            console.log(etapaAtualValor, "etapaAtualValor 3");
+            setDadosAtivos(2);
+          }
+        }
+
+        if (detalheResAtual.completo) {
+          console.log(etapaAtualValor, "etapaAtualValor 4");
+          console.log("COMPLETO");
+          setDadosAtivos(3);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchToken();
+  }, [pathname]); // now Dados is stable, effect runs only when id changes
+
+  useEffect(() => {
+    console.log(dadosAtivos);
+  }, [dadosAtivos]);
   return (
     <>
       <input type="hidden" value={value} required />
@@ -1039,14 +974,13 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
         <PopoverTrigger asChild className="">
           <Button
             role="combobox"
-            className={`dadosBox xl:hidden text-[15px] px-3 w-fit max-w-[100px] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
+            className={`dadosBox xl:hidden  text-[15px] px-3 w-fit max-w-[100px] border rounded-[15px] h-[45px] border-gray-400 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] hover:bg-transparent transition-all ease-in-out duration-300 bg-transparent cursor-pointer `}
           >
             <span className="font-normal w-full block text-left rounded-[15px] bg-transparent overflow-hidden text-ellipsis whitespace-nowrap text-nowrap">
               {value
                 ? (Dados.find((framework) => framework.value === value)
                     ?.label as string)
                 : atual}
-
               <input
                 type="text"
                 name="genero"
@@ -1063,32 +997,52 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[200px] text-[15px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
-          <Command className="rounded-[15px] bg-transparent">
-            <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)]">
+        <PopoverContent className="w-[210px] text-[15px] border border-gray-400 bg-transparent p-0 rounded-[15px] z-[1100] cursor-pointer ">
+          <Command value={value} className="rounded-[15px] bg-transparent">
+            <CommandList className="rounded-[10px] cursor-pointer bg-[rgba(12,12,14,1)] ">
               <CommandEmpty className="text-white mx-auto text-center py-2 my-auto bg-[rgba(12,12,14,1)]">
                 Nenhum dado
               </CommandEmpty>
               <CommandGroup className="cursor-pointer  bg-[rgba(12,12,14,1)] relative">
-                {Dados.map((framework) => (
-                  <CommandItem
-                    key={framework.value}
-                    value={framework.value}
-                    className="text-[15px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer "
-                    onSelect={(currentValue) => {
-                      onChange(currentValue);
-                      setOpen(false);
-                    }}
-                  >
-                    {framework.label}
-                    <Check
-                      className={cn(
-                        "ml-auto transition-all ease-in-out duration-300",
-                        value === framework.value ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                  </CommandItem>
-                ))}
+                {Dados.map((framework, index) => {
+                  return (
+                    <CommandItem
+                      key={framework.value}
+                      value={framework.value}
+                      // ${
+                      //     value === framework.value
+                      //       ? "text-yellow-400 bg-[rgba(8,8,10,1)]"
+                      //       : "text-white hover:text-yellow-400 hover:bg-[rgba(8,8,10,0.5)]"
+                      //   }
+                      // text-[15px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent break-all
+
+                      className={`
+                        
+                        ${
+                          index === dadosAtivos! || index < dadosAtivos!
+                            ? "text-[15px] transition-all ease-in-out duration-300 data-[selected=true]:text-yellow-400 data-[selected=true]:bg-[rgba(8,8,10,1)] text-white cursor-pointer bg-transparent break-all"
+                            : "text-[15px] transition-all ease-in-out duration-300 text-gray-500 data-[selected=true]:bg-[rgba(8,8,10,1)]  bg-transparent break-all pointer-events-none"
+                        }
+                        
+                        `}
+                      onSelect={(currentValue) => {
+                        onChange(currentValue);
+                        setOpen(false);
+                      }}
+                    >
+                      {framework.label}
+                      {/* {framework.label} */}
+                      <Check
+                        className={cn(
+                          "ml-auto transition-all ease-in-out duration-300",
+                          value === framework.value
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  );
+                })}
               </CommandGroup>
             </CommandList>
           </Command>

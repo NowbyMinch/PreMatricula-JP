@@ -12,6 +12,7 @@ type Endereco = {
   numero: string;
   cidade: string;
   bairro: string;
+  complemento: string;
 };
 
 type Responsavel = {
@@ -109,7 +110,12 @@ export default function Home() {
       ...prev,
       sBairro: dados ? dados?.responsaveis[0]?.endereco.bairro : "",
     }));
-    // setUpdate(prev => ({...prev, sComplementoEndereco: dados ? dados?.responsaveis[0]?.endereco.complemento : "" }));
+    setUpdate((prev) => ({
+      ...prev,
+      sComplementoEndereco: dados
+        ? dados?.responsaveis[0]?.endereco.complemento
+        : "",
+    }));
     setUpdate((prev) => ({
       ...prev,
       sCelular: dados ? dados?.responsaveis[0]?.celular : "",
@@ -139,7 +145,12 @@ export default function Home() {
       ...prev,
       sBairro: dados ? dados?.responsaveis[1]?.endereco.bairro : "",
     }));
-    // setUpdate2(prev => ({...prev, sComplementoEndereco: dados ? dados?.responsaveis[1]?.endereco.complemento : "" }));
+    setUpdate2((prev) => ({
+      ...prev,
+      sComplementoEndereco: dados
+        ? dados?.responsaveis[1]?.endereco.complemento
+        : "",
+    }));
     setUpdate2((prev) => ({
       ...prev,
       sCelular: dados ? dados?.responsaveis[1]?.celular : "",
@@ -172,19 +183,19 @@ export default function Home() {
               return (
                 <React.Fragment key={index}>
                   {responsavel.endereco.cidade !== "PENDENTE" && (
-                      <motion.h1
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
-                        className={`${
-                          index === 1 && "mt-5"
-                        } text-[30px] origin-left`}
-                      >
-                        {index === 0
-                          ? "Responsável Financeiro"
-                          : "Segundo Responsável"}
-                      </motion.h1>
-                    )}
+                    <motion.h1
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className={`${
+                        index === 1 && "mt-5"
+                      } text-[30px] origin-left`}
+                    >
+                      {index === 0
+                        ? "Responsável Financeiro"
+                        : "Segundo Responsável"}
+                    </motion.h1>
+                  )}
 
                   {responsavel.endereco.cidade !== "PENDENTE" && (
                     <>

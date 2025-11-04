@@ -102,9 +102,11 @@ export default function Home() {
           (item) =>
             item.pagina === pathname.split("/")[pathname.split("/").length - 1]
         )[0].value;
-        const PresetValor = etapas.filter(
+        const etapaEncontrada = etapas.find(
           (item) => item.label === preset.etapaAtualLabel
-        )[0].value;
+        );
+
+        const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
         if (!preset.completo && PresetValor > AtualValor) {
           setCEP(preset.segundoResponsavel.endereco.cep);
@@ -115,6 +117,8 @@ export default function Home() {
           setComplemento(preset.segundoResponsavel.endereco.complemento);
           setCelular(preset.segundoResponsavel.celular);
           setEmail(preset.segundoResponsavel.email);
+          setMoraJunto(preset.segundoRespMoraComPrincipal);
+          setDisable(preset.segundoRespMoraComPrincipal);
         }
 
         if (dataRes?.message === "Unauthorized") {
@@ -195,24 +199,20 @@ export default function Home() {
     );
     const EnderecoResponsavelFinanceiroRes =
       await EnderecoResponsavelFinanceiro.json();
-    console.log(
-      EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco,
-      "Endereço do responsável financeiro vai vir daqui"
-    );
 
     const endereco = moraJunto
       ? {
-          cep: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.cep,
-          rua: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.rua,
-          numero:
-            EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.numero,
-          cidade:
-            EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.cidade,
-          bairro:
-            EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.bairro,
-          complemento:
-            EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco
-              ?.complemento,
+          // cep: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.cep,
+          // rua: EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.rua,
+          // numero:
+          //   EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.numero,
+          // cidade:
+          //   EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.cidade,
+          // bairro:
+          //   EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco?.bairro,
+          // complemento:
+          //   EnderecoResponsavelFinanceiroRes?.responsaveis[0]?.endereco
+          //     ?.complemento,
           celular,
           email,
           moraComResponsavelPrincipal: true,
@@ -225,7 +225,6 @@ export default function Home() {
           bairro,
           celular,
           email,
-          complemento,
           moraComResponsavelPrincipal: false,
         };
 
@@ -236,8 +235,8 @@ export default function Home() {
       }
     }
 
-    console.log(matriculaID);
     console.log(endereco);
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2b/${matriculaID}`,
       {
@@ -518,6 +517,7 @@ export default function Home() {
                   >
                     {/* Hidden native checkbox */}
                     <input
+                      checked={moraJunto}
                       onChange={() => {
                         setMoraJunto(!moraJunto);
                         setDisable(!disable);

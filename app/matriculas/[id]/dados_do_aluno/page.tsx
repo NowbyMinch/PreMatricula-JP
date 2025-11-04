@@ -3,7 +3,7 @@
 import { DataEditar } from "@imports/components/ui/datepicker";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 import { Loading } from "@imports/components/ui/loading";
-import { Genero } from "@imports/components/ui/selectionboxes";
+import { CpfInput, Genero } from "@imports/components/ui/selectionboxes";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -139,7 +139,10 @@ export default function Home() {
       nAlunoID: Alunoid.sponteAlunoId,
     };
 
-    console.log(updatedAluno, "updatedAluno");
+    console.log(
+      updatedAluno,
+      "updatedAluno updatedAluno updatedAluno updatedAluno"
+    );
 
     const Turma = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/update`,
@@ -299,14 +302,20 @@ export default function Home() {
                 <motion.label htmlFor="" className="origin-left">
                   CPF
                 </motion.label>
-                <motion.input
+                <CpfInput
+                  value={update.sCPF}
+                  onChange={(value) => {
+                    setUpdate((prev) => ({ ...prev, sCPF: value }));
+                  }}
+                />
+                {/* <motion.input
                   onChange={(e) => {
                     setUpdate((prev) => ({ ...prev, sCPF: e.target.value }));
                   }}
                   type="text"
                   defaultValue={update.sCPF}
                   className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
-                />
+                /> */}
               </motion.div>
             </div>
           </div>

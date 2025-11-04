@@ -102,9 +102,11 @@ export default function Home() {
           (item) =>
             item.pagina === pathname.split("/")[pathname.split("/").length - 1]
         )[0].value;
-        const PresetValor = etapas.filter(
+        const etapaEncontrada = etapas.find(
           (item) => item.label === preset.etapaAtualLabel
-        )[0].value;
+        );
+
+        const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
         if (!preset.completo && PresetValor > AtualValor) {
           setSegundoResponsavel(preset.temSegundoResponsavel);
@@ -196,6 +198,7 @@ export default function Home() {
         temSegundoResponsavel: segundoResponsavel,
       };
 
+      console.log(endereco);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/${matriculaID}`,
         {

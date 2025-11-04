@@ -110,9 +110,11 @@ export default function EnderecoComunicacaoAluno() {
           (item) =>
             item.pagina === pathname.split("/")[pathname.split("/").length - 1]
         )[0].value;
-        const PresetValor = etapas.filter(
+        const etapaEncontrada = etapas.find(
           (item) => item.label === preset.etapaAtualLabel
-        )[0].value;
+        );
+
+        const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
         if (!preset.completo && PresetValor > AtualValor) {
           setCEP(preset.aluno.cep);
@@ -515,18 +517,15 @@ export default function EnderecoComunicacaoAluno() {
                           <motion.label>Cidade</motion.label>
                           <Localidade
                             disabled={isDisabled}
-                            onChange={(value, exists) => {
-                              console.log(
-                                "Cidade:",
-                                setCidade(value),
-                                "Existe?",
-                                setExiste(exists)
-                              );
+                            onChange={(value, exists, estado) => {
+                              setCidade(value),
+                                setExiste(exists),
+                                setUF(estado ? estado : "");
                             }}
                           />
                         </motion.div>
 
-                        <motion.div
+                        {/* <motion.div
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           exit={{ scale: 0 }}
@@ -534,11 +533,9 @@ export default function EnderecoComunicacaoAluno() {
                         >
                           <motion.label>UF</motion.label>
                           <motion.input
-                            onChange={(e) => setUF(e.target.value)}
-                            disabled={isDisabled}
+                            disabled={true}
+                            onChange={() => {}}
                             value={uf ? uf : ""}
-                            maxLength={2}
-                            required
                             type="text"
                             className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 
                   border-gray-400 max-w-[480px] 
@@ -548,7 +545,7 @@ export default function EnderecoComunicacaoAluno() {
                       : "focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] bg-transparent text-white"
                   } text-center`}
                           />
-                        </motion.div>
+                        </motion.div> */}
 
                         <motion.div
                           initial={{ scale: 0 }}

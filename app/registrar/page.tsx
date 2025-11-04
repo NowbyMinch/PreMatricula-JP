@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ErrorModal from "@imports/components/ui/ErrorModal";
@@ -30,8 +30,8 @@ export default function Home() {
       password: senha,
       confirmPassword: confirmarSenha,
     };
-    console.log(codigo, "codigo");
-    console.log(codigo, "registro");
+
+    console.log(registro, "registro");
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/home/register/confirm`,
@@ -53,6 +53,9 @@ export default function Home() {
         errors += data.message[i] + "\n";
       }
       setMessage(errors);
+    } else if (data.error) {
+      setMessage(data.message);
+      return;
     } else {
       router.push("/cadastro");
     }
@@ -88,6 +91,8 @@ export default function Home() {
     }
   };
 
+  const codeContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handlePaste = (e: ClipboardEvent) => {
       const pastedText = e.clipboardData?.getData("text");
@@ -104,8 +109,9 @@ export default function Home() {
       }
     };
 
-    window.addEventListener("paste", handlePaste);
-    return () => window.removeEventListener("paste", handlePaste);
+    const container = codeContainerRef.current;
+    container?.addEventListener("paste", handlePaste);
+    return () => container?.removeEventListener("paste", handlePaste);
   }, [codigo]);
 
   return (
@@ -183,7 +189,7 @@ export default function Home() {
                 </motion.label>
                 <span>Insira o código enviado para o seu email</span>
 
-                <div className="flex gap-2">
+                <div ref={codeContainerRef} className="flex gap-2">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <motion.input
                       key={i}
@@ -294,6 +300,43 @@ export default function Home() {
             </div>
           </AnimatePresence>
 
+          <div className="flex flex-1 gap-4 max-w-full justify-center items-center">
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)",
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.3 }}
+              type="button"
+              onClick={() => {
+                router.push("/cadastro");
+              }}
+              className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10"
+            >
+              Voltar
+            </motion.button>
+
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)",
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.3 }}
+              type="submit"
+              className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10"
+            >
+              Próximo
+            </motion.button>
+          </div>
+          {/*                   
           <motion.button
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -308,7 +351,7 @@ export default function Home() {
             className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10"
           >
             Registrar
-          </motion.button>
+          </motion.button> */}
         </form>
       </div>
     </>

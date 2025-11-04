@@ -99,9 +99,11 @@ export default function Home() {
           (item) =>
             item.pagina === pathname.split("/")[pathname.split("/").length - 1]
         )[0].value;
-        const PresetValor = etapas.filter(
+        const etapaEncontrada = etapas.find(
           (item) => item.label === preset.etapaAtualLabel
-        )[0].value;
+        );
+
+        const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
         if (!preset.completo && PresetValor > AtualValor) {
           console.log(preset.completo);
@@ -145,8 +147,6 @@ export default function Home() {
       parentesco: parentesco,
     };
 
-    console.log(iniciar);
-    
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/cadastro/iniciar`,
       {

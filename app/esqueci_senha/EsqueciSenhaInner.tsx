@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ErrorModal from "@imports/components/ui/ErrorModal";
@@ -56,6 +56,7 @@ export default function Home() {
       const data = await res.json();
       console.log(data);
 
+      console.log(step2, "step2 step2 step2 step2");
       if (data.error) {
         setMessage(data.message);
       } else {
@@ -155,6 +156,29 @@ export default function Home() {
     }
   };
 
+  const codeContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      const pastedText = e.clipboardData?.getData("text");
+      if (pastedText) {
+        const newCode = [...codigo];
+        for (let i = 0; i < pastedText.length && i < 5; i++) {
+          newCode[i] = pastedText[i];
+          const input = document.querySelector(
+            `input[name=codigo${i}]`
+          ) as HTMLInputElement;
+          if (input) input.value = pastedText[i];
+        }
+        setCodigo(newCode);
+      }
+    };
+
+    const container = codeContainerRef.current;
+    container?.addEventListener("paste", handlePaste);
+    return () => container?.removeEventListener("paste", handlePaste);
+  }, [codigo]);
+
   const handlePaste = (
     e: React.ClipboardEvent<HTMLInputElement>,
     index: number
@@ -201,23 +225,23 @@ export default function Home() {
             : ""
         }  max-h-[95%] max-w-[95%] w-[600px] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl relative`}
       >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => {
-            if (step === 1) {
-              router.push("/cadastro");
-            } else {
-              setStep(step - 1);
-            }
-          }}
-          className="w-8 absolute left-4 top-4 cursor-pointer"
-        >
-          <ArrowLeft className="w-full h-full text-yellow-400 " />
-        </motion.div>
+        {/* <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              if (step === 1) {
+                router.push("/cadastro");
+              } else {
+                setStep(step - 1);
+              }
+            }}
+            className="w-8 absolute left-4 top-4 cursor-pointer"
+          >
+            <ArrowLeft className="w-full h-full text-yellow-400 " />
+          </motion.div> */}
 
         <form
           onSubmit={handleSubmit}
@@ -329,7 +353,7 @@ export default function Home() {
                     </motion.label>
                     <span>Insira o código enviado para o seu email</span>
 
-                    <div className="flex gap-2">
+                    <div ref={codeContainerRef} className="flex gap-2">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <motion.input
                           key={i}
@@ -338,7 +362,7 @@ export default function Home() {
                           name={`codigo${i}`}
                           id={`codigo${i}`}
                           value={codigo[i]}
-                          onPaste={(e) => handlePaste(e, i)}
+                          //   onPaste={(e) => handlePaste(e, i)}
                           onChange={(e) => handleChange(e, i)}
                           onKeyDown={(e) => handleKeyDown(e, i)}
                           type="text"
@@ -478,7 +502,30 @@ export default function Home() {
             </>
           </AnimatePresence>
 
-          <div className="flex flex-col w-[480px] max-w-full h-full items-center mt-10">
+          <div className="flex flex-1 gap-4 max-w-full justify-center items-center">
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)",
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.3 }}
+              type="button"
+              onClick={() => {
+                if (step === 1) {
+                  router.push("/cadastro");
+                } else {
+                  setStep(step - 1);
+                }
+              }}
+              className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10"
+            >
+              Voltar
+            </motion.button>
+
             <motion.button
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -490,7 +537,7 @@ export default function Home() {
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.3 }}
               type="submit"
-              className="cursor-pointer rounded-[15px] my-auto w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold "
+              className="cursor-pointer rounded-[15px] w-fit max-w-full px-14 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-lg text-black font-semibold my-10"
             >
               Próximo
             </motion.button>

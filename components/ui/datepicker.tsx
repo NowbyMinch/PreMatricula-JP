@@ -104,9 +104,11 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
         (item) =>
           item.pagina === pathname.split("/")[pathname.split("/").length - 1]
       )[0].value;
-      const PresetValor = etapas.filter(
+      const etapaEncontrada = etapas.find(
         (item) => item.label === preset.etapaAtualLabel
-      )[0].value;
+      );
+
+      const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
       if (!preset.completo && PresetValor > AtualValor) {
         if (pathname.endsWith("dados_do_responsavel_financeiro")) {

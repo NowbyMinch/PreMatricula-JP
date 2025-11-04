@@ -338,35 +338,24 @@ export default function Home() {
                 />
               </motion.div>
 
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                className="flex flex-col gap-2 w-[130px]"
-              >
-                <motion.label htmlFor="" className="origin-left">
-                  UF
-                </motion.label>
-                <motion.input
-                  type="text"
-                  maxLength={2}
-                  onChange={(e) =>
-                    setDados((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            aluno: { ...prev.aluno, uf: e.target.value },
-                          }
-                        : prev
-                    )
-                  }
-                  // onChange={(e) => {setUpdate(prev => ({...prev, sCidade: dados ?
-                  //   `${dados?.aluno.cidade}${ dados?.aluno?.uf && `|${(dados?.aluno?.uf).toUpperCase()}`} ` : "" }
-                  // ))}}
-                  defaultValue={dados ? dados.aluno.uf : ""}
-                  className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] bg-transparent text-white  text-center`}
-                />
-              </motion.div>
+              {/* <motion.div 
+              initial={{scale:0}}
+              animate={{scale:1}}
+              exit={{scale:0}}
+              className="flex flex-col gap-2 w-[130px]">
+                <motion.label 
+                htmlFor="" 
+                className="origin-left">UF</motion.label>
+                <motion.input 
+                type="text" 
+                maxLength={2}
+                onChange={(e) => setDados(prev => prev ? { ...prev, aluno: { ...prev.aluno, uf: e.target.value } } : prev)}
+                // onChange={(e) => {setUpdate(prev => ({...prev, sCidade: dados ? 
+                //   `${dados?.aluno.cidade}${ dados?.aluno?.uf && `|${(dados?.aluno?.uf).toUpperCase()}`} ` : "" }
+                // ))}}
+                defaultValue={dados ? dados.aluno.uf : ""}
+                className={`w-full rounded-[15px] py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] bg-transparent text-white  text-center`} />
+              </motion.div> */}
 
               <motion.div
                 initial={{ scale: 0 }}
