@@ -40,7 +40,6 @@ export default function Home() {
           return;
         }
         const token = data.token;
-        console.log(token);
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -105,7 +104,6 @@ export default function Home() {
         const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
         if (!preset.completo && PresetValor > AtualValor) {
-          console.log(preset.completo);
           setNome(preset.segundoResponsavel.nome);
           setGenero(preset.segundoResponsavel.genero);
           setRG(preset.segundoResponsavel.rg);
@@ -117,7 +115,6 @@ export default function Home() {
         if (dataRes?.message === "Unauthorized") {
           setMessage("Erro na matricula. Por favor, logue novamente.");
         }
-        console.log(dataRes);
       };
       fetchToken();
     } catch {
@@ -134,7 +131,6 @@ export default function Home() {
         return;
       }
       const token = data.token;
-      console.log(token);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -150,7 +146,6 @@ export default function Home() {
       if (dataRes?.message === "Unauthorized") {
         setMessage("Erro na matricula. Por favor, logue novamente.");
       }
-      console.log(dataRes);
     };
     fetchToken();
   }, []);
@@ -187,7 +182,6 @@ export default function Home() {
       }
     );
     const responsaveis = await Responsavel.json();
-    console.log(responsaveis);
 
     if (matricula?.message === "Unauthorized") {
       setMessage("Erro na matricula. Por favor, logue novamente.");
@@ -204,10 +198,6 @@ export default function Home() {
       parentesco: parentesco,
     };
 
-    console.log(
-      dadosResponsavelDois,
-      "dadosResponsavelDoisdadosResponsavelDoisdadosResponsavelDois"
-    );
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-1b/${matriculaID}`,
       {
@@ -220,7 +210,6 @@ export default function Home() {
       }
     );
     const dataRes = await res.json();
-    console.log(dataRes);
 
     if (dataRes?.error) {
       if (
@@ -447,15 +436,11 @@ export default function Home() {
                             <motion.label htmlFor="" className="origin-left">
                               N°
                             </motion.label>
-                            <motion.input
-                              required
+                            <NumeroRG
                               value={rg}
-                              onChange={(e) => {
-                                setRG(e.target.value);
+                              onChange={(value) => {
+                                setRG(value);
                               }}
-                              type="text"
-                              placeholder="Digite seu RG"
-                              className={` w-full rounded-[15px] px-4 py-3 border outline-none transition-all ease-in-out duration-300 border-gray-400 max-w-[480px] focus:border-yellow-400 focus:shadow-[0_0_15px_rgba(255,215,0,0.2)] `}
                             />
                           </motion.div>
                         </div>

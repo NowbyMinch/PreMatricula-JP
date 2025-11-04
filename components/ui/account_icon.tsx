@@ -78,7 +78,6 @@ export default function   Account() {
     try {
       const res = await fetch(`/api/logout`, { method: 'POST', credentials: "include" });
       const data = await res.json();
-      console.log(data);
 
 
     } catch (err) {
@@ -94,9 +93,6 @@ export default function   Account() {
 
   const Continuar = async () => {
     if (!finalizado){
-      console.log("Não finalizado!");
-      
-      console.log(etapaAtual);
 
       if (etapaAtual === "2"){
         router.push (`/matricula/endereco_e_comunicacao_responsavel_financeiro`)

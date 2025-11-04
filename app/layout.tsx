@@ -34,14 +34,14 @@ export default function RootLayout({
           playsInline
           className="fixed top-0 left-0 w-full h-full object-cover object-bottom -z-10"
         >
-          <source src="/file.mov" type="video/mp4" />
+          <source src="/file.MOV" type="video/mp4" />
         </video>
 
         <div className="fixed top-0 left-0 w-full h-full bg-black opacity-55 z-[-5] "></div>
 
         <Account />
 
-        <div className="my-auto py-2 h-full flex justify-center items-center w-full overflow-y-auto">
+        <div className="my-auto py-2 h-full flex justify-center items-center w-full ">
           {children}
         </div>
       </body>

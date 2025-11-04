@@ -79,7 +79,6 @@ export default function Home() {
       );
       const dataRes = await res.json();
 
-      console.log(dataRes);
       setDados(dataRes);
       setGenero(dataRes ? dataRes?.aluno?.genero : "");
       setLoading(false);
@@ -111,7 +110,6 @@ export default function Home() {
   }, [dados]);
 
   useEffect(() => {
-    console.log(update);
   }, [update]);
 
   const handleUpdate = async () => {
@@ -139,10 +137,6 @@ export default function Home() {
       nAlunoID: Alunoid.sponteAlunoId,
     };
 
-    console.log(
-      updatedAluno,
-      "updatedAluno updatedAluno updatedAluno updatedAluno"
-    );
 
     const Turma = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/update`,
@@ -169,7 +163,6 @@ export default function Home() {
 
     const retornoOperacaoValues = retornoElements.map((el) => el.textContent);
 
-    console.log(retornoOperacaoValues);
   };
 
   if (loading)
@@ -321,7 +314,7 @@ export default function Home() {
           </div>
         </AnimatePresence>
       </div>
-      <div className=" h-full mt-auto">
+      {/* <div className=" h-full mt-auto">
         <motion.button
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -336,7 +329,7 @@ export default function Home() {
         >
           Salvar mudanças
         </motion.button>
-      </div>
+      </div> */}
     </>
   );
 }

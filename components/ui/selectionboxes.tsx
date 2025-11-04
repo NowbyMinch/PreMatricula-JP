@@ -202,7 +202,6 @@ export function Responsavel({
   >([]);
 
   useEffect(() => {
-    console.log(checked, "CHECKED FROM INSIDE");
     const Responsaveis = async () => {
       const tok = await fetch("/api/token", { credentials: "include" });
       const data = await tok.json();
@@ -249,10 +248,6 @@ export function Responsavel({
 
   const [open, setOpen] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
-
-  useEffect(() => {
-    console.log(isEnabled, "checked", checked);
-  }, [checked, isEnabled]);
 
   useEffect(() => {
     enabled?.(isEnabled); // call on mount with the initial checked value
@@ -482,7 +477,6 @@ export function Localidade({ disabled, onChange }: LocalidadeProps) {
         const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
         if (!preset.completo && PresetValor > AtualValor) {
-          console.log(preset.aluno?.cidadeNatal);
 
           if (pathname.endsWith("/endereco_e_comunicacao_responsavel")) {
             setCidade(preset.segundoResponsavel?.endereco?.cidade || "");
@@ -491,14 +485,12 @@ export function Localidade({ disabled, onChange }: LocalidadeProps) {
           ) {
             setCidade(preset.responsavelPrincipal?.endereco?.cidade || "");
           } else if (pathname.endsWith("/dados_do_aluno")) {
-            console.log(preset.aluno?.endereco?.cidadeNatal, "CIDADE NATAL");
             setCidade(preset.aluno?.cidadeNatal || "");
           } else if (pathname.endsWith("/endereco_e_comunicacao_aluno")) {
             setCidade(preset.aluno?.cidade || "");
           }
         }
 
-        console.log(dataRes);
       };
       fetchToken();
     } catch {
@@ -936,24 +928,17 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
         )?.value;
 
         if (etapaAtualValor) {
-          console.log(etapaAtualValor, "etapaAtualValor 1");
           setDadosAtivos(0);
 
           if (etapaAtualValor > 2) {
-            console.log("setEnderecoResponsavel(true);");
-            console.log(etapaAtualValor, "etapaAtualValor 2");
             setDadosAtivos(1);
           }
           if (etapaAtualValor > 5) {
-            console.log("setDadosAluno(true);");
-            console.log(etapaAtualValor, "etapaAtualValor 3");
             setDadosAtivos(2);
           }
         }
 
         if (detalheResAtual.completo) {
-          console.log(etapaAtualValor, "etapaAtualValor 4");
-          console.log("COMPLETO");
           setDadosAtivos(3);
         }
       } catch (err) {
@@ -963,9 +948,6 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
     fetchToken();
   }, [pathname]); // now Dados is stable, effect runs only when id changes
 
-  useEffect(() => {
-    console.log(dadosAtivos);
-  }, [dadosAtivos]);
   return (
     <>
       <input type="hidden" value={value} required />
@@ -1123,10 +1105,10 @@ export function NumeroRG({
     if (v.length > 9) v = v.slice(0, 9); // limit to 11 digits
 
     // apply mask
-    v = v
-      .replace(/(\d{2})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    // v = v
+    //   .replace(/(\d{2})(\d)/, "$1.$2")
+    //   .replace(/(\d{3})(\d)/, "$1.$2")
+    //   .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 
     setNumeroRG(v);
     onChange?.(v);
@@ -1205,7 +1187,7 @@ export function Numero({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let v = e.target.value.replace(/\D/g, ""); // remove non-digits
-    if (v.length > 3) v = v.slice(0, 3); // limit to 3 digits
+    // if (v.length > 3) v = v.slice(0, 3); // limit to 3 digits
     setNumero(v);
     onChange?.(v);
   };

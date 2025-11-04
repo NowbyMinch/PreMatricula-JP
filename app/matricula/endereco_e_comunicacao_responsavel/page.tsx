@@ -43,7 +43,6 @@ export default function Home() {
           return;
         }
         const token = data.token;
-        console.log(token);
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -79,7 +78,6 @@ export default function Home() {
           }
         );
         const preset = await PresetFetch.json();
-        console.log(preset);
 
         const etapas = [
           { value: 1, label: "1", pagina: "dados_do_responsavel_financeiro" },
@@ -124,7 +122,6 @@ export default function Home() {
         if (dataRes?.message === "Unauthorized") {
           setMessage("Erro na matricula. Por favor, logue novamente.");
         }
-        console.log(dataRes);
       };
       fetchToken();
     } catch {
@@ -141,7 +138,6 @@ export default function Home() {
         return;
       }
       const token = data.token;
-      console.log(token);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -157,7 +153,6 @@ export default function Home() {
       if (dataRes?.message === "Unauthorized") {
         setMessage("Erro na matricula. Por favor, logue novamente.");
       }
-      console.log(dataRes);
     };
     fetchToken();
   }, [pathname]);
@@ -166,7 +161,6 @@ export default function Home() {
     e.preventDefault(); // prevent page reload
     const tok = await fetch("/api/token", { credentials: "include" });
     const data = await tok.json();
-    console.log(data.token);
     if (!data.token) return;
     const token = data.token;
     const Matricula = await fetch(
@@ -184,7 +178,6 @@ export default function Home() {
       setMessage("Erro na matricula. Por favor, logue novamente.");
       return;
     }
-    console.log(matricula);
     const matriculaID = matricula.id;
 
     const EnderecoResponsavelFinanceiro = await fetch(
@@ -235,7 +228,6 @@ export default function Home() {
       }
     }
 
-    console.log(endereco);
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2b/${matriculaID}`,
@@ -250,7 +242,6 @@ export default function Home() {
     );
 
     const dataRes = await res.json();
-    console.log(dataRes);
 
     if (dataRes?.error) {
       if (
@@ -258,7 +249,6 @@ export default function Home() {
         Array.isArray(dataRes?.message) &&
         dataRes?.message.length > 0
       ) {
-        console.log("Tem erro 2");
 
         // dataRes.error exists and is a non-empty array
         let errors = "";

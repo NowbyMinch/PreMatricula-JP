@@ -42,7 +42,6 @@ export default function Home() {
     };
 
     if (step === 1) {
-      console.log(step1.email, "oi oi oi ");
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/home/password/reset`,
@@ -54,9 +53,7 @@ export default function Home() {
         }
       );
       const data = await res.json();
-      console.log(data);
 
-      console.log(step2, "step2 step2 step2 step2");
       if (data.error) {
         setMessage(data.message);
       } else {
@@ -64,7 +61,6 @@ export default function Home() {
       }
       setStep(2);
     } else if (step === 2) {
-      console.log(step2, "oi oi oi 2");
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/home/password/reset/verify`,
         {
@@ -75,7 +71,6 @@ export default function Home() {
         }
       );
       const data = await res.json();
-      console.log(data);
 
       if (data.error) {
         setMessage(data.message);
@@ -83,7 +78,6 @@ export default function Home() {
         setStep(3);
       }
     } else if (step === 3) {
-      console.log(step3, "oi oi oi 2");
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/home/password/reset/confirm`,
         {
@@ -94,7 +88,6 @@ export default function Home() {
         }
       );
       const data = await res.json();
-      console.log(data);
 
       if (data.error) {
         setMessage(data.message);
@@ -118,7 +111,6 @@ export default function Home() {
       }
     );
     const data = await res.json();
-    console.log(data);
 
     if (data.error) {
       setMessage(data.message);

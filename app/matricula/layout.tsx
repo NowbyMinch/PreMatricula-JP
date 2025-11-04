@@ -61,7 +61,6 @@ export default function RootLayout({
       );
       const dataRes = await res.json();
 
-      console.log(dataRes);
     };
     fetchToken();
   }, [id, pathname]);

@@ -47,7 +47,6 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
         return;
       }
       const token = data.token;
-      console.log(token);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -112,7 +111,6 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
 
       if (!preset.completo && PresetValor > AtualValor) {
         if (pathname.endsWith("dados_do_responsavel_financeiro")) {
-          console.log("Termina 1");
           const v = preset.responsavelPrincipal.dataNascimento
             .split("/")
             .reverse()
@@ -123,7 +121,6 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
           setInputValue3(vI[2]);
           onChangePreset?.(v);
         } else if (pathname.endsWith("dados_do_responsavel")) {
-          console.log("Termina 2");
 
           const v = preset.segundoResponsavel.dataNascimento
             .split("/")
@@ -135,7 +132,6 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
           setInputValue3(vI[2]);
           onChangePreset?.(v);
         } else if (pathname.endsWith("dados_do_aluno")) {
-          console.log("Termina 3");
 
           const v = preset.aluno.dataNascimento.split("/").reverse().join("-");
 
@@ -147,7 +143,6 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
         }
       }
 
-      console.log(dataRes);
     };
     fetchToken();
   }, [onChangePreset, pathname]);
@@ -181,7 +176,6 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
       inputValue2 === "10" ||
       inputValue2 === "12"
     ) {
-      console.log(inputValue2);
       if (parseInt(inputValue) > 31) {
         setInputValue("31");
       }
@@ -191,13 +185,11 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
       inputValue2 === "9" ||
       inputValue2 === "11"
     ) {
-      console.log(inputValue2);
 
       if (parseInt(inputValue) > 30) {
         setInputValue("30");
       }
     } else if (inputValue2 === "2") {
-      console.log(inputValue2);
 
       if (parseInt(inputValue) > 28) {
         setInputValue("28");
@@ -251,7 +243,6 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
 
   const handleDateSelect = (date: Date) => {
     if (date.getFullYear() < 1900 || date.getFullYear() > currentYear) return;
-    // console.log(date);
     const formatted = format(date, "dd/MM/yyyy");
     setSelectedDate(date);
     setInputValue(formatted.slice(0, 2));

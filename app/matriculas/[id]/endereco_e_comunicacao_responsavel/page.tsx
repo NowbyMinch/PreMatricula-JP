@@ -75,7 +75,6 @@ export default function Home() {
       );
       const dataRes = await res.json();
 
-      console.log(dataRes);
       setDados(dataRes);
       setLoading(false);
     };
@@ -161,10 +160,6 @@ export default function Home() {
     }));
   }, [dados]);
 
-  useEffect(() => {
-    console.log(update, "update");
-    console.log(update2, "update2");
-  }, [update, update2]);
 
   if (loading)
     return (

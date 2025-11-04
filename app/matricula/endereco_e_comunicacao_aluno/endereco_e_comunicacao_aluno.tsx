@@ -52,7 +52,6 @@ export default function EnderecoComunicacaoAluno() {
           return;
         }
         const token = data.token;
-        console.log(token);
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -88,7 +87,6 @@ export default function EnderecoComunicacaoAluno() {
           }
         );
         const preset = await PresetFetch.json();
-        console.log(preset);
         const etapas = [
           { value: 1, label: "1", pagina: "dados_do_responsavel_financeiro" },
           {
@@ -138,14 +136,12 @@ export default function EnderecoComunicacaoAluno() {
         if (dataRes?.message === "Unauthorized") {
           setMessage("Erro na matricula. Por favor, logue novamente.");
         }
-        console.log(dataRes);
       };
       fetchToken();
     } catch {
     } finally {
       setLoading(false);
     }
-    console.log(moraComResponsavel, "MoraComResponsavel");
   }, [moraComResponsavel, pathname]);
 
   useEffect(() => {
@@ -157,7 +153,6 @@ export default function EnderecoComunicacaoAluno() {
         return;
       }
       const token = data.token;
-      console.log(token);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -234,7 +229,6 @@ export default function EnderecoComunicacaoAluno() {
           cidade,
           uf,
         };
-    console.log(endereco, "Endereço");
 
     if (!isDisabled) {
       if (!existe) {
@@ -255,7 +249,6 @@ export default function EnderecoComunicacaoAluno() {
       }
     );
     const dataRes = await res.json();
-    console.log(dataRes);
 
     if (dataRes?.error) {
       if (
@@ -276,7 +269,6 @@ export default function EnderecoComunicacaoAluno() {
         return;
       }
 
-      console.log("deu certo1");
     }
 
     const Atual = await fetch(
@@ -303,8 +295,8 @@ export default function EnderecoComunicacaoAluno() {
       }
     );
     const IntegrarSponte = await Sponte.json();
-    console.log(IntegrarSponte, "Sponte aqui");
 
+    console.log(IntegrarSponte);
     if (IntegrarSponte?.erro) {
       if (
         IntegrarSponte?.detalhe &&
@@ -322,7 +314,6 @@ export default function EnderecoComunicacaoAluno() {
         setMessage(IntegrarSponte.detalhe);
       }
 
-      console.log("deu certo1");
     } else if (IntegrarSponte?.detalhe) {
       if (IntegrarSponte.detalhe === "Operação Realizada com Sucesso.") {
         router.push(`/matriculas/${matriculaID}/dados_do_responsavel`);

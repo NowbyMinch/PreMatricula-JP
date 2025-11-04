@@ -43,7 +43,6 @@ export default function Home() {
           return;
         }
         const token = data.token;
-        console.log(token);
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -79,7 +78,6 @@ export default function Home() {
           }
         );
         const preset = await PresetFetch.json();
-        console.log(preset);
 
         const etapas = [
           { value: 1, label: "1", pagina: "dados_do_responsavel_financeiro" },
@@ -123,7 +121,6 @@ export default function Home() {
         if (dataRes?.message === "Unauthorized") {
           setMessage("Erro na matricula. Por favor, logue novamente.");
         }
-        console.log(dataRes);
       };
       fetchToken();
     } catch {
@@ -140,7 +137,6 @@ export default function Home() {
         return;
       }
       const token = data.token;
-      console.log(token);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -156,7 +152,6 @@ export default function Home() {
       if (dataRes?.message === "Unauthorized") {
         setMessage("Erro na matricula. Por favor, logue novamente.");
       }
-      console.log(dataRes);
     };
     fetchToken();
   }, []);
@@ -198,7 +193,6 @@ export default function Home() {
         temSegundoResponsavel: segundoResponsavel,
       };
 
-      console.log(endereco);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-2/${matriculaID}`,
         {
@@ -212,7 +206,6 @@ export default function Home() {
       );
 
       const dataRes = await res.json();
-      console.log(dataRes);
 
       if (dataRes?.error) {
         if (
@@ -466,7 +459,6 @@ export default function Home() {
                     <input
                       onChange={() => {
                         setSegundoResponsavel(!segundoResponsavel);
-                        console.log(segundoResponsavel);
                       }}
                       checked={!segundoResponsavel}
                       type="checkbox"

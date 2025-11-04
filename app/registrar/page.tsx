@@ -31,7 +31,6 @@ export default function Home() {
       confirmPassword: confirmarSenha,
     };
 
-    console.log(registro, "registro");
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/home/register/confirm`,
@@ -43,7 +42,6 @@ export default function Home() {
     );
 
     const data = await res.json();
-    console.log(data);
 
     // handleSubmit snippet
     if (data.error && Array.isArray(data.message) && data.message.length > 0) {
@@ -224,7 +222,6 @@ export default function Home() {
                     required
                     onChange={(e) => {
                       setSenha(e.target.value);
-                      console.log(senha);
                     }}
                     type={`${mostrar ? "text" : "password"}`}
                     placeholder="Digite sua senha"

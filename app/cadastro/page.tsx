@@ -28,7 +28,6 @@ export default function Home() {
     const login = { email: formLogin.email, password: formLogin.senha };
 
     if (registrar) {
-      console.log(registro.email, "oi oi oi ");
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/home/register/request`,
@@ -41,7 +40,6 @@ export default function Home() {
       );
 
       const data = await res.json();
-      console.log(data);
 
       if (data.error) {
         setMessage(data.message);
@@ -57,8 +55,6 @@ export default function Home() {
       });
 
       const data = await res.json();
-      console.log(data);
-      console.log(login);
 
       // handleSubmit snippet
       if (Array.isArray(data?.message) && data.message.length > 0) {
@@ -140,7 +136,6 @@ export default function Home() {
                       value={form.email}
                       onChange={(e) => {
                         setForm({ email: e.target.value });
-                        console.log(form.email);
                       }}
                       type="email"
                       placeholder="Digite seu email"
@@ -173,7 +168,6 @@ export default function Home() {
                           ...prev,
                           email: e.target.value,
                         }));
-                        console.log(e.target.value);
                       }}
                       type="email"
                       placeholder="Digite seu email"
@@ -199,7 +193,6 @@ export default function Home() {
                             ...prev,
                             senha: e.target.value,
                           }));
-                          console.log(e.target.value);
                         }}
                         type={`${mostrar ? "text" : "password"}`}
                         placeholder="Digite sua senha"

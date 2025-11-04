@@ -39,7 +39,6 @@ export default function Home() {
           return;
         }
         const token = data.token;
-        console.log(token);
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -104,7 +103,6 @@ export default function Home() {
         const PresetValor = etapaEncontrada ? etapaEncontrada.value : 0;
 
         if (!preset.completo && PresetValor > AtualValor) {
-          console.log(preset.completo);
           // setBack(true);
           setNome(preset.responsavelPrincipal.nome);
           setGenero(preset.responsavelPrincipal.genero);
@@ -115,7 +113,6 @@ export default function Home() {
         if (dataRes?.message === "Unauthorized") {
           setMessage("Erro na matricula. Por favor, logue novamente.");
         }
-        console.log(dataRes);
       };
       fetchToken();
     } catch {}
@@ -129,7 +126,6 @@ export default function Home() {
         return;
       }
       const token = data.token;
-      console.log(token);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/matriculas/recente`,
@@ -142,7 +138,6 @@ export default function Home() {
         }
       );
       const dataRes = await res.json();
-      console.log(dataRes, "RECENTE AQUI <-");
       setSegundoResponsavel(dataRes.temSegundoResponsavel);
 
       if (dataRes?.message === "Unauthorized") {
@@ -157,7 +152,6 @@ export default function Home() {
     if (existe) {
       const tok = await fetch("/api/token", { credentials: "include" });
       const data = await tok.json();
-      console.log(data.token);
       if (!data.token) return;
       const token = data.token;
       const Matricula = await fetch(
@@ -186,8 +180,6 @@ export default function Home() {
         cpf: cpf,
       };
 
-      console.log(matriculaID);
-      console.log(dadosAluno);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-3/${matriculaID}`,
         {
@@ -201,7 +193,6 @@ export default function Home() {
       );
 
       const dataRes = await res.json();
-      console.log(dataRes);
 
       if (dataRes?.error) {
         if (
@@ -209,7 +200,6 @@ export default function Home() {
           Array.isArray(dataRes?.message) &&
           dataRes?.message.length > 0
         ) {
-          console.log("hahahaha 1");
 
           // dataRes.error exists and is a non-empty array
           let errors = "";
