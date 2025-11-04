@@ -301,7 +301,7 @@ export default function Home() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="text-[35px] mx-auto mt-10 font-medium text-center"
+                className="text-[35px] mx-auto mt-10 font-medium text-center max-w-full break-all"
               >
                 Endereço/Comunicação do Responsável
               </motion.h1>
@@ -446,7 +446,6 @@ export default function Home() {
                         Complemento
                       </motion.label>
                       <motion.input
-                        required
                         value={complemento ? complemento : ""}
                         onChange={(e) => setComplemento(e.target.value)}
                         type="text"

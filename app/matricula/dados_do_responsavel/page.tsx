@@ -447,10 +447,10 @@ export default function Home() {
                             <motion.label htmlFor="" className="origin-left">
                               N°
                             </motion.label>
-                            <NumeroRG
+                            <input
                               value={rg}
-                              onChange={(value) => {
-                                setRG(value);
+                              onChange={(e) => {
+                                setRG(e.target.value);
                               }}
                               disabled={false}
                             />
