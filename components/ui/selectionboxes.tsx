@@ -425,6 +425,9 @@ export function Localidade({ disabled, onChange }: LocalidadeProps) {
           }
         );
         const dataRes = await res.json();
+        if (!dataRes) {
+          return
+        }
 
         const idAtualRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`,
@@ -857,19 +860,6 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
   const [atual, setAtual] = useState("");
   const [dadosAtivos, setDadosAtivos] = useState<number>();
 
-  useEffect(() => {
-    // Example: set value based on the current pathname
-    const currentPage = pathname.split("/")[3];
-    const defaultOption = Dados.find((item) => item.value === currentPage);
-
-    if (defaultOption) {
-      onChange(defaultOption.value); // set value automatically
-    } else {
-      // or set a fallback
-      onChange("dados_do_responsavel");
-    }
-  }, [pathname]);
-
   const Dados = useMemo(
     () => [
       { value: "dados_do_responsavel", label: "Dados do responsável" },
@@ -885,6 +875,18 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
     ],
     []
   ); // <- empty array: only created once
+
+  useEffect(() => {
+    if (!value) {
+      const currentPage = pathname.split("/")[3];
+      const defaultOption =
+        Dados.find((item) => item.value === currentPage)?.value ||
+        "dados_do_responsavel";
+
+      onChange(defaultOption);
+    }
+  }, []); // roda só uma vez
+  
 
   useEffect(() => {
     const atualDado = Dados.filter(
@@ -946,7 +948,7 @@ export function Dados({ value, onChange }: ComboboxDemoProps) {
       }
     };
     fetchToken();
-  }, [pathname]); // now Dados is stable, effect runs only when id changes
+  }, [pathname, Dados]); // now Dados is stable, effect runs only when id changes
 
   return (
     <>
@@ -1186,7 +1188,7 @@ export function Numero({
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let v = e.target.value.replace(/\D/g, ""); // remove non-digits
+    const v = e.target.value.replace(/\D/g, ""); // remove non-digits
     // if (v.length > 3) v = v.slice(0, 3); // limit to 3 digits
     setNumero(v);
     onChange?.(v);

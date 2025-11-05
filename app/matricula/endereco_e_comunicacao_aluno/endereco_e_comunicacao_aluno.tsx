@@ -268,7 +268,6 @@ export default function EnderecoComunicacaoAluno() {
         setMessage(dataRes.message);
         return;
       }
-
     }
 
     const Atual = await fetch(
@@ -313,7 +312,6 @@ export default function EnderecoComunicacaoAluno() {
       } else if (IntegrarSponte?.erro && IntegrarSponte?.detalhe) {
         setMessage(IntegrarSponte.detalhe);
       }
-
     } else if (IntegrarSponte?.detalhe) {
       if (IntegrarSponte.detalhe === "Operação Realizada com Sucesso.") {
         router.push(`/matriculas/${matriculaID}/dados_do_responsavel`);

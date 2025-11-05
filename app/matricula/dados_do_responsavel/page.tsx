@@ -171,17 +171,17 @@ export default function Home() {
     );
     const matricula = await Matricula.json();
     const matriculaID = matricula.id;
-    const Responsavel = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const responsaveis = await Responsavel.json();
+    // const Responsavel = await fetch(
+    //   `${process.env.NEXT_PUBLIC_API_URL}/cadastro/responsaveis/${matriculaID}`,
+    //   {
+    //     method: "GET",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   }
+    // );
+    // const responsaveis = await Responsavel.json();
 
     if (matricula?.message === "Unauthorized") {
       setMessage("Erro na matricula. Por favor, logue novamente.");
@@ -198,6 +198,8 @@ export default function Home() {
       parentesco: parentesco,
     };
 
+    console.log(dadosResponsavelDois);
+    
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/cadastro/etapa-1b/${matriculaID}`,
       {

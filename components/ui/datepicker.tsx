@@ -59,6 +59,9 @@ export function DatePicker({ onChangePreset, onChange }: DatePickerProps) {
         }
       );
       const dataRes = await res.json();
+      if (!dataRes) {
+        return;
+      }
 
       const idAtualRes = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`,

@@ -180,18 +180,18 @@ export default function Home() {
     }
     const matriculaID = matricula.id;
 
-    const EnderecoResponsavelFinanceiro = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/matriculas/${matriculaID}/detalhe`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const EnderecoResponsavelFinanceiroRes =
-      await EnderecoResponsavelFinanceiro.json();
+    // const EnderecoResponsavelFinanceiro = await fetch(
+    //   `${process.env.NEXT_PUBLIC_API_URL}/matriculas/${matriculaID}/detalhe`,
+    //   {
+    //     method: "GET",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   }
+    // );
+    // const EnderecoResponsavelFinanceiroRes =
+    //   await EnderecoResponsavelFinanceiro.json();
 
     const endereco = moraJunto
       ? {

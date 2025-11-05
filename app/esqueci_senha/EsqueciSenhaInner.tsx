@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ErrorModal from "@imports/components/ui/ErrorModal";
 // <span className="absolute top-20 right-5 text-white text-7xl md:text-[130px] font-bold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
@@ -171,29 +171,29 @@ export default function Home() {
     return () => container?.removeEventListener("paste", handlePaste);
   }, [codigo]);
 
-  const handlePaste = (
-    e: React.ClipboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    e.preventDefault(); // prevent default paste behavior
+  // const handlePaste = (
+  //   e: React.ClipboardEvent<HTMLInputElement>,
+  //   index: number
+  // ) => {
+  //   e.preventDefault(); // prevent default paste behavior
 
-    const pastedText = e.clipboardData?.getData("text") || "";
-    if (!pastedText) return;
+  //   const pastedText = e.clipboardData?.getData("text") || "";
+  //   if (!pastedText) return;
 
-    const newCode = [...codigo];
+  //   const newCode = [...codigo];
 
-    // Start inserting from the current input index
-    for (let i = 0; i < pastedText.length && index + i < newCode.length; i++) {
-      newCode[index + i] = pastedText[i];
+  //   // Start inserting from the current input index
+  //   for (let i = 0; i < pastedText.length && index + i < newCode.length; i++) {
+  //     newCode[index + i] = pastedText[i];
 
-      const input = document.querySelector(
-        `input[name=codigo${index + i}]`
-      ) as HTMLInputElement;
-      if (input) input.value = pastedText[i];
-    }
+  //     const input = document.querySelector(
+  //       `input[name=codigo${index + i}]`
+  //     ) as HTMLInputElement;
+  //     if (input) input.value = pastedText[i];
+  //   }
 
-    setCodigo(newCode);
-  };
+  //   setCodigo(newCode);
+  // };
   // useEffect(() => {
 
   //     window.addEventListener("paste", handlePaste);

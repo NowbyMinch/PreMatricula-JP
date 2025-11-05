@@ -133,58 +133,58 @@ export default function Home() {
   }, [dados]);
 
 
-  const handleUpdate = async () => {
-    const tok = await fetch("/api/token", { credentials: "include" });
-    const data = await tok.json();
-    if (!data.token) return;
-    const token = data.token;
+  // const handleUpdate = async () => {
+  //   const tok = await fetch("/api/token", { credentials: "include" });
+  //   const data = await tok.json();
+  //   if (!data.token) return;
+  //   const token = data.token;
 
-    const AlunoSponteID = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/matriculas/sponte-id?id=${id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const Alunoid = await AlunoSponteID.json();
+  //   const AlunoSponteID = await fetch(
+  //     `${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/matriculas/sponte-id?id=${id}`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     }
+  //   );
+  //   const Alunoid = await AlunoSponteID.json();
 
-    setUpdate((prev) => ({ ...prev, nAlunoID: Alunoid.sponteAlunoId }));
+  //   setUpdate((prev) => ({ ...prev, nAlunoID: Alunoid.sponteAlunoId }));
 
-    const updatedAluno: alunosUpdate = {
-      ...update,
-      nAlunoID: Alunoid.sponteAlunoId,
-    };
+  //   const updatedAluno: alunosUpdate = {
+  //     ...update,
+  //     nAlunoID: Alunoid.sponteAlunoId,
+  //   };
 
 
-    const Turma = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/update`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedAluno),
-      }
-    );
+  //   const Turma = await fetch(
+  //     `${process.env.NEXT_PUBLIC_API_URL}/integracoes/sponte/alunos/update`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify(updatedAluno),
+  //     }
+  //   );
 
-    const turmaRes = await Turma.text();
-    const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
+  //   const turmaRes = await Turma.text();
+  //   const wrapped = `<?xml version="1.0" encoding="UTF-8"?><root>${turmaRes}</root>`;
 
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(wrapped, "application/xml");
+  //   const parser = new DOMParser();
+  //   const xmlDoc = parser.parseFromString(wrapped, "application/xml");
 
-    // Get all <RetornoOperacao> elements
-    const retornoElements = Array.from(
-      xmlDoc.getElementsByTagName("RetornoOperacao")
-    );
+  //   // Get all <RetornoOperacao> elements
+  //   const retornoElements = Array.from(
+  //     xmlDoc.getElementsByTagName("RetornoOperacao")
+  //   );
 
-    const retornoOperacaoValues = retornoElements.map((el) => el.textContent);
+  //   const retornoOperacaoValues = retornoElements.map((el) => el.textContent);
 
-  };
+  // };
 
   if (loading)
     return (

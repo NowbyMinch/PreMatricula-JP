@@ -78,7 +78,10 @@ export default function   Account() {
     try {
       const res = await fetch(`/api/logout`, { method: 'POST', credentials: "include" });
       const data = await res.json();
-
+      
+      if (!data) {
+        return;
+      }
 
     } catch (err) {
       console.error("Logout failed:", err);

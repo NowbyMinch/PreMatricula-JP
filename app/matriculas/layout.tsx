@@ -248,6 +248,7 @@ export default function RootLayout({
                 value={dado}
                 onChange={(value) => {
                   setDado(value);
+                  console.log(value);
                   router.push(`/matriculas/${id}/${value}`);
                 }}
               />

@@ -35,31 +35,31 @@ export default function RootLayout({
       if (!data.token) {
         return;
       }
-      const token = data.token;
+      // const token = data.token;
 
-      const MatriculaAtual = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const matriculaAtual = await MatriculaAtual.json();
+      // const MatriculaAtual = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}/matriculas/atual-id`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
+      // const matriculaAtual = await MatriculaAtual.json();
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/matriculas/${matriculaAtual.matriculaId}/detalhe`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const dataRes = await res.json();
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}/matriculas/${matriculaAtual.matriculaId}/detalhe`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
+      // const dataRes = await res.json();
 
     };
     fetchToken();
