@@ -39,10 +39,16 @@ export default function RootLayout({
 
         <div className="fixed top-0 left-0 w-full h-full bg-black opacity-55 z-[-5] "></div>
 
-        <Account />
+        {/* <Account /> */}
 
-        <div className="my-auto py-2 h-full flex justify-center items-center w-full ">
+        {/* <div className="my-auto py-2 h-full flex justify-center items-center w-full ">
           {children}
+        </div> */}
+
+        <div className="min-h-[270px] w-[600px] my-auto px-5 max-h-[95%] max-w-[95%] transition-all ease-in-out duration-300 rounded-[25px] flex justify-center items-center bg-[rgba(12,12,14,0.985)] gap-4 z-20 flex-col shadow-2xl overflow-hidden ">
+          <p className={`text-center text-[20px] mb-6 min-h-fit text-white`}>
+            As matrículas estão encerradas. Aguarde o próximo período de pré-matrículas.
+          </p>
         </div>
       </body>
     </html>
