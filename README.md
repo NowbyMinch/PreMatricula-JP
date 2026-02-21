@@ -31,7 +31,62 @@ O objetivo é otimizar o processo de cadastro e rematrícula de alunos e respons
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Wix Velo** (Back-end e Front-end)  
-- **Secrets Manager** (armazenamento seguro de chaves e tokens)  
-- **SPONTE API** (requisições externas para cadastro e vinculação de dados)  
-- **Banco de dados local Wix**  
+- Wix Velo (Back-end e Front-end)
+
+- Banco de dados local Wix
+
+🔹 Front-end (Arquitetura Moderna)
+
+- Next.js (App Router)
+
+- React.js
+
+- TypeScript
+
+- Tailwind CSS
+
+- Roteamento dinâmico
+
+- Proteção de rotas
+
+- Gerenciamento de estado
+
+- Manipulação assíncrona com Promises / async-await
+
+- Integração com APIs REST
+
+- Interceptação de requisições
+
+- Tratamento global de erros
+
+- Estruturação de componentes reutilizáveis
+
+- Validação avançada de formulários
+
+- Mobile-first e design responsivo
+
+- Otimização de performance
+
+🔹 Integração & APIs
+
+- SPONTE API
+
+- Comunicação via REST
+
+- Controle de autenticação
+
+- Validação de tokens
+
+- Sincronização de dados responsável ↔ aluno
+
+- Tratamento seguro de payloads
+
+🔹 Segurança
+
+- Secrets Manager
+
+- Armazenamento seguro de credenciais
+
+- Validação server-side antes de persistência
+
+- Proteção de dados sensíveis (CPF, RG, informações pessoais)
